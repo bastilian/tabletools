@@ -11,6 +11,7 @@ import SimpleTableToolsTableWithCustomEmptyRows from '../components/SimpleTableT
 import SimpleTableToolsTableWithCustomEmptyState from '../components/SimpleTableToolsTableWithCustomEmptyState';
 import TableToolsTableWithError from '../components/TableToolsTableWithError';
 import TableToolsTableWithErrorPassed from '../components/TableToolsTableWithErrorPassed';
+import TableToolsTableWithCustomFilter from '../components/TableToolsTableWithCustomFilter';
 
 export const simple = {
   title: 'Simple',
@@ -96,6 +97,13 @@ export const withErrorPassed = {
     'Table Tools Table Example with an error passed in to test error views',
 };
 
+export const withCustomFilter = {
+  title: 'With custom filter',
+  Component: TableToolsTableWithCustomFilter,
+  description:
+    'Table Tools Table Example with a custom filter not provided by the ConditionalFilter component',
+};
+
 // TODO Add example with default sorting set to column other than the first
 // TODO Add example with default initial filters set
 
@@ -113,4 +121,5 @@ export default [
   withCustomEmptyState,
   withError,
   withErrorPassed,
+  withCustomFilter,
 ];

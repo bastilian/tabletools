@@ -9,11 +9,15 @@ const checkboxFilterSerialiser = (filterConfigItem, values) =>
 const raidoFilterSerialiser = (filterConfigItem, values) =>
   `.${filterConfigItem.filterAttribute} == "${values[0]}"`;
 
+const numberFilterSerialiser = (filterConfigItem, value) =>
+  `.${filterConfigItem.filterAttribute} == ${value}`;
+
 const filterSerialisers = {
   text: textFilterSerialiser,
   checkbox: checkboxFilterSerialiser,
   radio: raidoFilterSerialiser,
   singleSelect: raidoFilterSerialiser,
+  number: numberFilterSerialiser,
 };
 
 const findFilterSerialiser = (filterConfigItem) => {
