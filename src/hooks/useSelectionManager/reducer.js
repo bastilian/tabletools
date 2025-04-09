@@ -30,7 +30,9 @@ const set = (state = {}, action) => {
   return cleanEmpty({
     ...state,
     [group]:
-      action.items?.length > 0 || isObject(action.items)
+      action.items?.length > 0 ||
+      isObject(action.items) ||
+      typeof action.items === 'number'
         ? action.items
         : undefined,
   });

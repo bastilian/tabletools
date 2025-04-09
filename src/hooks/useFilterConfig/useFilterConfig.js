@@ -7,7 +7,7 @@ import useCallbacksCallback from '~/hooks/useTableState/hooks/useCallbacksCallba
 import { toFilterConfig, toIdedFilters } from './helpers/filterConfigHelpers';
 import { toFilterChips } from './helpers/filterChipHelpers';
 import useEventHandlers from './hooks/useEventHandlers';
-
+import useFilterOptions from './hooks/useFilterOptions';
 import { TABLE_STATE_NAMESPACE } from './constants';
 
 /**
@@ -25,19 +25,21 @@ import { TABLE_STATE_NAMESPACE } from './constants';
  *  @param   {object}       [options.filters.filterConfig]  An object containing filter definition
  *  @param   {object}       [options.filters.activeFilters] An object containing an initial active filters state
  *  @param   {object}       [options.serialisers.filters]   A function to serialise the filter table state
+ *  @param   {object}       [options.customFilterTypes]     An object containing definitions for custom filter type
  *
  *  @returns {FilterConfig}                                 props for PrimaryToolbar/ConditionalFilter component
  *
  *  @group Hooks
  *
  */
-const useFilterConfig = (options = {}) => {
-  // TODO Add/port support for custom filters
-  const { filters, serialisers } = options;
-  const enableFilters = !!filters;
-  const { filterConfig = [], activeFilters: initialActiveFilters } =
-    filters || {};
-
+const useFilterConfig = (options) => {
+  const {
+    filterConfig,
+    initialActiveFilters,
+    serialisers,
+    enableFilters,
+    filterTypes,
+  } = useFilterOptions(options);
   const { selection: activeFilters, ...selectionActions } = useSelectionManager(
     initialActiveFilters,
     { withGroups: true }
@@ -47,11 +49,13 @@ const useFilterConfig = (options = {}) => {
     ...options,
     activeFilters,
     selectionActions,
+    filterTypes,
   });
 
   const builtFilterConfig = useMemo(
-    () => toFilterConfig(filterConfig, activeFilters, onFilterUpdate),
-    [filterConfig, activeFilters, onFilterUpdate]
+    () =>
+      toFilterConfig(filterConfig, filterTypes, activeFilters, onFilterUpdate),
+    [filterConfig, activeFilters, onFilterUpdate, filterTypes]
   );
 
   const [, setTableState] = useTableState(
@@ -76,7 +80,7 @@ const useFilterConfig = (options = {}) => {
         toolbarProps: {
           filterConfig: builtFilterConfig,
           activeFiltersConfig: {
-            filters: toFilterChips(filterConfig, activeFilters),
+            filters: toFilterChips(filterConfig, filterTypes, activeFilters),
             onDelete: onFilterDelete,
           },
         },

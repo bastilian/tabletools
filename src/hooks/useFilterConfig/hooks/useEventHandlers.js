@@ -9,16 +9,24 @@ const useEventHandlers = ({
   onFilterUpdate: onFilterUpdateCallback,
   onDeleteFilter,
   resetOnClear,
+  filterTypes,
   selectionActions: { select, deselect, reset, clear },
 }) => {
   const onFilterUpdate = useCallback(
     (filter, selectedValue, selectedValues) => {
       select(
-        ...toSelectValue(filterConfig, filter, selectedValue, selectedValues)
+        ...toSelectValue(
+          filterConfig,
+          filterTypes,
+          filter,
+          selectedValue,
+          selectedValues
+        )
       );
+
       onFilterUpdateCallback?.();
     },
-    [filterConfig, select, onFilterUpdateCallback]
+    [filterConfig, select, onFilterUpdateCallback, filterTypes]
   );
 
   const onFilterDelete = useCallback(
@@ -30,7 +38,9 @@ const useEventHandlers = ({
           clear();
         }
       } else {
-        deselect(...toDeselectValue(filterConfig, chips[0], activeFilters));
+        deselect(
+          ...toDeselectValue(filterConfig, filterTypes, chips[0], activeFilters)
+        );
       }
       onDeleteFilter?.(chips, clearAll);
     },
@@ -42,6 +52,7 @@ const useEventHandlers = ({
       clear,
       deselect,
       resetOnClear,
+      filterTypes,
     ]
   );
 

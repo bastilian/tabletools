@@ -1,3 +1,4 @@
+import React from 'react';
 import isArray from 'lodash/isEmpty';
 import isObject from 'lodash/isObject';
 
@@ -36,4 +37,79 @@ export const itemForLabelInGroups = (configItem, label) =>
 export const isNotEmpty = (value) =>
   (isArray(value) && value?.length > 0) ||
   value !== '' ||
-  (isObject(value) && Object.keys(value).length > 0);
+  (isObject(value) && Object.keys(value).length > 0) ||
+  typeof value === 'number';
+
+export const prepareCustomFilterTypes = (customFilterTypes) =>
+  Object.fromEntries(
+    Object.entries(customFilterTypes).map(
+      ([
+        filterTypeKey,
+        {
+          filterValues,
+          Component,
+          filterChips,
+          chips,
+          toSelectValue,
+          selectValue,
+          toDeselectValue,
+          deselectValue,
+        },
+      ]) => [
+        filterTypeKey,
+        {
+          ...(filterValues
+            ? { filterValues }
+            : {
+                filterValues: (configItem, handler, value) => ({
+                  children: (
+                    <Component
+                      onChange={(value) => handler(configItem.label, value)}
+                      value={value}
+                    />
+                  ),
+                }),
+              }),
+
+          ...(filterChips
+            ? { filterChips }
+            : {
+                filterChips: (configItem, value) => ({
+                  category: configItem.label,
+                  chips: chips(value).map((name) => ({ name })),
+                }),
+              }),
+
+          ...(toSelectValue
+            ? { toSelectValue }
+            : {
+                toSelectValue: (configItem, selectedValue, selectedValues) => {
+                  const customSelectValue = selectValue(
+                    selectedValue || selectedValues
+                  );
+
+                  return [
+                    customSelectValue[0],
+                    stringToId(configItem.label),
+                    customSelectValue[1],
+                  ];
+                },
+              }),
+
+          ...(toDeselectValue
+            ? { toDeselectValue }
+            : {
+                toDeselectValue: (configItem, chip) => {
+                  const customDeselectValue = deselectValue(chip);
+
+                  return [
+                    customDeselectValue[0],
+                    stringToId(configItem.label),
+                    customDeselectValue[1],
+                  ];
+                },
+              }),
+        },
+      ]
+    )
+  );

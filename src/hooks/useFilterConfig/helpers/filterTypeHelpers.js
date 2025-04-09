@@ -1,5 +1,4 @@
 import { conditionalFilterType } from '@redhat-cloud-services/frontend-components/ConditionalFilter';
-
 import {
   configItemItemByLabel,
   defaultOnChange,
@@ -120,11 +119,10 @@ const groupType = {
   },
 };
 
-export default (type) =>
-  ({
-    [conditionalFilterType.text]: textType,
-    [conditionalFilterType.checkbox]: checkboxType,
-    [conditionalFilterType.radio]: radioType,
-    [conditionalFilterType.singleSelect]: radioType,
-    [conditionalFilterType.group]: groupType,
-  }[type]);
+export default {
+  [conditionalFilterType.text]: textType,
+  [conditionalFilterType.checkbox]: checkboxType,
+  [conditionalFilterType.radio]: radioType,
+  [conditionalFilterType.singleSelect]: radioType,
+  [conditionalFilterType.group]: groupType,
+};
