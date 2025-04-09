@@ -1,10 +1,10 @@
 ---
-title: Use TableToolsTable with an async function
+title: Using the table tools
 group: Documents
 category: Guides
 ---
 
-# Use TableToolsTable with an async function
+# Using the table tools
 
 The {@link TableToolsTable} component can be used with an async function to retrieve items to show in the page.
 The function will be called with the current `serialisedTableState`, and the "raw" `tableState`.

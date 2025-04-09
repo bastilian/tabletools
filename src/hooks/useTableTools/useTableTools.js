@@ -14,7 +14,7 @@ import useRadioSelect from '~/hooks/useRadioSelect';
 import { toToolbarActions } from './helpers';
 
 /**
- *  @typedef {object} useAsyncTableToolsReturn
+ *  @typedef {object} useTableToolsReturn
  *
  *  @property {object} toolbarProps Object containing PrimaryToolbar props
  *  @property {object} tableProps   Object containing Patternfly (deprecated) Table props
@@ -23,11 +23,11 @@ import { toToolbarActions } from './helpers';
 /**
  * This hook combines several "Table hooks" and returns props for Patternfly (v4) Table components and the FEC PrimaryToolbar
  *
- *  @param   {Array | Function}         items     An array or (async) function that returns an array of items to render or an async function to call with the tableState and serialised table state
- *  @param   {object}                   columns   An array of columns to render the items/rows with
- *  @param   {object}                   [options] AsyncTableTools options
+ *  @param   {Array | Function}    items     An array or (async) function that returns an array of items to render or an async function to call with the tableState and serialised table state
+ *  @param   {object}              columns   An array of columns to render the items/rows with
+ *  @param   {object}              [options] AsyncTableTools options
  *
- *  @returns {useAsyncTableToolsReturn}           An object of props meant to be used in the {@link TableToolsTable}
+ *  @returns {useTableToolsReturn}           An object of props meant to be used in the {@link TableToolsTable}
  *
  *  @group Hooks
  *

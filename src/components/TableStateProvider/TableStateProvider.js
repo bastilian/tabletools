@@ -11,7 +11,7 @@ import { TableContext } from '~/hooks/useTableState/constants';
  *
  *  @returns {React.ReactElement}                  The passed in component wrapped in a TableContext provider
  *
- *  @document ../../docs/using-async-table-tools.md
+ *  @document ../../docs/using-table-tools.md
  *
  *  @group Components
  *

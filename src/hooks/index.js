@@ -1,6 +1,7 @@
 export { default as useBulkSelect } from './useBulkSelect';
 export { default as useColumnManager } from './useColumnManager';
 export { default as useExpandable } from './useExpandable';
+export { default as useExport } from './useExport';
 export { default as useFilterConfig } from './useFilterConfig';
 export { default as useItems } from './useItems';
 export { default as usePagination } from './usePagination';

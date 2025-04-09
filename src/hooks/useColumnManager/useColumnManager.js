@@ -55,6 +55,7 @@ const useColumnManager = (columns = [], options = {}) => {
     [selectedColumns, unManagableColumns]
   );
 
+  // TODO We should be moving this out of the hook
   const ColumnManager = useMemo(
     // eslint-disable-next-line react/display-name
     () => () =>

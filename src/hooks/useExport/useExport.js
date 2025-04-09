@@ -22,6 +22,8 @@ import { downloadItems, exportableColumns } from './helpers';
  *
  *  @returns {useExportReturn}                      Props for PrimaryToolbar component
  *
+ *  @group Hooks
+ *
  */
 const useExport = ({
   exporter,
