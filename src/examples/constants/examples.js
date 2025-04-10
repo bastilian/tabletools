@@ -9,6 +9,8 @@ import TableToolsTableWithTreeTable from '../components/TableToolsTableWithTreeT
 import SimpleTableToolsTableWithAsyncFunction from '../components/SimpleTableToolsTableWithAsyncFunction';
 import SimpleTableToolsTableWithCustomEmptyRows from '../components/SimpleTableToolsTableWithCustomEmptyRows';
 import SimpleTableToolsTableWithCustomEmptyState from '../components/SimpleTableToolsTableWithCustomEmptyState';
+import TableToolsTableWithError from '../components/TableToolsTableWithError';
+import TableToolsTableWithErrorPassed from '../components/TableToolsTableWithErrorPassed';
 
 export const simple = {
   title: 'Simple',
@@ -80,6 +82,20 @@ export const withCustomEmptyState = {
   description: 'Table Tools Table Example with a custom empty state provided',
 };
 
+export const withError = {
+  title: 'With error',
+  Component: TableToolsTableWithError,
+  description:
+    'Table Tools Table Example with a fetch that fails to test error views',
+};
+
+export const withErrorPassed = {
+  title: 'With error passed in',
+  Component: TableToolsTableWithErrorPassed,
+  description:
+    'Table Tools Table Example with an error passed in to test error views',
+};
+
 // TODO Add example with default sorting set to column other than the first
 // TODO Add example with default initial filters set
 
@@ -95,4 +111,6 @@ export default [
   withAsyncFunction,
   withCustomEmptyRows,
   withCustomEmptyState,
+  withError,
+  withErrorPassed,
 ];
