@@ -7,6 +7,8 @@ import TableToolsTableWithExport from '../components/TableToolsTableWithExport';
 import TableToolsTableWithBulkSelect from '../components/TableToolsTableWithBulkSelect';
 import TableToolsTableWithTreeTable from '../components/TableToolsTableWithTreeTable';
 import SimpleTableToolsTableWithAsyncFunction from '../components/SimpleTableToolsTableWithAsyncFunction';
+import SimpleTableToolsTableWithCustomEmptyRows from '../components/SimpleTableToolsTableWithCustomEmptyRows';
+import SimpleTableToolsTableWithCustomEmptyState from '../components/SimpleTableToolsTableWithCustomEmptyState';
 
 export const simple = {
   title: 'Simple',
@@ -66,9 +68,20 @@ export const withAsyncFunction = {
     'Table Tools Table Example with an async function to fetch results',
 };
 
+export const withCustomEmptyRows = {
+  title: 'With custom emptyRows',
+  Component: SimpleTableToolsTableWithCustomEmptyRows,
+  description: 'Table Tools Table Example with a custom empty rows provided',
+};
+
+export const withCustomEmptyState = {
+  title: 'With custom empty state',
+  Component: SimpleTableToolsTableWithCustomEmptyState,
+  description: 'Table Tools Table Example with a custom empty state provided',
+};
+
 // TODO Add example with default sorting set to column other than the first
 // TODO Add example with default initial filters set
-// TODO Add example with custom emptyRows/empty state
 
 export default [
   simple,
@@ -80,4 +93,6 @@ export default [
   withBulkSelect,
   withTreeTable,
   withAsyncFunction,
+  withCustomEmptyRows,
+  withCustomEmptyState,
 ];

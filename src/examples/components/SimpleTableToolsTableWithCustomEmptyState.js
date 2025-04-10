@@ -5,9 +5,10 @@ import columns from '~/support/factories/columns';
 import filters from '~/support/factories/filters';
 
 import ExamplesTable from './ExamplesTable';
+import CustomEmptyState from './CustomEmptyState';
 import useExampleDataQuery from '../hooks/useExampleDataQuery';
 
-const CommonTableToolsTable = () => {
+const SimpleTableToolsTableWithCustomEmptyRows = () => {
   const { result: { data, meta: { total } = {} } = {} } = useExampleDataQuery();
 
   return (
@@ -17,17 +18,17 @@ const CommonTableToolsTable = () => {
       filters={{ filterConfig: filters }}
       total={total}
       options={{
-        manageColumns: true,
         kind: 'songs',
+        EmptyState: CustomEmptyState,
       }}
     />
   );
 };
 
-const CommonTableToolsTableWrapper = (props) => (
+const SimpleTableToolsTableWithCustomEmptyRowsWrapper = (props) => (
   <TableStateProvider>
-    <CommonTableToolsTable {...props} />
+    <SimpleTableToolsTableWithCustomEmptyRows {...props} />
   </TableStateProvider>
 );
 
-export default CommonTableToolsTableWrapper;
+export default SimpleTableToolsTableWithCustomEmptyRowsWrapper;

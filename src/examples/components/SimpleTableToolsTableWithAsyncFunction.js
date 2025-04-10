@@ -10,7 +10,7 @@ const SimpleTableToolsTableWithAsyncFunction = () => {
   const { fetch } = useExampleDataQuery();
 
   const fetchItems = useCallback(
-    async ({ pagination, filters, sort }) => {
+    async ({ pagination = {}, filters, sort } = {}) => {
       const {
         data: items,
         meta: { total },
