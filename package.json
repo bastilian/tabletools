@@ -24,24 +24,25 @@
     "url": "https://github.com/bastilian/tabletools/issues"
   },
   "homepage": "https://github.com/bastilian/tabletools#readme",
-  "dependencies": {
-    "@patternfly/patternfly": "^6.1.0",
+  "peerDependencies": {
     "@patternfly/react-component-groups": "^5.2.0",
     "@patternfly/react-core": "^5.4.0",
     "@patternfly/react-table": "^5.4.0",
-    "@jsonquerylang/jsonquery": "^4.1.1",
-    "@redhat-cloud-services/frontend-components": "^5.2.12",
-    "@redhat-cloud-services/frontend-components-utilities": "^5.0.13",
+    "@redhat-cloud-services/eslint-config-redhat-cloud-services": "^2.0.0",
+    "@redhat-cloud-services/frontend-components": "^5.0.0",
+    "@redhat-cloud-services/frontend-components-utilities": "^5.0.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
+  },
+  "dependencies": {
     "@faker-js/faker": "^9.6.0",
     "fishery": "^2.2.3",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
+    "@jsonquerylang/jsonquery": "^4.1.1",
     "use-deep-compare": "^1.3.0"
   },
   "devDependencies": {
     "@commitlint/cli": "^19.8.0",
     "@commitlint/config-conventional": "^19.8.0",
-    "@redhat-cloud-services/eslint-config-redhat-cloud-services": "^2.0.12",
     "@testing-library/jest-dom": "^6.6.3",
     "@testing-library/react": "^16.3.0",
     "@testing-library/user-event": "^14.6.1",
