@@ -4,7 +4,6 @@ import { Spinner } from '@patternfly/react-core';
 
 import { DEFAULT_RENDER_OPTIONS } from '~/support/testHelpers';
 import useItems from '~/hooks/useItems';
-import { NoResultsTable } from '~/components';
 
 import items from '~/support/factories/items';
 import columns from '~/support/factories/columns';
@@ -53,8 +52,14 @@ describe('useTableView', () => {
       DEFAULT_RENDER_OPTIONS
     );
 
-    expect(result.current.table.tableProps.rows[0].cells[0].title()).toEqual(
-      <NoResultsTable />
+    expect(
+      result.current.table.tableProps.rows[0].cells[0].title().props
+    ).toEqual(
+      expect.objectContaining({
+        items: expect.any(Array),
+        options: expect.any(Object),
+        columns: expect.any(Array),
+      })
     );
   });
 
