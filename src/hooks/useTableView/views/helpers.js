@@ -146,3 +146,26 @@ export const isBranchChecked = (tableTree, item, isItemSelected) => {
 
   return false;
 };
+
+export const emptyRows = (
+  EmptyStateComponent,
+  kind,
+  columns,
+  items,
+  options
+) => ({
+  rows: [
+    {
+      cells: [
+        {
+          title: () => (
+            <EmptyStateComponent kind={kind} {...{ items, columns, options }} />
+          ),
+          props: {
+            colSpan: columns.length,
+          },
+        },
+      ],
+    },
+  ],
+});

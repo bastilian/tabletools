@@ -1,5 +1,3 @@
-import { emptyRows } from '~/components/NoResultsTable';
-
 import { buildRows } from './helpers';
 
 /**
@@ -19,20 +17,12 @@ const rowsBuilder = (items, columns, options = {}) => {
     bulkSelect: { enableBulkSelect, markRowSelected } = {},
   } = options;
 
-  // TODO Check why this is still here and remove if not needed anymore
-  const EmptyRowsComponent =
-    options.emptyRows || emptyRows(undefined, columns.length);
   const rowTransformers = [
     ...(enableBulkSelect ? [markRowSelected] : []),
     ...(enableExpandingRow ? [expandRow] : []),
   ];
 
-  return (
-    items &&
-    (items.length > 0
-      ? buildRows(items, columns, rowTransformers)
-      : EmptyRowsComponent)
-  );
+  return buildRows(items, columns, rowTransformers);
 };
 
 export default rowsBuilder;

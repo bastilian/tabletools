@@ -4,7 +4,7 @@ import { Spinner } from '@patternfly/react-core';
 
 import NoResultsTable from '~/components/NoResultsTable';
 
-import { treeColumns, getOnTreeSelect } from './helpers';
+import { treeColumns, getOnTreeSelect, emptyRows } from './helpers';
 import rowsBuilder from './rowsBuilder';
 import treeChopper from './treeChopper';
 
@@ -29,20 +29,18 @@ const views = {
   // TODO implement "Something went wrong" (here or higher up)
   error: {},
   empty: {
-    tableProps: (_items, columns) => ({
-      rows: [
-        {
-          cells: [
-            {
-              title: () => <NoResultsTable />,
-              props: {
-                colSpan: columns.length,
-              },
-            },
-          ],
-        },
-      ],
-    }),
+    tableProps: (items, columns, options) => {
+      const {
+        emptyRows: customEmptyRows,
+        kind,
+        EmptyState: CustomEmptyState,
+      } = options;
+      const EmptyStateComponent = CustomEmptyState || NoResultsTable;
+
+      return customEmptyRows
+        ? { rows: customEmptyRows }
+        : emptyRows(EmptyStateComponent, kind, columns, items, options);
+    },
     checkOptions: () => true,
   },
   rows: {

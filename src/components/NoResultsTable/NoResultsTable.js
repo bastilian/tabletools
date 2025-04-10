@@ -35,17 +35,4 @@ NoResultsTable.propTypes = {
   kind: propTypes.string,
 };
 
-export const emptyRows = (kind, colSpan) => [
-  {
-    cells: [
-      {
-        title: () => <NoResultsTable kind={kind} />, // eslint-disable-line react/display-name
-        props: {
-          colSpan,
-        },
-      },
-    ],
-  },
-];
-
 export default NoResultsTable;
