@@ -1,6 +1,7 @@
 import React from 'react';
 import { ListIcon, TreeviewIcon } from '@patternfly/react-icons';
 import { Spinner } from '@patternfly/react-core';
+import { ErrorState } from '@redhat-cloud-services/frontend-components/ErrorState';
 
 import NoResultsTable from '~/components/NoResultsTable';
 
@@ -26,8 +27,23 @@ const views = {
     }),
     checkOptions: () => true,
   },
-  // TODO implement "Something went wrong" (here or higher up)
-  error: {},
+  error: {
+    tableProps: (_items, columns) => ({
+      rows: [
+        {
+          cells: [
+            {
+              title: () => <ErrorState />,
+              props: {
+                colSpan: columns.length,
+              },
+            },
+          ],
+        },
+      ],
+    }),
+    checkOptions: () => true,
+  },
   empty: {
     tableProps: (items, columns, options) => {
       const {

@@ -22,20 +22,27 @@ const useViewState = (options) => {
     []
   );
   const itemObserver = useCallback(
-    (_currentTableViewState, _previousItems, [items]) => {
-      let newView;
-      if (
-        typeof items === 'undefined' &&
-        internalTableView.current !== 'tree'
-      ) {
-        newView = 'loading';
-      } else if (items?.length === 0 && internalTableView.current !== 'tree') {
-        newView = 'empty';
-      } else if (items?.length > 0) {
-        newView = internalTableView.current;
-      }
+    (_currentTableViewState, _previousItems, { items, error }) => {
+      if (!error) {
+        let newView;
+        if (
+          typeof items === 'undefined' &&
+          internalTableView.current !== 'tree'
+        ) {
+          newView = 'loading';
+        } else if (
+          items?.length === 0 &&
+          internalTableView.current !== 'tree'
+        ) {
+          newView = 'empty';
+        } else if (items?.length > 0) {
+          newView = internalTableView.current;
+        }
 
-      return newView;
+        return newView;
+      } else {
+        return 'error';
+      }
     },
     []
   );

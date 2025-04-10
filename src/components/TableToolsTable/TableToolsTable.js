@@ -16,6 +16,7 @@ import { TableStateProvider } from '~/components';
 
 const TableToolsTable = ({
   items,
+  error,
   columns,
   filters,
   total,
@@ -36,6 +37,7 @@ const TableToolsTable = ({
       toolbarProps: toolbarPropsProp,
       tableProps: tablePropsRest,
       total,
+      error,
       ...options,
     });
 
@@ -88,6 +90,7 @@ TableToolsTable.propTypes = {
     })
   ).isRequired,
   filters: propTypes.object,
+  error: propTypes.object,
   total: propTypes.number,
   loading: propTypes.bool,
   options: propTypes.object,

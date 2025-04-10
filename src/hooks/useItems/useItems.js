@@ -21,11 +21,15 @@ import { itemObserver, identifyItems } from './helpers';
  *  @group Hooks
  *
  */
-const useItems = (itemsProp, { total: optionsTotal } = {}) => {
-  // TODO We should not keep all items in the table state
-  // We might use this in some cases, but we can probably accomplish the same without these
-  // It might also be bad and cause cycles of the tableState updating and then updating again when items are set
-  const [[items, total] = [], setItems] = useTableState('items');
+const useItems = (
+  itemsProp,
+  { total: optionsTotal, error: optionsError } = {}
+) => {
+  const [{ error, items, total } = {}, setItems] = useTableState('items', {
+    items: undefined,
+    total: undefined,
+    error: optionsError,
+  });
   const [loaded] = useTableState('loaded', false, {
     observers: {
       [TABLE_STATE_NAMESPACE]: itemObserver,
@@ -35,24 +39,35 @@ const useItems = (itemsProp, { total: optionsTotal } = {}) => {
   const serialisedTableState = useSerialisedTableState();
 
   useDeepCompareEffect(() => {
-    const setStateFromAsyncItems = async () => {
-      if (typeof itemsProp === 'function') {
-        const [items, total] = await itemsProp(
-          serialisedTableState,
-          tableState
-        );
-        setItems([identifyItems(items), total]);
-      } else {
-        setItems([identifyItems(itemsProp), optionsTotal]);
-      }
-    };
+    if (typeof itemsProp === 'function') {
+      const setStateFromAsyncItems = async () => {
+        try {
+          const [items, total] = await itemsProp(
+            serialisedTableState,
+            tableState
+          );
 
-    setStateFromAsyncItems();
+          setItems({ items: identifyItems(items), total });
+        } catch (error) {
+          console.error(error);
+          setItems({ error });
+        }
+      };
+
+      setStateFromAsyncItems();
+    } else {
+      setItems((currentState) => ({
+        ...currentState,
+        items: identifyItems(itemsProp),
+        total: optionsTotal,
+      }));
+    }
   }, [setItems, itemsProp, serialisedTableState, tableState, optionsTotal]);
 
   return {
     loaded,
     items,
+    error,
     total,
   };
 };
