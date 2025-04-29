@@ -1,5 +1,5 @@
 {
-    "projectDocuments": ["./src/docs/*.md"],
+    "projectDocuments": ["./src/docs/*.md", "./CONTRIBUTING.md"],
     "entryPoints": ["src/index.js"],
     "cleanOutputDir": true,
     "categorizeByGroup": false,
