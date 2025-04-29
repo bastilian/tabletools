@@ -64,9 +64,6 @@ describe('useBulkSelect', () => {
       })
     );
 
-    // eslint-disable-next-line testing-library/no-node-access
-    expect(result.current.toolbarProps.bulkSelect.toggleProps.children).toEqual(
-      ['1 selected']
-    );
+    expect(result.current.toolbarProps.bulkSelect.count).toEqual(1);
   });
 });

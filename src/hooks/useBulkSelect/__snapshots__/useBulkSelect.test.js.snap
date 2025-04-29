@@ -17,6 +17,7 @@ exports[`useBulkSelect returns a bulk select configuration 1`] = `
     "toolbarProps": {
       "bulkSelect": {
         "checked": false,
+        "count": 0,
         "isDisabled": true,
         "items": [
           {
@@ -36,11 +37,6 @@ exports[`useBulkSelect returns a bulk select configuration 1`] = `
           },
         ],
         "onSelect": undefined,
-        "toggleProps": {
-          "children": [
-            "0 selected",
-          ],
-        },
       },
     },
   },
