@@ -14,7 +14,7 @@ import {
 import examples from './constants/examples';
 
 export const ExamplesPage = () => {
-  const [activeTabKey, setActiveTabKey] = useState(10);
+  const [activeTabKey, setActiveTabKey] = useState(0);
   const handleTabClick = (_event, tabIndex) => {
     setActiveTabKey(tabIndex);
   };

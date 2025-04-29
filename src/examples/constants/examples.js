@@ -12,6 +12,7 @@ import SimpleTableToolsTableWithCustomEmptyState from '../components/SimpleTable
 import TableToolsTableWithError from '../components/TableToolsTableWithError';
 import TableToolsTableWithErrorPassed from '../components/TableToolsTableWithErrorPassed';
 import TableToolsTableWithCustomFilter from '../components/TableToolsTableWithCustomFilter';
+import StaticTableToolsTable from '../components/StaticTableToolsTable';
 
 export const simple = {
   title: 'Simple',
@@ -104,6 +105,13 @@ export const withCustomFilter = {
     'Table Tools Table Example with a custom filter not provided by the ConditionalFilter component',
 };
 
+export const withStaticTableToolsTable = {
+  title: 'with StaticTableToolsTable',
+  Component: StaticTableToolsTable,
+  description:
+    'Table Tools Table Example using the StaticTableToolsTable component to build a table with an static array that should be filtered, sorted and paginated',
+};
+
 // TODO Add example with default sorting set to column other than the first
 // TODO Add example with default initial filters set
 
@@ -122,4 +130,5 @@ export default [
   withError,
   withErrorPassed,
   withCustomFilter,
+  withStaticTableToolsTable,
 ];
