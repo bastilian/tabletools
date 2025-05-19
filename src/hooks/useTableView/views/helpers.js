@@ -1,29 +1,32 @@
 import React from 'react';
 import { treeRow } from '@patternfly/react-table';
 
-export const columnProp = (column) =>
+const columnProp = (column) =>
   column.key || column.original?.toLowerCase() || column.title?.toLowerCase();
 
-// TODO Make renderFunc obsolete
-// We carried over this pattern to keep compatibility with old columns
-// Only having to pass a "component" prop for columns and pass the "item" attributes as props would be nicer
-export const itemRow = ({ rowProps, props = {}, ...item }, columns) => ({
+const renderCell = (column, item) => {
+  const { Component, renderFunc } = column;
+
+  if (Component) {
+    return <Component {...item} />;
+  } else if (renderFunc) {
+    // TODO deprecated "rednerFunc"
+    return renderFunc(undefined, undefined, item);
+  } else {
+    return item[columnProp(column)];
+  }
+};
+
+const itemRow = ({ rowProps, props = {}, ...item }, columns) => ({
   props,
   ...rowProps,
   cells: columns.map((column) => ({
-    title: column.renderFunc
-      ? column.renderFunc(undefined, undefined, item)
-      : item[columnProp(column)],
+    title: renderCell(column, item),
   })),
   item,
 });
 
-export const applyTransformations = (
-  item,
-  rowsForItem,
-  transformers,
-  runningIndex
-) =>
+const applyTransformations = (item, rowsForItem, transformers, runningIndex) =>
   transformers.reduce(
     (currentRowsForItem, transformer) =>
       transformer

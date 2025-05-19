@@ -1,34 +1,42 @@
+import React from 'react';
+import propTypes from 'prop-types';
+
+const Title = ({ title }) => <strong>{title}</strong>;
+Title.propTypes = {
+  title: propTypes.string,
+};
+
 export const title = {
   title: 'Title',
-  renderFunc: (_a, _b, { title }) => title,
+  Component: Title,
   renderExport: ({ title }) => title,
   sortable: 'title',
 };
 
 export const artist = {
   title: 'Artist',
-  renderFunc: (_a, _b, { artist }) => artist,
+  Component: ({ artist }) => artist,
   renderExport: ({ artist }) => artist,
   sortable: 'artist',
 };
 
 export const genre = {
   title: 'Genre',
-  renderFunc: (_a, _b, { genre }) => genre,
+  Component: ({ genre }) => genre,
   renderExport: ({ genre }) => genre,
   sortable: 'genre',
 };
 
 export const releaseYear = {
   title: 'Released',
-  renderFunc: (_a, _b, { releaseYear }) => releaseYear,
+  Component: ({ releaseYear }) => releaseYear,
   renderExport: ({ releaseYear }) => releaseYear,
   sortable: 'releaseYear',
 };
 
 export const rating = {
   title: 'Rating',
-  renderFunc: (_a, _b, { rating }) =>
+  Component: ({ rating }) =>
     [...new Array(rating)]
       .map(() => {
         return '★';
