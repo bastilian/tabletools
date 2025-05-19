@@ -66,7 +66,8 @@ const useAsyncTableTools = (items, columns, options = {}) => {
     total,
   });
 
-  const { toolbarProps: conditionalFilterProps } = useFilterConfig(options);
+  const { toolbarProps: conditionalFilterProps, filterModalProps } =
+    useFilterConfig(options);
 
   const {
     tableProps: expandableTableProps,
@@ -166,6 +167,7 @@ const useAsyncTableTools = (items, columns, options = {}) => {
     // TODO We could possibly just return the configuratin/props for these components instead
     ColumnManager,
     TableViewToggle,
+    filterModalProps,
   };
 };
 

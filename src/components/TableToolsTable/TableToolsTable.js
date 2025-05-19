@@ -12,7 +12,7 @@ import TableToolbar from '@redhat-cloud-services/frontend-components/TableToolba
 
 import useTableTools from '~/hooks/useTableTools';
 import { TableContext } from '~/hooks/useTableState/constants';
-import { TableStateProvider } from '~/components';
+import { TableStateProvider, FilterModal } from '~/components';
 
 const TableToolsTable = ({
   items,
@@ -31,15 +31,21 @@ const TableToolsTable = ({
   paginationProps,
   ...tablePropsRest
 }) => {
-  const { loaded, toolbarProps, tableProps, ColumnManager, TableViewToggle } =
-    useTableTools(items, columns, {
-      filters,
-      toolbarProps: toolbarPropsProp,
-      tableProps: tablePropsRest,
-      total,
-      error,
-      ...options,
-    });
+  const {
+    loaded,
+    toolbarProps,
+    tableProps,
+    filterModalProps,
+    ColumnManager,
+    TableViewToggle,
+  } = useTableTools(items, columns, {
+    filters,
+    toolbarProps: toolbarPropsProp,
+    tableProps: tablePropsRest,
+    total,
+    error,
+    ...options,
+  });
 
   const skeletonLoading = !loaded || loading;
 
@@ -73,6 +79,8 @@ const TableToolsTable = ({
       </TableToolbar>
 
       {ColumnManager && <ColumnManager />}
+
+      {filterModalProps && <FilterModal {...filterModalProps} />}
     </>
   );
 };

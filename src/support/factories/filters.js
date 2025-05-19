@@ -1,4 +1,4 @@
-import { genres } from './items';
+import { genres, items } from './items';
 
 export const title = {
   type: 'text',
@@ -61,6 +61,22 @@ export const decade = {
     `(.releaseYear >= ${start}) and (.releaseYear <= ${end})`,
 };
 
+const artistsGroupedByGenre = Object.groupBy(items, ({ genre }) => genre);
+
+export const artistByGenre = {
+  type: 'group',
+  label: 'Artist by genre',
+  items: Object.entries(artistsGroupedByGenre).map(([genre, artists]) => ({
+    label: genre,
+    value: genre,
+    items: artists.slice(0, 10).map(({ id, artist }) => ({
+      label: artist,
+      value: id,
+    })),
+  })),
+  modal: true,
+};
+
 export const invalidFilter = {
   type: 'UNKNOWNTYPE',
   label: 'Invalid Filter',
@@ -71,33 +87,10 @@ export const invalidFilter = {
   filter: (items) => items,
 };
 
-// {
-//   type: 'group',
-//   label: 'Filter group',
-//   items: [
-//     {
-//       label: 'Parent 1',
-//       value: 1,
-//       items: [
-//         { label: 'Child 1', value: 1 },
-//         { label: 'Child 2', value: 2 },
-//       ],
-//     },
-//     {
-//       label: 'Parent 2',
-//       value: 2,
-//       items: [
-//         { label: 'Parent 2 Child 1', value: 1 },
-//         { label: 'Parent 2 Child 2', value: 2 },
-//       ],
-//     },
-//   ],
-//   filter: () => [],
-// },
-
 export default [
   title,
   artist,
+  artistByGenre,
   genre,
   singleGenre,
   rating,

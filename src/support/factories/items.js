@@ -14,4 +14,6 @@ const itemsFactory = Factory.define(({ sequence }) => ({
   rating: faker.number.int({ min: 1, max: 5 }),
 }));
 
-export default (count) => itemsFactory.buildList(count);
+export const items = itemsFactory.buildList(5000);
+
+export default (count) => items.slice(0, count);

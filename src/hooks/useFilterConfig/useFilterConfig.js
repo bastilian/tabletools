@@ -8,6 +8,7 @@ import { toFilterConfig, toIdedFilters } from './helpers/filterConfigHelpers';
 import { toFilterChips } from './helpers/filterChipHelpers';
 import useEventHandlers from './hooks/useEventHandlers';
 import useFilterOptions from './hooks/useFilterOptions';
+import useFilterModal from './hooks/useFilterModal';
 import { TABLE_STATE_NAMESPACE } from './constants';
 
 /**
@@ -40,22 +41,32 @@ const useFilterConfig = (options) => {
     enableFilters,
     filterTypes,
   } = useFilterOptions(options);
+
   const { selection: activeFilters, ...selectionActions } = useSelectionManager(
     initialActiveFilters,
     { withGroups: true }
   );
-
   const { onFilterUpdate, onFilterDelete } = useEventHandlers({
     ...options,
+    filterConfig,
     activeFilters,
     selectionActions,
     filterTypes,
   });
 
+  const { isFilterModalOpen, openFilterModal, filterModalProps } =
+    useFilterModal({ filterConfig, activeFilters, onFilterUpdate });
+
   const builtFilterConfig = useMemo(
     () =>
-      toFilterConfig(filterConfig, filterTypes, activeFilters, onFilterUpdate),
-    [filterConfig, activeFilters, onFilterUpdate, filterTypes]
+      toFilterConfig(
+        filterConfig,
+        filterTypes,
+        activeFilters,
+        onFilterUpdate,
+        openFilterModal
+      ),
+    [filterConfig, activeFilters, onFilterUpdate, filterTypes, openFilterModal]
   );
 
   const [, setTableState] = useTableState(
@@ -84,6 +95,7 @@ const useFilterConfig = (options) => {
             onDelete: onFilterDelete,
           },
         },
+        ...(isFilterModalOpen ? { filterModalProps } : {}),
       }
     : {};
 };

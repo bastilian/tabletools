@@ -16,7 +16,7 @@ export const defaultOnChange = (handler, label) => ({
 });
 
 export const flattenConfigItems = (configItem) =>
-  configItem.items.flatMap((parentItem) => [
+  (configItem.items || configItem.groups).flatMap((parentItem) => [
     parentItem,
     ...parentItem.items.map((item) => ({ ...item, parent: parentItem })),
   ]);

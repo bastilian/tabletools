@@ -33,8 +33,20 @@ const textType = {
 };
 
 const checkboxType = {
-  filterValues: ({ items, label }, handler, value) => ({
-    items,
+  filterValues: ({ items, label, modal }, handler, value, openFilterModal) => ({
+    items: [
+      ...items,
+      ...(modal
+        ? [
+            {
+              // TODO The checkbox filter in frontend-components does not really support "Show more", like the group filter.
+              label: 'Show more',
+              value: 'modal',
+              onClick: () => openFilterModal?.(stringToId(label)),
+            },
+          ]
+        : []),
+    ],
     value,
     ...defaultOnChange(handler, stringToId(label)),
   }),
@@ -80,16 +92,27 @@ const radioType = {
 };
 
 const groupType = {
-  filterValues: ({ items, label }, handler, value) => ({
+  filterValues: (
+    { groups, label, modal },
+    handler,
+    value,
+    openFilterModal
+  ) => ({
     selected: value,
-    groups: items?.map((item) => ({
-      ...item,
+    groups: groups?.map((item) => ({
       type: 'checkbox',
+      ...item,
       items: item.items?.map((subItem) => ({
-        ...subItem,
         type: 'checkbox',
+        ...subItem,
       })),
     })),
+    ...(modal
+      ? {
+          showMoreTitle: 'Show more',
+          onShowMore: () => openFilterModal?.(stringToId(label)),
+        }
+      : {}),
     ...defaultOnChange(handler, stringToId(label)),
   }),
   filterChips: (configItem, value) => ({
@@ -100,11 +123,31 @@ const groupType = {
       }))
     ),
   }),
-  toSelectValue: (configItem, selectedValues) => [
-    selectedValues,
-    stringToId(configItem.label),
-    true,
-  ],
+  toSelectValue: (configItem, selectedValues) => {
+    const cleanedUpFilter = Object.fromEntries(
+      Object.entries(selectedValues)
+        .map(([group, groupItems]) => {
+          const filteredItems = Object.entries(groupItems).filter(
+            ([, value]) => value
+          );
+          return filteredItems.length
+            ? [
+                group,
+                Object.fromEntries(
+                  Object.entries(groupItems).filter(([, value]) => value)
+                ),
+              ]
+            : undefined;
+        })
+        .filter((v) => !!v)
+    );
+
+    return [
+      Object.keys(cleanedUpFilter).length ? cleanedUpFilter : undefined,
+      stringToId(configItem.label),
+      true,
+    ];
+  },
   toDeselectValue: (configItem, chip, activeFilters) => {
     const filter = stringToId(configItem.label);
     const activeValues = activeFilters[filter];

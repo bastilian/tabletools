@@ -12,6 +12,7 @@ import SimpleTableToolsTableWithCustomEmptyState from '../components/SimpleTable
 import TableToolsTableWithError from '../components/TableToolsTableWithError';
 import TableToolsTableWithErrorPassed from '../components/TableToolsTableWithErrorPassed';
 import TableToolsTableWithCustomFilter from '../components/TableToolsTableWithCustomFilter';
+import TableToolsTableWithFilterModalFilters from '../components/TableToolsTableWithFilterModalFilters';
 
 export const simple = {
   title: 'Simple',
@@ -104,8 +105,17 @@ export const withCustomFilter = {
     'Table Tools Table Example with a custom filter not provided by the ConditionalFilter component',
 };
 
+export const withFilterModalFilters = {
+  title: 'With FilterModal filters',
+  Component: TableToolsTableWithFilterModalFilters,
+  description:
+    'Table Tools Table Example with filters that have a modal enabled',
+};
+
 // TODO Add example with default sorting set to column other than the first
 // TODO Add example with default initial filters set
+// TODO Add example that makes use of table and row actions
+// TODO Add example that accesses the tablestate in some way for something
 
 export default [
   simple,
@@ -122,4 +132,5 @@ export default [
   withError,
   withErrorPassed,
   withCustomFilter,
+  withFilterModalFilters,
 ];

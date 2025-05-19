@@ -1,4 +1,4 @@
-import { renderHook, act } from '@testing-library/react';
+import { renderHook, act, waitFor } from '@testing-library/react';
 
 import { DEFAULT_RENDER_OPTIONS } from '~/support/testHelpers';
 import filterConfig from '~/support/factories/filters';
@@ -39,6 +39,8 @@ describe('useFilterConfig', () => {
         }),
       DEFAULT_RENDER_OPTIONS
     );
+
+    await waitFor(() => result.current.toolbarProps.filterConfig.items[0]);
 
     await act(() =>
       result.current.toolbarProps.filterConfig.items[0].filterValues.onChange(

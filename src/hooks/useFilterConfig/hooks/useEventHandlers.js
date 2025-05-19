@@ -4,7 +4,7 @@ import { toSelectValue } from '../helpers/filterConfigHelpers';
 import { toDeselectValue } from '../helpers/filterChipHelpers';
 
 const useEventHandlers = ({
-  filters: { filterConfig } = {},
+  filterConfig,
   activeFilters,
   onFilterUpdate: onFilterUpdateCallback,
   onDeleteFilter,
@@ -14,6 +14,10 @@ const useEventHandlers = ({
 }) => {
   const onFilterUpdate = useCallback(
     (filter, selectedValue, selectedValues) => {
+      // This is a hack to prevent any filters from being set via their onChange/onSelect handlers when the modal option is clicked
+      if (selectedValue === 'modal') {
+        return;
+      }
       select(
         ...toSelectValue(
           filterConfig,
