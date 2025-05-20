@@ -1,6 +1,11 @@
 import type { StorybookConfig } from '@storybook/react-webpack5';
 import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 import TsconfigPathsPlugin from "tsconfig-paths-webpack-plugin";
+
+// Define for ES module context
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const config: StorybookConfig = {
   "stories": [
@@ -18,21 +23,22 @@ const config: StorybookConfig = {
     "options": {}
   },
   webpackFinal: async (config) => {
-   config.resolve.plugins = config.resolve.plugins || [];
-   config.resolve.plugins.push(
-     new TsconfigPathsPlugin({
-       configFile: path.resolve(__dirname, "../tsconfig.json"),
-     })
-   );
-if (config.resolve) {
-     config.resolve.plugins = [
-       ...(config.resolve.plugins || []),
-       new TsconfigPathsPlugin({
-         extensions: config.resolve.extensions,
-       }),
-     ];
-   }
-   return config;
+    config.resolve.plugins = config.resolve.plugins || [];
+    config.resolve.plugins.push(
+        new TsconfigPathsPlugin({
+          configFile: path.resolve(__dirname, "../tsconfig.json"),
+        })
+    );
+
+    if (config.resolve) {
+      config.resolve.plugins = [
+        ...(config.resolve.plugins || []),
+        new TsconfigPathsPlugin({
+          extensions: config.resolve.extensions,
+        }),
+      ];
+    }
+    return config;
   }
 };
 export default config;
