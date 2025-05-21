@@ -2,7 +2,6 @@ import { useCallback } from 'react';
 import { useDeepCompareEffect } from 'use-deep-compare';
 
 import useContextOrInternalStateAndRefs from './hooks/useContextOrInternalStateAndRefs';
-import useStateObservers from './hooks/useStateObservers';
 import useSerialisers from './hooks/useSerialisers';
 import useCallbacks from './hooks/useCallbacks';
 import compileState from './helpers/compileState';
@@ -14,7 +13,6 @@ import compileState from './helpers/compileState';
  *  @param   {object} [initialState]       Initial state to put into the table state
  *  @param   {object} [options]            Options for the state
  *  @param   {object} [options.serialiser] A function to serialise the table state and allow access it via the useSerialisedTableState hook
- *  @param   {object} [options.observers]  An object with properties of an other state namespace and an object or function returning an object with an desired state should the other state change
  *  @param   {object} [options.callbacks]  An object with callbacks
  *
  *  @returns {Array}                       An array with the first item being the tableState, the second a function to set the state and a third optional item with the serialised state if a serialiser was provided
@@ -25,12 +23,10 @@ import compileState from './helpers/compileState';
 const useTableState = (namespace, initialState, options = {}) => {
   const {
     serialisers,
-    observers,
     callbacks,
     state: [state, setState],
   } = useContextOrInternalStateAndRefs();
 
-  useStateObservers(namespace, options.observers, observers);
   useSerialisers(namespace, options.serialiser, serialisers);
   useCallbacks(namespace, options.callbacks, callbacks);
 
@@ -46,7 +42,6 @@ const useTableState = (namespace, initialState, options = {}) => {
           namespace,
           currentState,
           newState,
-          observers.current,
           serialisers.current,
           callbacks.current
         );
@@ -61,10 +56,11 @@ const useTableState = (namespace, initialState, options = {}) => {
         return nextState;
       });
     },
-    [observers, serialisers, callbacks, setState, namespace]
+    [serialisers, callbacks, setState, namespace]
   );
 
   useDeepCompareEffect(() => {
+    console.log('asdasdasd');
     setTableState(initialState);
   }, [initialState, setTableState]);
 

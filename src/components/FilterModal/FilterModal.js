@@ -2,7 +2,8 @@ import React, { useState } from 'react';
 import propTypes from 'prop-types';
 import { Modal, Button } from '@patternfly/react-core';
 
-import { TableToolsTable, TableStateProvider } from '~/components';
+import TableToolsTable from '../TableToolsTable';
+import TableStateProvider from '../TableStateProvider';
 
 import { filterOption, filterGroup } from './columns';
 import { convertToSelectValues, convertToFilterValues } from './helpers';

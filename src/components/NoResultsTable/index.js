@@ -1,1 +1,1 @@
-export { default, emptyRows } from './NoResultsTable';
+export { default } from './NoResultsTable';
