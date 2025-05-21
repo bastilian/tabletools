@@ -21,14 +21,20 @@ export const emptyRows = (_kind, colSpan) => [
 ];
 
 const SimpleTableToolsTableWithCustomEmptyRows = () => {
-  const { result: { data, meta: { total } = {} } = {} } = useExampleDataQuery();
+  const {
+    result: { data, meta: { total } = {} } = {},
+    loading,
+    error,
+  } = useExampleDataQuery();
 
   return (
     <ExamplesTable
+      loading={loading}
       items={data}
+      error={error}
+      total={total}
       columns={columns}
       filters={{ filterConfig: filters }}
-      total={total}
       options={{
         emptyRows: emptyRows(2),
       }}

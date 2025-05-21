@@ -25,16 +25,23 @@ const customNumberFilter = {
 const TableToolsTableWithCustomFilter = () => {
   const { tableState: { tableView } = {} } = useFullTableState() || {};
 
-  const { result: { data, meta: { total } = {} } = {}, exporter } =
-    useExampleDataQuery({
-      ...(tableView === 'tree'
-        ? { params: { limit: 'max', sort: 'id:asc' } }
-        : {}),
-    });
+  const {
+    result: { data, meta: { total } = {} } = {},
+    error,
+    loading,
+    exporter,
+  } = useExampleDataQuery({
+    ...(tableView === 'tree'
+      ? { params: { limit: 'max', sort: 'id:asc' } }
+      : {}),
+  });
 
   return (
     <ExamplesTable
+      loading={loading}
       items={data}
+      error={error}
+      total={total}
       columns={columns}
       filters={{
         filterConfig: [customNumberFilter],
@@ -42,7 +49,6 @@ const TableToolsTableWithCustomFilter = () => {
           number: customNumberFilterType,
         },
       }}
-      total={total}
       options={{
         exporter,
       }}

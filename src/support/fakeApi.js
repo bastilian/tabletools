@@ -4,6 +4,7 @@ import itemsFactory from '~/support/factories/items';
 import { buildTree } from '~/support/factories/tableTree';
 const DEFAULT_LIMIT = 10;
 const DEFAULT_ITEM_TOTAL = 2048;
+const DEFAULT_LATENCY = 1000; // milliseconds
 
 const items = itemsFactory(DEFAULT_ITEM_TOTAL);
 
@@ -27,13 +28,16 @@ const buildQuery = (filters, sort) => {
  * TODO Add way to simulate network latency to better test loading states
  *
  */
-const fakeApi = async ({
-  filters,
-  sort,
-  offset = 0,
-  limit = DEFAULT_LIMIT,
-} = {}) => {
-  console.log('Fake API call with:', { filters, sort, offset, limit });
+const fakeApi = async (
+  endpoint,
+  { filters, sort, offset = 0, limit = DEFAULT_LIMIT } = {}
+) => {
+  console.log(`Fake API call to ${endpoint} with:`, {
+    filters,
+    sort,
+    offset,
+    limit,
+  });
   const query = buildQuery(filters, sort);
   const queriedItems = query.length ? jsonquery(items, query) : items;
   const actualLimit = limit === 'max' ? items.length : limit;
@@ -45,8 +49,12 @@ const fakeApi = async ({
     },
   };
 
-  console.log('Fake API result:', result);
-  return result;
+  return new Promise(function (resolve) {
+    setTimeout(function () {
+      console.log(`Fake API result for ${endpoint}:`, result);
+      resolve(result);
+    }, DEFAULT_LATENCY);
+  });
 };
 
 export const fakePlasticTreeApi = async () => buildTree({ items });

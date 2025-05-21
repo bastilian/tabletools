@@ -6,7 +6,6 @@ const useContextOrInternalStateAndRefs = () => {
   const context = useContext(TableContext);
   const {
     state: contextState,
-    observers: contextObservers,
     serialisers: contextSerialisers,
     callbacks: contextCallbacks,
   } = context || {};
@@ -24,7 +23,6 @@ const useContextOrInternalStateAndRefs = () => {
 
   return {
     state: contextState,
-    observers: contextObservers,
     serialisers: contextSerialisers,
     callbacks: contextCallbacks,
   };

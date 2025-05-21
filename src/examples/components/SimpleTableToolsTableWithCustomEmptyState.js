@@ -9,14 +9,20 @@ import CustomEmptyState from './CustomEmptyState';
 import useExampleDataQuery from '../hooks/useExampleDataQuery';
 
 const SimpleTableToolsTableWithCustomEmptyRows = () => {
-  const { result: { data, meta: { total } = {} } = {} } = useExampleDataQuery();
+  const {
+    result: { data, meta: { total } = {} } = {},
+    loading,
+    error,
+  } = useExampleDataQuery();
 
   return (
     <ExamplesTable
+      loading={loading}
       items={data}
+      error={error}
+      total={total}
       columns={columns}
       filters={{ filterConfig: filters }}
-      total={total}
       options={{
         kind: 'songs',
         EmptyState: CustomEmptyState,
