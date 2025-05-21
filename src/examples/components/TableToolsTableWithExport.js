@@ -10,15 +10,21 @@ import DetailsRow from './DetailsRow';
 import useExampleDataQuery from '../hooks/useExampleDataQuery';
 
 const TableToolsTableWithExport = () => {
-  const { result: { data, meta: { total } = {} } = {}, exporter } =
-    useExampleDataQuery();
+  const {
+    result: { data, meta: { total } = {} } = {},
+    error,
+    loading,
+    exporter,
+  } = useExampleDataQuery();
 
   return (
     <ExamplesTable
+      loading={loading}
       items={data}
+      error={error}
+      total={total}
       columns={columns}
       filters={{ filterConfig: filters }}
-      total={total}
       options={{
         manageColumns: true,
         detailsComponent: DetailsRow,

@@ -3,14 +3,7 @@ module.exports = {
   parser: '@typescript-eslint/parser',
   plugins: ['jsdoc', '@typescript-eslint'],
   ignorePatterns: ['dist', 'docs', 'coverage'],
-  extends: [
-    '@redhat-cloud-services/eslint-config-redhat-cloud-services',
-    'plugin:testing-library/react',
-    'plugin:jest-dom/recommended',
-    'plugin:jsdoc/recommended',
-    'plugin:react-hooks/recommended',
-    'plugin:@typescript-eslint/recommended',
-  ],
+  extends: ['@redhat-cloud-services/eslint-config-redhat-cloud-services', 'plugin:testing-library/react', 'plugin:jest-dom/recommended', 'plugin:jsdoc/recommended', 'plugin:react-hooks/recommended', 'plugin:@typescript-eslint/recommended', 'plugin:storybook/recommended'],
   rules: {
     '@typescript-eslint/ban-ts-comment': 'warn',
     'rulesdir/forbid-pf-relative-imports': 'off',

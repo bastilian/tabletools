@@ -1,23 +1,38 @@
 import { useCallback, useState } from 'react';
-import { useDeepCompareEffect } from 'use-deep-compare';
+import { useDeepCompareEffect, useDeepCompareCallback } from 'use-deep-compare';
 
 import fakeApi from '~/support/fakeApi';
 import useParamsFromTableState from './hooks/useParamsFromTableState';
 
 const useExampleDataQuery = ({
-  api = fakeApi,
+  endpoint = '/api',
+  fetchApi = fakeApi,
   params: paramsOption = {},
+  errorToThrow,
 } = {}) => {
   const params = useParamsFromTableState();
   const [result, setResult] = useState();
   const [error, setError] = useState();
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
 
-  // TODO Check why the API gets called twice on initialisation
+  const api = useDeepCompareCallback(
+    async (...args) => {
+      if (errorToThrow) {
+        throw errorToThrow;
+      } else {
+        return await fetchApi(endpoint, ...args);
+      }
+    },
+    [fetchApi, errorToThrow, endpoint]
+  );
+
   useDeepCompareEffect(() => {
-    const fakeFetchDate = async (params) => {
-      setLoading(true);
+    console.log('Yello', api, params, paramsOption);
+    setLoading(true);
+    setResult(undefined);
+    setError(undefined);
 
+    const fakeFetchDate = async (params) => {
       try {
         const apiResult = await api({ ...params, ...paramsOption });
 
@@ -25,28 +40,24 @@ const useExampleDataQuery = ({
       } catch (e) {
         console.log(e);
         setError(e);
-      } finally {
-        setLoading(false);
       }
+
+      setLoading(false);
     };
 
     fakeFetchDate(params);
-
-    return () => {
-      setLoading(false);
-    };
   }, [api, params, paramsOption]);
 
   const exporter = useCallback(
     async () =>
-      (await api({ ...params, ...paramsOption, offset: 0, limit: 10000 })).data,
+      (await api({ ...params, ...paramsOption, offset: 0, limit: 'max' })).data,
     [api, params, paramsOption]
   );
 
   const itemIdsInTable = useCallback(
     async () =>
       (
-        await api({ ...params, ...paramsOption, offset: 0, limit: 10000 })
+        await api({ ...params, ...paramsOption, offset: 0, limit: 'max' })
       ).data.map(({ id }) => id),
     [api, params, paramsOption]
   );

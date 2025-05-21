@@ -12,6 +12,8 @@ import useExampleDataQuery from '../hooks/useExampleDataQuery';
 const TableToolsTableWithExport = () => {
   const {
     result: { data, meta: { total } = {} } = {},
+    error,
+    loading,
     exporter,
     itemIdsInTable,
     itemIdsOnPage,
@@ -19,10 +21,12 @@ const TableToolsTableWithExport = () => {
 
   return (
     <ExamplesTable
+      loading={loading}
       items={data}
+      error={error}
+      total={total}
       columns={columns}
       filters={{ filterConfig: filters }}
-      total={total}
       options={{
         manageColumns: true,
         detailsComponent: DetailsRow,

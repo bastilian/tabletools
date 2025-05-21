@@ -8,7 +8,11 @@ import useExampleDataQuery from '../hooks/useExampleDataQuery';
 import ExamplesTable from './ExamplesTable';
 
 const TableToolsTableWithFilterModalFilters = () => {
-  const { result: { data, meta: { total } = {} } = {} } = useExampleDataQuery();
+  const {
+    result: { data, meta: { total } = {} } = {},
+    loading,
+    error,
+  } = useExampleDataQuery();
   const genreFilterOptions = genres.map((genre) => ({
     label: genre,
     value: genre,
@@ -16,7 +20,10 @@ const TableToolsTableWithFilterModalFilters = () => {
 
   return (
     <ExamplesTable
+      loading={loading}
       items={data}
+      error={error}
+      total={total}
       columns={columns}
       filters={{
         filterConfig: [
@@ -118,7 +125,6 @@ const TableToolsTableWithFilterModalFilters = () => {
           },
         ],
       }}
-      total={total}
     />
   );
 };

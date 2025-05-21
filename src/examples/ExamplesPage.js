@@ -14,7 +14,7 @@ import {
 import examples from './constants/examples';
 
 export const ExamplesPage = () => {
-  const [activeTabKey, setActiveTabKey] = useState(0);
+  const [activeTabKey, setActiveTabKey] = useState(3);
   const handleTabClick = (_event, tabIndex) => {
     setActiveTabKey(tabIndex);
   };
@@ -35,7 +35,11 @@ export const ExamplesPage = () => {
             <Tab
               key={idx}
               eventKey={idx}
-              title={<TabTitleText>{title}</TabTitleText>}
+              title={
+                <TabTitleText>
+                  #{idx} {title}
+                </TabTitleText>
+              }
             >
               {activeTabKey === idx && (
                 <>

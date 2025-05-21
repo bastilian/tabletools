@@ -1,3 +1,4 @@
+import { useMemo } from 'react';
 import { useDeepCompareMemo } from 'use-deep-compare';
 
 import usePagination from '~/hooks/usePagination';
@@ -32,15 +33,20 @@ import { toToolbarActions } from './helpers';
  *  @group Hooks
  *
  */
-const useAsyncTableTools = (items, columns, options = {}) => {
+const useTableTools = (loading, items, error, total, columns, options = {}) => {
   const {
     toolbarProps: toolbarPropsOption,
     tableProps: tablePropsOption,
     dedicatedAction,
     actionResolver,
   } = options;
-  const { loaded, items: usableItems, total } = useItems(items, options);
-  const actionResolverEnabled = usableItems?.length > 0;
+  const {
+    loading: itemsLoading,
+    error: itemsError,
+    items: itemsItems,
+    total: itemsTotal,
+  } = useItems({ loading, items, error, total });
+  const actionResolverEnabled = itemsItems?.length > 0;
 
   const {
     columnManagerAction,
@@ -63,7 +69,7 @@ const useAsyncTableTools = (items, columns, options = {}) => {
 
   const { toolbarProps: paginationToolbarProps } = usePagination({
     ...options,
-    total,
+    total: itemsTotal,
   });
 
   const { toolbarProps: conditionalFilterProps, filterModalProps } =
@@ -76,7 +82,7 @@ const useAsyncTableTools = (items, columns, options = {}) => {
 
   const { tableProps: radioSelectTableProps } = useRadioSelect({
     ...options,
-    total: usableItems?.length || 0,
+    total: itemsItems?.length || 0,
   });
 
   const {
@@ -86,14 +92,14 @@ const useAsyncTableTools = (items, columns, options = {}) => {
   } = useBulkSelect({
     ...options,
     total,
-    itemIdsOnPage: usableItems?.map(({ id }) => id),
+    itemIdsOnPage: itemsItems?.map(({ id }) => id),
   });
 
   const {
     toolbarProps: tableViewToolbarProps,
     tableProps: tableViewTableProps,
     TableViewToggle,
-  } = useTableView(usableItems, managedColumns, {
+  } = useTableView(itemsLoading, itemsItems, itemsError, managedColumns, {
     ...options,
     expandable: expandableTableViewOptions,
     bulkSelect: bulkSelectTableViewOptions,
@@ -112,7 +118,7 @@ const useAsyncTableTools = (items, columns, options = {}) => {
     ...options,
   });
 
-  const toolbarProps = useDeepCompareMemo(
+  const toolbarProps = useMemo(
     () => ({
       ...toolbarActionsProps,
       ...paginationToolbarProps,
@@ -133,7 +139,7 @@ const useAsyncTableTools = (items, columns, options = {}) => {
     ]
   );
 
-  const tableProps = useDeepCompareMemo(
+  const tableProps = useMemo(
     () => ({
       // TODO we should have a hook that maintains columns.
       // at least the columns manager and table sort hook "act" on columns, currently without a good interface
@@ -161,7 +167,7 @@ const useAsyncTableTools = (items, columns, options = {}) => {
   );
 
   return {
-    loaded,
+    loading: itemsLoading,
     toolbarProps,
     tableProps,
     // TODO We could possibly just return the configuratin/props for these components instead
@@ -171,4 +177,4 @@ const useAsyncTableTools = (items, columns, options = {}) => {
   };
 };
 
-export default useAsyncTableTools;
+export default useTableTools;

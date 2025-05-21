@@ -8,14 +8,20 @@ import ExamplesTable from './ExamplesTable';
 import useExampleDataQuery from '../hooks/useExampleDataQuery';
 
 const SimpleTableToolsTableSorted = () => {
-  const { result: { data, meta: { total } = {} } = {} } = useExampleDataQuery();
+  const {
+    result: { data, meta: { total } = {} } = {},
+    loading,
+    error,
+  } = useExampleDataQuery();
 
   return (
     <ExamplesTable
+      loading={loading}
       items={data}
+      error={error}
+      total={total}
       columns={[title, artist]}
       filters={{ filterConfig: [titleOrArtist] }}
-      total={total}
     />
   );
 };

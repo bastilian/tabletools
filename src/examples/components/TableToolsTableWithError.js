@@ -4,15 +4,16 @@ import columns from '~/support/factories/columns';
 import filters from '~/support/factories/filters';
 
 import ExamplesTable from './ExamplesTable';
+import useExampleDataQuery from '../hooks/useExampleDataQuery';
 
 const TableToolsTableWithError = () => {
-  const failingFetchItems = useCallback(async () => {
-    throw 'Erorr loading items!';
-  }, []);
+  const { fetch } = useExampleDataQuery({
+    errorToThrow: new Error('Erorr loading items!'),
+  });
 
   return (
     <ExamplesTable
-      items={failingFetchItems}
+      items={fetch}
       columns={columns}
       filters={{ filterConfig: filters }}
     />

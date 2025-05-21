@@ -16,6 +16,8 @@ const TableToolsTableWithExport = () => {
 
   const {
     result: { data, meta: { total } = {} } = {},
+    loading,
+    error,
     exporter,
     itemIdsInTable,
     itemIdsOnPage,
@@ -25,13 +27,20 @@ const TableToolsTableWithExport = () => {
       : {}),
   });
 
-  const { result: tableTree } = useExampleDataQuery({
-    api: fakePlasticTreeApi,
+  const {
+    result: tableTree,
+    loading: treeLoading,
+    error: treeError,
+  } = useExampleDataQuery({
+    endpoint: '/treeapi',
+    fetchApi: fakePlasticTreeApi,
   });
 
   return (
     <ExamplesTable
+      loading={loading || treeLoading}
       items={data}
+      erorr={error || treeError}
       columns={columns}
       filters={{ filterConfig: filters }}
       total={total}
