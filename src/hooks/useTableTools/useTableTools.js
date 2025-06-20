@@ -1,4 +1,4 @@
-import { useDeepCompareMemo } from 'use-deep-compare';
+import { useMemo } from 'react';
 
 import usePagination from '~/hooks/usePagination';
 import useFilterConfig from '~/hooks/useFilterConfig';
@@ -48,7 +48,7 @@ const useAsyncTableTools = (items, columns, options = {}) => {
     ColumnManager,
   } = useColumnManager(columns, options);
 
-  const { toolbarProps: toolbarActionsProps } = useDeepCompareMemo(
+  const { toolbarProps: toolbarActionsProps } = useMemo(
     () =>
       toToolbarActions({
         ...options,
@@ -112,7 +112,7 @@ const useAsyncTableTools = (items, columns, options = {}) => {
     ...options,
   });
 
-  const toolbarProps = useDeepCompareMemo(
+  const toolbarProps = useMemo(
     () => ({
       ...toolbarActionsProps,
       ...paginationToolbarProps,
@@ -133,7 +133,7 @@ const useAsyncTableTools = (items, columns, options = {}) => {
     ]
   );
 
-  const tableProps = useDeepCompareMemo(
+  const tableProps = useMemo(
     () => ({
       // TODO we should have a hook that maintains columns.
       // at least the columns manager and table sort hook "act" on columns, currently without a good interface

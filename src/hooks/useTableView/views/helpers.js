@@ -8,6 +8,8 @@ const renderCell = (column, item) => {
   const { Component, renderFunc } = column;
 
   if (Component) {
+    // NOTE: When using "deep compare" effects that have the rows
+    // or the object containing rows as dependencies will raise a "too much recursion" error (via dequal)
     return <Component {...item} />;
   } else if (renderFunc) {
     // TODO deprecated "rednerFunc"
