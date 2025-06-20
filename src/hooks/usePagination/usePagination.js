@@ -1,4 +1,11 @@
 import { useCallback } from 'react';
+import {
+  useDeepCompareCallback,
+  useDeepCompareEffect,
+  useDeepCompareMemo,
+} from 'use-deep-compare';
+
+import { useRawTableState } from '~/hooks/useTableState';
 
 import usePaginationState from './hooks/usePaginationState';
 
@@ -18,6 +25,7 @@ import usePaginationState from './hooks/usePaginationState';
 const usePagination = (options = {}) => {
   const { total, pagination = true } = options;
   const [paginationState, setPaginationState] = usePaginationState(options);
+  const { tableView, sort, filters } = useRawTableState() || {};
 
   const setPagination = useCallback(
     (newState) =>
@@ -46,6 +54,8 @@ const usePagination = (options = {}) => {
     },
     [setPaginationState]
   );
+
+  const resetPage = useDeepCompareCallback(() => setPage(1), [setPage]);
 
   return pagination && !(paginationState || {}).isDisabled
     ? {

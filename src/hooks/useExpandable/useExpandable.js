@@ -55,7 +55,7 @@ const useExpandable = (options) => {
     [isItemOpen, options]
   );
 
-  // TODO This is hackish. We should rather have a selection manager based on a table state
+  // // TODO This is hackish. We should rather have a selection manager based on a table state
   useEffect(() => {
     setOpenItemsState(openItems || []);
   }, [openItems, setOpenItemsState]);

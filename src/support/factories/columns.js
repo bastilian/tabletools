@@ -7,10 +7,10 @@ Title.propTypes = {
 };
 
 export const title = {
-  title: 'Title',
+  title: 'Title1',
   Component: Title,
   renderExport: ({ title }) => title,
-  sortable: 'title',
+  sortable: 'title1',
 };
 
 export const artist = {

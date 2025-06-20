@@ -20,9 +20,9 @@ import useViewState from './hooks/useViewState';
  *  @group Hooks
  *
  */
-const useTableView = (items, columns, options = {}) => {
+const useTableView = (loaded, items, error, columns, options = {}) => {
   const { showViewToggle } = options;
-  const { setTableView, tableView } = useViewState(options);
+  const { setTableView, tableView } = useViewState(items, error, options);
   const { tableProps, toolbarProps, choosableViews } = useViews(
     tableView,
     items,

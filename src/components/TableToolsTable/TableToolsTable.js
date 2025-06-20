@@ -12,15 +12,16 @@ import TableToolbar from '@redhat-cloud-services/frontend-components/TableToolba
 
 import useTableTools from '~/hooks/useTableTools';
 import { TableContext } from '~/hooks/useTableState/constants';
-import { TableStateProvider, FilterModal } from '~/components';
+import TableStateProvider from '../TableStateProvider';
+import FilterModal from '../FilterModal';
 
 const TableToolsTable = ({
+  loading,
   items,
   error,
   columns,
   filters,
   total,
-  loading,
   options,
   // TODO I'm not sure if we need this level of customisation.
   // It might actually hurt in the long run. Consider removing until we really have the case where we need this
@@ -32,30 +33,26 @@ const TableToolsTable = ({
   ...tablePropsRest
 }) => {
   const {
-    loaded,
+    loading: itemsLoading,
     toolbarProps,
     tableProps,
     filterModalProps,
     ColumnManager,
     TableViewToggle,
-  } = useTableTools(items, columns, {
+  } = useTableTools(loading, items, error, total, columns, {
     filters,
     toolbarProps: toolbarPropsProp,
     tableProps: tablePropsRest,
-    total,
-    error,
     ...options,
   });
-
-  const skeletonLoading = !loaded || loading;
-
+  console.log('il', tableProps);
   return (
     <>
       <PrimaryToolbar aria-label="Table toolbar" {...toolbarProps}>
         {TableViewToggle && <TableViewToggle />}
       </PrimaryToolbar>
 
-      {skeletonLoading ? (
+      {itemsLoading ? (
         <SkeletonTable
           rowSize={toolbarProps?.pagination?.perPage || 10}
           columns={columns.map(({ title }) => title)}
@@ -73,7 +70,6 @@ const TableToolsTable = ({
             aria-label="Pagination-ToolBar"
             variant={PaginationVariant.bottom}
             {...toolbarProps.pagination}
-            {...paginationProps}
           />
         )}
       </TableToolbar>

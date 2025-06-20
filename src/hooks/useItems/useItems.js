@@ -1,12 +1,13 @@
+import { useState, useEffect } from 'react';
 import { useDeepCompareEffect } from 'use-deep-compare';
 
-import useTableState, {
+import {
   useSerialisedTableState,
   useRawTableState,
 } from '~/hooks/useTableState';
 
-import { TABLE_STATE_NAMESPACE } from './constants';
-import { itemObserver, identifyItems } from './helpers';
+import { initialItemsState } from './constants';
+import { identifyItems } from './helpers';
 
 /**
  * This hook handles either just returning a provided array of items
@@ -21,51 +22,59 @@ import { itemObserver, identifyItems } from './helpers';
  *  @group Hooks
  *
  */
-const useItems = (
-  itemsProp,
-  { total: optionsTotal, error: optionsError } = {}
-) => {
-  const [{ error, items, total } = {}, setItems] = useTableState('items', {
-    items: undefined,
-    total: undefined,
-    error: optionsError,
-  });
-  const [loaded] = useTableState('loaded', false, {
-    observers: {
-      [TABLE_STATE_NAMESPACE]: itemObserver,
-    },
-  });
+const useItems = ({
+  loading: externalLoading,
+  items: externalItems,
+  error: externalError,
+  total: externalTotal,
+} = {}) => {
+  const useInternalState = typeof externalItems === 'function';
+  const [{ items: internalItems, total: internalTotal }, setInternalItems] =
+    useState(initialItemsState);
+  const items = useInternalState ? internalItems : externalItems;
+  const total = useInternalState ? internalTotal : externalTotal;
+
+  const [internalError, setInternalError] = useState();
+  const error = useInternalState ? internalError : externalError;
+
+  const [internalLoading, setInternalLoading] = useState(true);
+  const loading = useInternalState ? internalLoading : externalLoading;
+
   const tableState = useRawTableState();
   const serialisedTableState = useSerialisedTableState();
 
-  useDeepCompareEffect(() => {
-    if (typeof itemsProp === 'function') {
+  useEffect(() => {
+    console.log('Hej');
+    if (typeof externalItems === 'function') {
+      console.log('Ho');
+      setInternalLoading(true);
+      setInternalItems(undefined);
+      setInternalError(undefined);
+
       const setStateFromAsyncItems = async () => {
         try {
-          const [items, total] = await itemsProp(
+          const [items, total] = await externalItems(
             serialisedTableState,
             tableState
           );
-
-          setItems({ items: identifyItems(items), total });
+          setInternalItems({
+            items: identifyItems(items),
+            total,
+          });
         } catch (error) {
           console.error(error);
-          setItems({ error });
+          setInternalError(error);
         }
+
+        setInternalLoading(false);
       };
 
       setStateFromAsyncItems();
-    } else {
-      setItems((currentState) => ({
-        ...currentState,
-        items: identifyItems(itemsProp),
-        total: optionsTotal,
-      }));
     }
-  }, [setItems, itemsProp, serialisedTableState, tableState, optionsTotal]);
+  }, [externalItems, tableState, serialisedTableState]);
 
   return {
-    loaded,
+    loading,
     items,
     error,
     total,

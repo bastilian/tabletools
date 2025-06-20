@@ -10,10 +10,12 @@ import { TableContext } from '../constants';
  *  @group Hooks
  *
  */
-const useRawTableState = () => {
+const useRawTableState = (namespace) => {
   const context = useContext(TableContext);
 
-  return context?.state?.[0]?.tableState;
+  return namespace
+    ? context?.state?.[0]?.tableState?.[namespace]
+    : context?.state?.[0]?.tableState;
 };
 
 export default useRawTableState;
