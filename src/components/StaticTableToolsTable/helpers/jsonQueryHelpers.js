@@ -19,6 +19,7 @@ const queryItems = async (
   const { jsonquery } = await import('@jsonquerylang/jsonquery');
 
   const query = buildQuery(filters, sort);
+
   const queriedItems = query.length ? jsonquery(items, query) : items;
   const actualLimit = limit === 'max' ? items.length : limit;
 

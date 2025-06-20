@@ -12,7 +12,6 @@ module.exports = {
     '!src/**/*.test.js',
     '!src/**/index.js',
     '!src/support/**/*.{js,jsx}',
-    '!src/examples/**/*.{js,jsx}',
   ],
   roots: ['<rootDir>/src/'],
   moduleNameMapper: {

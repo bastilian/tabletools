@@ -10,6 +10,7 @@ module.exports = {
     'plugin:jsdoc/recommended',
     'plugin:react-hooks/recommended',
     'plugin:@typescript-eslint/recommended',
+    'plugin:storybook/recommended',
   ],
   rules: {
     '@typescript-eslint/ban-ts-comment': 'warn',

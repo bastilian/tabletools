@@ -63,6 +63,7 @@ mode = "disabled"
 
 [[plugin]]
 name = "radarlint-js"
+mode = "disabled"
 
 [[plugin]]
 name = "ripgrep"
