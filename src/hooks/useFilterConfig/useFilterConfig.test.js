@@ -14,7 +14,7 @@ describe('useFilterConfig', () => {
             filterConfig,
           },
         }),
-      DEFAULT_RENDER_OPTIONS
+      DEFAULT_RENDER_OPTIONS,
     );
 
     expect(result.current.toolbarProps).toBeDefined();
@@ -23,7 +23,7 @@ describe('useFilterConfig', () => {
   it('returns no toolbar configuration if no filters are provided', () => {
     const { result } = renderHook(
       () => useFilterConfig(),
-      DEFAULT_RENDER_OPTIONS
+      DEFAULT_RENDER_OPTIONS,
     );
 
     expect(result.current.toolbarProps).not.toBeDefined();
@@ -37,7 +37,7 @@ describe('useFilterConfig', () => {
             filterConfig,
           },
         }),
-      DEFAULT_RENDER_OPTIONS
+      DEFAULT_RENDER_OPTIONS,
     );
 
     await waitFor(() => result.current.toolbarProps.filterConfig.items[0]);
@@ -45,8 +45,8 @@ describe('useFilterConfig', () => {
     await act(() =>
       result.current.toolbarProps.filterConfig.items[0].filterValues.onChange(
         'title',
-        'asd'
-      )
+        'asd',
+      ),
     );
     expect(result.current.toolbarProps.activeFiltersConfig.filters).toEqual([
       { category: 'Title', chips: [{ name: 'asd' }] },
@@ -62,7 +62,7 @@ describe('useFilterConfig', () => {
             },
           ],
         },
-      ])
+      ]),
     );
 
     expect(result.current.activeFilters).toEqual(undefined);

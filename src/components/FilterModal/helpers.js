@@ -8,7 +8,7 @@ const convertGroupsToArray = (groupFilterItems) =>
         itemId: `${group.value}-${item.value}`,
       })),
     ],
-    []
+    [],
   );
 
 // TODO Replace with "proper" jsonQuery based static "fetch"
@@ -16,7 +16,7 @@ export const fetchStatic = (
   filterItems,
   filterType,
   _serialisedState,
-  { pagination: { state: { page = 1, perPage = 10 } = {} } = {} } = {}
+  { pagination: { state: { page = 1, perPage = 10 } = {} } = {} } = {},
 ) => {
   const items =
     filterType === 'group'
@@ -55,10 +55,10 @@ export const convertToSelectValues = (filterValues, filter) => {
       (selection, [group, groupSelection]) => [
         ...selection,
         ...Object.keys(groupSelection).map(
-          (groupItem) => `${group}-${groupItem}`
+          (groupItem) => `${group}-${groupItem}`,
         ),
       ],
-      []
+      [],
     );
   } else {
     return filterValues;

@@ -34,7 +34,7 @@ const applyTransformations = (item, rowsForItem, transformers, runningIndex) =>
       transformer
         ? transformer(item, currentRowsForItem, runningIndex)
         : currentRowsForItem,
-    rowsForItem
+    rowsForItem,
   );
 
 /**
@@ -71,7 +71,7 @@ export const treeColumns = (columns, onCollapse, onSelect) => [
       ...(columns[0].cellTransforms || []),
       treeRow(
         (...args) => onCollapse?.(...args),
-        onSelect && ((...args) => onSelect?.(...args))
+        onSelect && ((...args) => onSelect?.(...args)),
       ),
     ],
   },
@@ -82,7 +82,7 @@ export const collectLeaves = (tableTree, itemId) => {
   const pickBranch = (basket, branch, _idx, _arr, inBranchArg) => {
     const inBranch = inBranchArg || (itemId ? branch.itemId === itemId : true);
     const twigLeaves = branch?.twigs?.flatMap((twig) =>
-      pickBranch([], twig, _idx, _arr, inBranch)
+      pickBranch([], twig, _idx, _arr, inBranch),
     );
 
     return [
@@ -105,7 +105,7 @@ export const getOnTreeSelect = (options) => {
       const row = args[4];
       const idsForSelect = row.item.isTreeBranch
         ? collectLeaves(options.tableTree, row.item.itemId).map(
-            ({ itemId }) => itemId
+            ({ itemId }) => itemId,
           )
         : row.item.itemId;
 
@@ -157,7 +157,7 @@ export const emptyRows = (
   kind,
   columns,
   items,
-  options
+  options,
 ) => ({
   rows: [
     {

@@ -49,7 +49,7 @@ const useExport = ({
         onError?.(error);
       }
     },
-    [onStart, onError, onComplete, exporter, exportColumns]
+    [onStart, onError, onComplete, exporter, exportColumns],
   );
 
   return enableExport

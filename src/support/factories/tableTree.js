@@ -11,7 +11,7 @@ export const buildTree = ({ items = defaultItems } = {}) => {
     .map(([genre, genreItems]) => {
       const genreItemsGroupedByReleaseYear = jsonquery(
         genreItems,
-        'groupBy(.releaseYear)'
+        'groupBy(.releaseYear)',
       );
 
       const twigs = Object.entries(genreItemsGroupedByReleaseYear)

@@ -95,7 +95,7 @@ TableToolsTable.propTypes = {
       sortByArray: propTypes.array,
       sortByFunction: propTypes.func,
       renderFunc: propTypes.func,
-    })
+    }),
   ).isRequired,
   filters: propTypes.object,
   error: propTypes.object,

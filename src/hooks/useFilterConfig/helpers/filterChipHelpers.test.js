@@ -23,7 +23,7 @@ describe('toDeselectValue', () => {
             name: 'TEST NAME',
           },
         ],
-      })
+      }),
     ).toEqual(['TEST NAME', 'title']);
   });
 });

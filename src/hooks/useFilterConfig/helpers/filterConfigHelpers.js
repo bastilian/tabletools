@@ -13,14 +13,14 @@ const toFilterConfigItem = (
   filterTypeHelpers,
   handler,
   activeFilters,
-  openFilterModal
+  openFilterModal,
 ) => {
   const value = getActiveFilters(configItem, activeFilters, filterTypeHelpers);
   const filterValues = filterTypeHelpers.filterValues(
     configItem,
     handler,
     value,
-    openFilterModal
+    openFilterModal,
   );
 
   return filterValues
@@ -47,7 +47,7 @@ export const toFilterConfig = (
   filterTypes,
   activeFilters,
   handler,
-  openFilterModal
+  openFilterModal,
 ) => ({
   items: filterConfig
     .map(toIdedFilters)
@@ -58,16 +58,16 @@ export const toFilterConfig = (
             filterTypes[configItem.type],
             handler,
             activeFilters,
-            openFilterModal
+            openFilterModal,
           )
-        : undefined
+        : undefined,
     )
     .filter((v) => !!v),
 });
 
 export const getFilterConfigItem = (filterConfig, filter) =>
   filterConfig.find(
-    (configItem) => stringToId(configItem.label) === stringToId(filter)
+    (configItem) => stringToId(configItem.label) === stringToId(filter),
   );
 
 export const toSelectValue = (
@@ -75,13 +75,13 @@ export const toSelectValue = (
   filterTypes,
   filter,
   selectedValue,
-  selectedValues
+  selectedValues,
 ) => {
   const configItem = getFilterConfigItem(filterConfig, filter);
 
   return filterTypes[configItem.type].toSelectValue(
     configItem,
     selectedValues,
-    selectedValue
+    selectedValue,
   );
 };

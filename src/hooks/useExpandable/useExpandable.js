@@ -35,7 +35,7 @@ const useExpandable = (options) => {
 
   const isItemOpen = useCallback(
     (itemId) => (openItems || []).includes(itemId),
-    [openItems]
+    [openItems],
   );
 
   const expandRow = useCallback(
@@ -52,7 +52,7 @@ const useExpandable = (options) => {
         ...remainingRows,
       ];
     },
-    [isItemOpen, options]
+    [isItemOpen, options],
   );
 
   // TODO This is hackish. We should rather have a selection manager based on a table state

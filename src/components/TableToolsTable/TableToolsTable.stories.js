@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/rules-of-hooks */
 import React, { useCallback } from 'react';
 import {
   Page,
@@ -56,7 +57,7 @@ const emptyRows = (_kind, colSpan) => [
   {
     cells: [
       {
-        title: () => <>Custom emptyRows</>, // eslint-disable-line react/display-name
+        title: () => <>Custom emptyRows</>,
         props: {
           colSpan,
         },
@@ -172,7 +173,7 @@ export const WithFilterModal = {
                     ...years,
                     ...Object.keys(groupYears),
                   ],
-                  []
+                  [],
                 );
 
                 return `.releaseYear in [${allYears.join(', ')}]`;
@@ -245,7 +246,7 @@ export const WithFilterModal = {
               modal: {
                 items: async (
                   _serialisedState,
-                  { pagination: { state } = { page: 1, perPage: 10 } } = {}
+                  { pagination: { state } = { page: 1, perPage: 10 } } = {},
                 ) => {
                   const offset = (state?.page - 1) * state?.perPage;
                   const limit = state?.perPage;
@@ -389,7 +390,7 @@ export const WithAsyncFunction = {
 
         return [items, total];
       },
-      [fetch]
+      [fetch],
     );
 
     return (

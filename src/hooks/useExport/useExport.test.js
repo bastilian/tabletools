@@ -31,7 +31,7 @@ describe('useExport', () => {
       useExport({
         ...defaultOptions,
         isDisabled: true,
-      })
+      }),
     );
     expect(result.current.toolbarProps.exportConfig.isDisabled).toBe(true);
   });

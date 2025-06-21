@@ -11,7 +11,7 @@ describe('toToolbarActions', () => {
     expect(
       toToolbarActions({
         actions: ['exaple-bogus-action'],
-      }).toolbarProps.actionsConfig.actions[0]
+      }).toolbarProps.actionsConfig.actions[0],
     ).toBeUndefined();
   });
 
@@ -22,7 +22,7 @@ describe('toToolbarActions', () => {
       toToolbarActions({
         actions: ['example-bogus-action'],
         firstAction,
-      }).toolbarProps.actionsConfig.actions[0]
+      }).toolbarProps.actionsConfig.actions[0],
     ).toBeDefined();
   });
 });

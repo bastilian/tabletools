@@ -96,7 +96,7 @@ const groupType = {
     { groups, label, modal },
     handler,
     value,
-    openFilterModal
+    openFilterModal,
   ) => ({
     selected: value,
     groups: groups?.map((item) => ({
@@ -120,7 +120,7 @@ const groupType = {
     chips: Object.entries(value).flatMap((groupItem) =>
       Object.keys(groupItem[1]).map((itemValue) => ({
         name: itemForValueInGroups(configItem, itemValue).label,
-      }))
+      })),
     ),
   }),
   toSelectValue: (configItem, selectedValues) => {
@@ -128,18 +128,18 @@ const groupType = {
       Object.entries(selectedValues)
         .map(([group, groupItems]) => {
           const filteredItems = Object.entries(groupItems).filter(
-            ([, value]) => value
+            ([, value]) => value,
           );
           return filteredItems.length
             ? [
                 group,
                 Object.fromEntries(
-                  Object.entries(groupItems).filter(([, value]) => value)
+                  Object.entries(groupItems).filter(([, value]) => value),
                 ),
               ]
             : undefined;
         })
-        .filter((v) => !!v)
+        .filter((v) => !!v),
     );
 
     return [

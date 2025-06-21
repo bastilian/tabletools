@@ -58,7 +58,7 @@ const useAsyncTableTools = (items, columns, options = {}) => {
           ...((columnManagerAction && [columnManagerAction]) || []),
         ],
       }),
-    [columnManagerAction, options, dedicatedAction]
+    [columnManagerAction, options, dedicatedAction],
   );
 
   const { toolbarProps: paginationToolbarProps } = usePagination({
@@ -130,7 +130,7 @@ const useAsyncTableTools = (items, columns, options = {}) => {
       exportConfig?.toolbarProps,
       tableViewToolbarProps,
       toolbarPropsOption,
-    ]
+    ],
   );
 
   const tableProps = useMemo(
@@ -157,7 +157,7 @@ const useAsyncTableTools = (items, columns, options = {}) => {
       tableViewTableProps,
       actionResolver,
       actionResolverEnabled,
-    ]
+    ],
   );
 
   return {

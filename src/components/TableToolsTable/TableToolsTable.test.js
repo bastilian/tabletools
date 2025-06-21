@@ -29,7 +29,7 @@ describe('TableToolsTable', () => {
     render(
       <TableStateProvider>
         <TableToolsTable {...defaultProps} />
-      </TableStateProvider>
+      </TableStateProvider>,
     );
 
     await waitFor(() => expect(itemsFunc).toHaveBeenCalled());

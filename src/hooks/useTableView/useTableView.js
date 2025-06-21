@@ -27,7 +27,7 @@ const useTableView = (items, columns, options = {}) => {
     tableView,
     items,
     columns,
-    options
+    options,
   );
 
   const enableToggle = useMemo(
@@ -35,7 +35,7 @@ const useTableView = (items, columns, options = {}) => {
       typeof showViewToggle === 'boolean'
         ? showViewToggle
         : Object.keys(choosableViews).length > 1,
-    [choosableViews, showViewToggle]
+    [choosableViews, showViewToggle],
   );
 
   return {

@@ -39,7 +39,7 @@ const useFilterOptions = (options) => {
       customFilterTypes,
       initialActiveFilters,
       serialisers,
-    ]
+    ],
   );
 
   return config;

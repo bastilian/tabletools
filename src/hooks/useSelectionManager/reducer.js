@@ -84,4 +84,4 @@ export default (state, action) =>
     toggle,
     reset,
     clear,
-  }[action.type](state, action));
+  })[action.type](state, action);

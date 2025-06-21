@@ -26,7 +26,7 @@ const StaticTableToolsTable = ({ items, options, ...props }) => {
       await queryItems(items, { filters, ...pagination, sort }),
       items.length,
     ],
-    [items]
+    [items],
   );
 
   return (

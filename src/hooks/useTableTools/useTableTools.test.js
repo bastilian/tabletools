@@ -14,7 +14,7 @@ describe('useTableTools', () => {
   it('returns a object with tableProps and toolbarProps even with no items, columns or options passed', () => {
     const { result } = renderHook(
       () => useTableTools([], []),
-      DEFAULT_RENDER_OPTIONS
+      DEFAULT_RENDER_OPTIONS,
     );
 
     expect(result.current.tableProps).toBeDefined();
@@ -24,7 +24,7 @@ describe('useTableTools', () => {
   it('returns a object with tableProps and toolbarProps with items array', () => {
     const { result } = renderHook(
       () => useTableTools(...defaultArguments),
-      DEFAULT_RENDER_OPTIONS
+      DEFAULT_RENDER_OPTIONS,
     );
 
     expect(result.current.tableProps).toBeDefined();
@@ -39,7 +39,7 @@ describe('useTableTools', () => {
 
     renderHook(
       () => useTableTools(asyncFunction, columns),
-      DEFAULT_RENDER_OPTIONS
+      DEFAULT_RENDER_OPTIONS,
     );
 
     await waitFor(() => {

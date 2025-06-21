@@ -14,7 +14,7 @@ const buildQuery = (filters, sort) => {
 
 const queryItems = async (
   items,
-  { filters, sort, offset = 0, limit = DEFAULT_LIMIT } = {}
+  { filters, sort, offset = 0, limit = DEFAULT_LIMIT } = {},
 ) => {
   const { jsonquery } = await import('@jsonquerylang/jsonquery');
 

@@ -39,7 +39,7 @@ const useTableSort = (columns, options = {}) => {
   const serialiser = useCallback(
     (state) => options.serialisers.sort(state, columns),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [JSON.stringify(columns), JSON.stringify(options.serialisers)]
+    [JSON.stringify(columns), JSON.stringify(options.serialisers)],
   );
 
   const { tableView } = useRawTableState() || {};
@@ -53,7 +53,7 @@ const useTableSort = (columns, options = {}) => {
           }
         : {}),
     }),
-    [serialisers, serialiser]
+    [serialisers, serialiser],
   );
   const [sortBy, setSortBy] = useTableState(
     TABLE_STATE_NAMESPACE,
@@ -61,7 +61,7 @@ const useTableSort = (columns, options = {}) => {
       index: 0,
       direction: 'asc',
     },
-    stateOptions
+    stateOptions,
   );
 
   const onSort = useCallback(
@@ -72,7 +72,7 @@ const useTableSort = (columns, options = {}) => {
       });
       onSortOption?.(index, direction);
     },
-    [onSortOption, setSortBy, offset]
+    [onSortOption, setSortBy, offset],
   );
 
   const sortByOffset = sortBy && {

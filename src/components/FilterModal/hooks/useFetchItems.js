@@ -20,7 +20,7 @@ const useFetchItems = ({
         return fetchStatic(filterItems || groupItems, type, ...args);
       }
     },
-    [modalItems, filterItems, groupItems, type]
+    [modalItems, filterItems, groupItems, type],
   );
 
   return fetchItems;

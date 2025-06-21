@@ -22,7 +22,7 @@ describe('FilterModal', () => {
           filter={artistByGenre}
           activeFilters={{ Enka: { 1: true } }}
           isFilterModalOpen={true}
-        />
+        />,
       );
 
       await screen.findByRole('heading', 'Filter by genre');

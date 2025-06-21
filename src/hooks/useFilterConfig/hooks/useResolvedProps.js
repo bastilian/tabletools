@@ -28,7 +28,7 @@ const useResolvedProps = (objects, propsToResolve) => {
     const resolveObjects = async (objects, propsToResolve) => {
       const newResolvedObjects = await resolveObjectsProps(
         objects,
-        propsToResolve
+        propsToResolve,
       );
 
       setResolvedObjects(newResolvedObjects);

@@ -5,7 +5,7 @@ const useFilterModal = ({ filterConfig, activeFilters, onFilterUpdate }) => {
   const [modalFilter, setModalFilter] = useState();
   const isFilterModalOpen = !!modalFilter;
   const filter = filterConfig.find(
-    ({ label }) => stringToId(label) === modalFilter
+    ({ label }) => stringToId(label) === modalFilter,
   );
 
   const openFilterModal = useCallback((filter) => {

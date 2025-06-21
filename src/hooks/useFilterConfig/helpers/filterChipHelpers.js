@@ -19,16 +19,16 @@ export const toDeselectValue = (
   filterConfig,
   filterTypes,
   chip,
-  activeFilters
+  activeFilters,
 ) => {
   const configItem = getFilterConfigItem(
     filterConfig,
-    stringToId(chip.category)
+    stringToId(chip.category),
   );
 
   return filterTypes[configItem.type]?.toDeselectValue(
     configItem,
     chip,
-    activeFilters
+    activeFilters,
   );
 };

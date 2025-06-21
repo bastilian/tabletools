@@ -21,7 +21,7 @@ describe('useExpandable', () => {
   it('returns an expandable configuration', () => {
     const { result } = renderHook(
       () => useExpandable(defaultOptions),
-      DEFAULT_RENDER_OPTIONS
+      DEFAULT_RENDER_OPTIONS,
     );
 
     expect(result.current).toEqual({
@@ -41,7 +41,7 @@ describe('useExpandable', () => {
     const itemId = 'test-id';
     const { result } = renderHook(
       () => useExpandable(defaultOptions),
-      DEFAULT_RENDER_OPTIONS
+      DEFAULT_RENDER_OPTIONS,
     );
 
     act(() => {
@@ -54,7 +54,7 @@ describe('useExpandable', () => {
       row,
       [],
       () => 1,
-      false
+      false,
     );
 
     expect(openedRow).toEqual([
@@ -81,7 +81,7 @@ describe('useExpandable', () => {
   it('should expand & collapse a row', () => {
     const { result } = renderHook(
       () => useExpandable(defaultOptions),
-      DEFAULT_RENDER_OPTIONS
+      DEFAULT_RENDER_OPTIONS,
     );
 
     //expand

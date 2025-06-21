@@ -23,7 +23,7 @@ import { itemObserver, identifyItems } from './helpers';
  */
 const useItems = (
   itemsProp,
-  { total: optionsTotal, error: optionsError } = {}
+  { total: optionsTotal, error: optionsError } = {},
 ) => {
   const [{ error, items, total } = {}, setItems] = useTableState('items', {
     items: undefined,
@@ -44,7 +44,7 @@ const useItems = (
         try {
           const [items, total] = await itemsProp(
             serialisedTableState,
-            tableState
+            tableState,
           );
 
           setItems({ items: identifyItems(items), total });

@@ -44,7 +44,7 @@ const useFilterConfig = (options) => {
 
   const { selection: activeFilters, ...selectionActions } = useSelectionManager(
     initialActiveFilters,
-    { withGroups: true }
+    { withGroups: true },
   );
   const { onFilterUpdate, onFilterDelete } = useEventHandlers({
     ...options,
@@ -64,9 +64,9 @@ const useFilterConfig = (options) => {
         filterTypes,
         activeFilters,
         onFilterUpdate,
-        openFilterModal
+        openFilterModal,
       ),
-    [filterConfig, activeFilters, onFilterUpdate, filterTypes, openFilterModal]
+    [filterConfig, activeFilters, onFilterUpdate, filterTypes, openFilterModal],
   );
 
   const [, setTableState] = useTableState(
@@ -77,7 +77,7 @@ const useFilterConfig = (options) => {
           serialiser: (state) =>
             serialisers.filters(state, filterConfig.map(toIdedFilters)),
         }
-      : {}
+      : {},
   );
 
   useEffect(() => {

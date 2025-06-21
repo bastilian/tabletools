@@ -16,7 +16,7 @@ describe('usePagination', () => {
         usePagination({
           pagination: false,
         }),
-      DEFAULT_RENDER_OPTIONS
+      DEFAULT_RENDER_OPTIONS,
     );
     expect(result.current).toEqual({});
   });
@@ -24,7 +24,7 @@ describe('usePagination', () => {
   it('changes the page when setPage is called', () => {
     const { result } = renderHook(
       () => usePagination(defaultOptions),
-      DEFAULT_RENDER_OPTIONS
+      DEFAULT_RENDER_OPTIONS,
     );
 
     act(() => {
@@ -37,7 +37,7 @@ describe('usePagination', () => {
   it('resets to page 1 if a negative page is passed', () => {
     const { result } = renderHook(
       () => usePagination(defaultOptions),
-      DEFAULT_RENDER_OPTIONS
+      DEFAULT_RENDER_OPTIONS,
     );
 
     act(() => {
@@ -50,7 +50,7 @@ describe('usePagination', () => {
   it('changes the perPage when setPage is called', () => {
     const { result } = renderHook(
       () => usePagination(defaultOptions),
-      DEFAULT_RENDER_OPTIONS
+      DEFAULT_RENDER_OPTIONS,
     );
 
     act(() => {
@@ -81,7 +81,7 @@ describe('usePagination', () => {
             pagination: paginationSerialiser,
           },
         }),
-      DEFAULT_RENDER_OPTIONS
+      DEFAULT_RENDER_OPTIONS,
     );
 
     act(() => {

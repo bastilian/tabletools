@@ -40,7 +40,7 @@ const useExampleDataQuery = ({
   const exporter = useCallback(
     async () =>
       (await api({ ...params, ...paramsOption, offset: 0, limit: 10000 })).data,
-    [api, params, paramsOption]
+    [api, params, paramsOption],
   );
 
   const itemIdsInTable = useCallback(
@@ -48,18 +48,18 @@ const useExampleDataQuery = ({
       (
         await api({ ...params, ...paramsOption, offset: 0, limit: 10000 })
       ).data.map(({ id }) => id),
-    [api, params, paramsOption]
+    [api, params, paramsOption],
   );
 
   const itemIdsOnPage = useCallback(
     async () =>
       (await api({ ...params, ...paramsOption })).data.map(({ id }) => id),
-    [api, params, paramsOption]
+    [api, params, paramsOption],
   );
 
   const fetch = useCallback(
     async (params) => await api({ ...params, ...paramsOption }),
-    [api, paramsOption]
+    [api, paramsOption],
   );
 
   return {

@@ -18,14 +18,14 @@ describe('useSelectionManager', () => {
 
     it('returns an object with function to manage selections wihtout groups', () => {
       const { result } = renderHook(() =>
-        useSelectionManager(...defaultArguments)
+        useSelectionManager(...defaultArguments),
       );
       expect(result.current.selection).toEqual(defaultArguments[0]);
     });
 
     it('adds an item from the selection when calling select', () => {
       const { result } = renderHook(() =>
-        useSelectionManager(...defaultArguments)
+        useSelectionManager(...defaultArguments),
       );
 
       act(() => {
@@ -37,7 +37,7 @@ describe('useSelectionManager', () => {
 
     it('removes an item from the selection when calling deselect', () => {
       const { result } = renderHook(() =>
-        useSelectionManager(...defaultArguments)
+        useSelectionManager(...defaultArguments),
       );
 
       act(() => {
@@ -45,14 +45,14 @@ describe('useSelectionManager', () => {
       });
 
       expect(result.current.selection).toEqual(
-        defaultArguments[0].filter((v) => v !== 3)
+        defaultArguments[0].filter((v) => v !== 3),
       );
     });
 
     it('sets items for a selection when calling set', () => {
       const newSelection = [0, 9, 8, 45, 3];
       const { result } = renderHook(() =>
-        useSelectionManager(...defaultArguments)
+        useSelectionManager(...defaultArguments),
       );
 
       act(() => {
@@ -65,7 +65,7 @@ describe('useSelectionManager', () => {
     it('resets selection to preselection', () => {
       const newSelection = [0, 9, 8, 45, 3];
       const { result } = renderHook(() =>
-        useSelectionManager(...defaultArguments)
+        useSelectionManager(...defaultArguments),
       );
 
       act(() => {
@@ -88,7 +88,7 @@ describe('useSelectionManager', () => {
 
     it('returns an object with function to manage selections with groups', () => {
       const { result } = renderHook(() =>
-        useSelectionManager(...defaultArguments)
+        useSelectionManager(...defaultArguments),
       );
       expect(result.current.clear).toBeDefined();
       expect(result.current.set).toBeDefined();
@@ -99,7 +99,7 @@ describe('useSelectionManager', () => {
 
     it('adds an item from the selection when calling select', () => {
       const { result } = renderHook(() =>
-        useSelectionManager(...defaultArguments)
+        useSelectionManager(...defaultArguments),
       );
 
       act(() => {
@@ -114,7 +114,7 @@ describe('useSelectionManager', () => {
 
     it('removes an item from the selection when calling deselect', () => {
       const { result } = renderHook(() =>
-        useSelectionManager(...defaultArguments)
+        useSelectionManager(...defaultArguments),
       );
 
       act(() => {
@@ -126,7 +126,7 @@ describe('useSelectionManager', () => {
 
     it('sets items for a selection when calling set', () => {
       const { result } = renderHook(() =>
-        useSelectionManager(...defaultArguments)
+        useSelectionManager(...defaultArguments),
       );
 
       act(() => {
@@ -138,7 +138,7 @@ describe('useSelectionManager', () => {
 
     it('resets selection to preselected on reset', () => {
       const { result } = renderHook(() =>
-        useSelectionManager(...defaultArguments)
+        useSelectionManager(...defaultArguments),
       );
 
       act(() => {
