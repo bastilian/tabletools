@@ -34,7 +34,13 @@ import { toToolbarActions } from './helpers';
  *  @group Hooks
  *
  */
-const useTableTools = (items, options = {}) => {
+const useTableTools = (
+  externalLoading,
+  externalItems,
+  externalError,
+  externalTotal,
+  options = {},
+) => {
   const {
     toolbarProps: toolbarPropsOption,
     tableProps: tablePropsOption,
@@ -42,14 +48,22 @@ const useTableTools = (items, options = {}) => {
     actionResolver,
     debug: debugOption,
   } = options;
+
   const debug = useDebug(debugOption);
 
-  const { loaded, items: usableItems, total } = useItems(items, options);
-  const actionResolverEnabled = usableItems?.length > 0;
+  const { loading, items, error, total } = useItems(
+    externalLoading,
+    externalItems,
+    externalError,
+    externalTotal,
+  );
+  // TODO investigate and maybe refactor
+  const actionResolverEnabled = items?.length > 0;
 
   const { columns, columnManagerAction, columnManagerModalProps } =
     useColumnManager(options);
 
+  // TODO extract to separate hook
   const { toolbarProps: toolbarActionsProps } = useMemo(
     () =>
       toToolbarActions({
@@ -78,7 +92,7 @@ const useTableTools = (items, options = {}) => {
 
   const { tableProps: radioSelectTableProps } = useRadioSelect({
     ...options,
-    total: usableItems?.length || 0,
+    total: items?.length || 0,
   });
 
   const {
@@ -88,14 +102,14 @@ const useTableTools = (items, options = {}) => {
   } = useBulkSelect({
     ...options,
     total,
-    itemIdsOnPage: usableItems?.map(({ id }) => id),
+    itemIdsOnPage: items?.map(({ id }) => id),
   });
 
   const {
     toolbarProps: tableViewToolbarProps,
     tableProps: tableViewTableProps,
     tableViewToggleProps,
-  } = useTableView(usableItems, columns, {
+  } = useTableView(loading, items, error, total, {
     ...options,
     expandable: expandableTableViewOptions,
     bulkSelect: bulkSelectTableViewOptions,
@@ -165,12 +179,21 @@ const useTableTools = (items, options = {}) => {
   useDeepCompareEffect(() => {
     if (debug) {
       console.group('TableTools props');
-      console.log('externalItems', items);
-      console.log('externalTotal', total);
+      console.log('externalLoading', externalLoading);
+      console.log('externalItems', externalItems);
+      console.log('externalError', externalError);
+      console.log('externalTotal', externalTotal);
       console.log('options', options);
       console.groupEnd();
     }
-  }, [items, total, options, debug]);
+  }, [
+    externalLoading,
+    externalItems,
+    externalError,
+    externalTotal,
+    options,
+    debug,
+  ]);
 
   useDeepCompareEffect(() => {
     if (debug) {
@@ -182,7 +205,7 @@ const useTableTools = (items, options = {}) => {
   }, [tableProps, toolbarProps, debug]);
 
   return {
-    loaded,
+    loading,
     toolbarProps,
     tableProps,
     columnManagerModalProps,

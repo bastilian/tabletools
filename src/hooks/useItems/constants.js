@@ -1,1 +1,4 @@
-export const TABLE_STATE_NAMESPACE = 'items';
+export const initialItemsState = {
+  items: undefined,
+  total: undefined,
+};

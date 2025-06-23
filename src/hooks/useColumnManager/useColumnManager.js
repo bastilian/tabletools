@@ -41,7 +41,8 @@ const useColumnManager = (options = {}) => {
     setIsManagerOpen(true);
   }, []);
 
-  const applyColumns = useCallback((newSelectedColumns) => {
+  const applyColumns = useCallback((newSelectedColumns, ...rest) => {
+    console.log('newSelectedColumns', newSelectedColumns, ...rest);
     setSelectedColumns(newSelectedColumns);
     setIsManagerOpen(false);
   }, []);

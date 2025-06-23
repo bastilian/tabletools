@@ -10,6 +10,7 @@ import {
   SkeletonTable,
   ColumnManagementModal,
 } from '@patternfly/react-component-groups';
+
 import PrimaryToolbar from '@redhat-cloud-services/frontend-components/PrimaryToolbar';
 import TableToolbar from '@redhat-cloud-services/frontend-components/TableToolbar';
 
@@ -18,12 +19,12 @@ import { TableContext } from '~/hooks/useTableState/constants';
 import { TableStateProvider, FilterModal, TableViewToggle } from '~/components';
 
 const TableToolsTable = ({
-  items,
-  error,
+  loading: externalLoading,
+  items: externalItems,
+  error: externalError,
+  total: externalTotal,
   columns,
   filters,
-  total,
-  loading,
   options,
   // TODO I'm not sure if we need this level of customisation.
   // It might actually hurt in the long run. Consider removing until we really have the case where we need this
@@ -35,23 +36,25 @@ const TableToolsTable = ({
   ...tablePropsRest
 }) => {
   const {
-    loaded,
+    loading,
     toolbarProps,
     tableProps,
     filterModalProps,
     columnManagerModalProps,
     tableViewToggleProps,
-  } = useTableTools(items, {
-    filters,
-    columns,
-    toolbarProps: toolbarPropsProp,
-    tableProps: tablePropsRest,
-    total,
-    error,
-    ...options,
-  });
-
-  const skeletonLoading = !loaded || loading;
+  } = useTableTools(
+    externalLoading,
+    externalItems,
+    externalError,
+    externalTotal,
+    {
+      filters,
+      columns,
+      toolbarProps: toolbarPropsProp,
+      tableProps: tablePropsRest,
+      ...options,
+    },
+  );
 
   return (
     <>
@@ -59,9 +62,10 @@ const TableToolsTable = ({
         {tableViewToggleProps && <TableViewToggle {...tableViewToggleProps} />}
       </PrimaryToolbar>
 
-      {skeletonLoading ? (
+      {loading ? (
         <SkeletonTable
           rowSize={toolbarProps?.pagination?.perPage || 10}
+          // TODO use Th when migrating to PF composable tables
           columns={columns.map(({ title }) => title)}
         />
       ) : (

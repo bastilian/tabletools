@@ -1,5 +1,6 @@
 import React from 'react';
 import { treeRow } from '@patternfly/react-table';
+import { ErrorState } from '@patternfly/react-component-groups';
 
 const columnProp = (column) =>
   column.key || column.original?.toLowerCase() || column.title?.toLowerCase();
@@ -166,6 +167,21 @@ export const emptyRows = (
           title: () => (
             <EmptyStateComponent kind={kind} {...{ items, columns, options }} />
           ),
+          props: {
+            colSpan: columns.length,
+          },
+        },
+      ],
+    },
+  ],
+});
+
+export const errorRows = (columns) => ({
+  rows: [
+    {
+      cells: [
+        {
+          title: () => <ErrorState />,
           props: {
             colSpan: columns.length,
           },
