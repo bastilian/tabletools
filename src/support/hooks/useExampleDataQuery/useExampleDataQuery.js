@@ -1,23 +1,31 @@
 import { useCallback, useState } from 'react';
-import { useDeepCompareEffect } from 'use-deep-compare';
+import { useDeepCompareEffect, useDeepCompareCallback } from 'use-deep-compare';
 
-import fakeApi from '~/support/fakeApi';
+import { useSerialisedTableState } from '~/hooks';
+
 import useParamsFromTableState from './hooks/useParamsFromTableState';
 
-const useExampleDataQuery = ({
-  api = fakeApi,
-  params: paramsOption = {},
-} = {}) => {
-  const params = useParamsFromTableState();
+const useExampleDataQuery = ({ endpoint, params: paramsOption = {} } = {}) => {
+  const serialisedTableState = useSerialisedTableState();
+  const params = useParamsFromTableState(serialisedTableState);
   const [result, setResult] = useState();
   const [error, setError] = useState();
-  const [loading, setLoading] = useState(false);
+  // const [loading, setLoading] = useState(true);
 
-  // TODO Check why the API gets called twice on initialisation
+  const api = useDeepCompareCallback(
+    async (params) => {
+      console.log('Yolo params', params);
+      const response = await fetch(
+        endpoint + '?' + new URLSearchParams(params).toString(),
+      );
+      const json = await response.json();
+      return json;
+    },
+    [endpoint],
+  );
+
   useDeepCompareEffect(() => {
-    const fakeFetchDate = async (params) => {
-      setLoading(true);
-
+    const fetchData = async (params) => {
       try {
         const apiResult = await api({ ...params, ...paramsOption });
 
@@ -25,28 +33,30 @@ const useExampleDataQuery = ({
       } catch (e) {
         console.log(e);
         setError(e);
-      } finally {
-        setLoading(false);
       }
+
+      // setLoading(false);
     };
 
-    fakeFetchDate(params);
+    if (serialisedTableState) {
+      // setLoading(true);
+      setResult(undefined);
+      setError(undefined);
 
-    return () => {
-      setLoading(false);
-    };
-  }, [api, params, paramsOption]);
+      fetchData(params);
+    }
+  }, [api, params, paramsOption, serialisedTableState]);
 
   const exporter = useCallback(
     async () =>
-      (await api({ ...params, ...paramsOption, offset: 0, limit: 10000 })).data,
+      (await api({ ...params, ...paramsOption, offset: 0, limit: 'max' })).data,
     [api, params, paramsOption],
   );
 
   const itemIdsInTable = useCallback(
     async () =>
       (
-        await api({ ...params, ...paramsOption, offset: 0, limit: 10000 })
+        await api({ ...params, ...paramsOption, offset: 0, limit: 'max' })
       ).data.map(({ id }) => id),
     [api, params, paramsOption],
   );
@@ -57,7 +67,7 @@ const useExampleDataQuery = ({
     [api, params, paramsOption],
   );
 
-  const fetch = useCallback(
+  const _fetch = useCallback(
     async (params) => await api({ ...params, ...paramsOption }),
     [api, paramsOption],
   );
@@ -73,8 +83,8 @@ const useExampleDataQuery = ({
           error,
         }
       : {}),
-    loading,
-    fetch,
+    loading: !(result || error),
+    fetch: _fetch,
     exporter,
     itemIdsInTable,
     itemIdsOnPage,

@@ -25,6 +25,7 @@ import filtersSerialiser from '~/support/serialisers/filters';
 import useExampleDataQuery from '~/support/hooks/useExampleDataQuery';
 
 import { fakePlasticTreeApi } from '~/support/fakeApi';
+import mswHandlers from '~/support/mswHandler';
 
 const defaultOptions = {
   serialisers: {
@@ -36,6 +37,11 @@ const defaultOptions = {
 
 const meta = {
   title: 'TableToolsTable',
+  parameters: {
+    msw: {
+      handlers: mswHandlers,
+    },
+  },
   decorators: [
     (Story) => (
       <Page>
@@ -66,6 +72,59 @@ const emptyRows = (_kind, colSpan) => [
   },
 ];
 
+const CommonExample = ({
+  columns,
+  filters,
+  sortable,
+  manageColumns,
+  customEmptyRows,
+  customEmptyState,
+  enableExport,
+  enableDetails,
+  enableBulkSelect,
+}) => {
+  const {
+    loading,
+    result: { data, meta: { total } = {} } = {},
+    error,
+    exporter,
+    itemIdsInTable,
+    itemIdsOnPage,
+  } = useExampleDataQuery({ endpoint: '/api' });
+
+  return (
+    <TableToolsTable
+      loading={loading}
+      items={data}
+      total={total}
+      error={error}
+      columns={columns}
+      {...(filters
+        ? {
+            filters: { filterConfig: filters },
+          }
+        : {})}
+      options={{
+        ...defaultOptions,
+        manageColumns,
+        ...(customEmptyRows ? { emptyRows: emptyRows(2) } : {}),
+        ...(customEmptyState ? { EmptyState: CustomEmptyState } : {}),
+        ...(enableExport ? { exporter } : {}),
+        ...(enableDetails ? { detailsComponent: DetailsRow } : {}),
+        ...(enableBulkSelect
+          ? {
+              onSelect: (selected) => {
+                console.log('Currently selected', selected);
+              },
+              itemIdsInTable,
+              itemIdsOnPage,
+            }
+          : {}),
+      }}
+    />
+  );
+};
+
 export const Common = {
   args: {
     columns,
@@ -86,58 +145,133 @@ export const Common = {
       </TableStateProvider>
     ),
   ],
-  render: ({
-    columns,
-    filters,
-    sortable,
-    manageColumns,
-    customEmptyRows,
-    customEmptyState,
-    enableExport,
-    enableDetails,
-    enableBulkSelect,
-  }) => {
-    const {
-      result: { data, meta: { total } = {} } = {},
-      exporter,
-      itemIdsInTable,
-      itemIdsOnPage,
-    } = useExampleDataQuery();
-
-    return (
-      <TableToolsTable
-        items={data}
-        columns={
-          sortable
-            ? columns
-            : columns.map((column) => ({ ...column, sortable: undefined }))
-        }
-        total={total}
-        {...(filters
-          ? {
-              filters: { filterConfig: filters },
-            }
-          : {})}
-        options={{
-          ...defaultOptions,
-          manageColumns,
-          ...(customEmptyRows ? { emptyRows: emptyRows(2) } : {}),
-          ...(customEmptyState ? { EmptyState: CustomEmptyState } : {}),
-          ...(enableExport ? { exporter } : {}),
-          ...(enableDetails ? { detailsComponent: DetailsRow } : {}),
-          ...(enableBulkSelect
-            ? {
-                onSelect: (selected) => {
-                  console.log('Currently selected', selected);
-                },
-                itemIdsInTable,
-                itemIdsOnPage,
-              }
-            : {}),
-        }}
-      />
-    );
+  render: (args) => {
+    return <CommonExample {...args} />;
   },
+};
+
+const WithFilterModalExample = () => {
+  const {
+    result: { data, meta: { total } = {} } = {},
+    error,
+    loading,
+  } = useExampleDataQuery({ endpoint: '/api' });
+
+  const genreFilterOptions = genres.map((genre) => ({
+    label: genre,
+    value: genre,
+  }));
+
+  return (
+    <TableToolsTable
+      loading={loading}
+      items={data}
+      total={total}
+      error={error}
+      columns={columns}
+      options={defaultOptions}
+      filters={{
+        filterConfig: [
+          {
+            type: 'group',
+            label: 'Years by decade',
+            filterSerialiser: (_filterConfigItem, value) => {
+              const allYears = Object.entries(value).reduce(
+                (years, [, groupYears]) => [
+                  ...years,
+                  ...Object.keys(groupYears),
+                ],
+                [],
+              );
+
+              return `.releaseYear in [${allYears.join(', ')}]`;
+            },
+            groups: [
+              {
+                label: '80s',
+                value: '80s',
+                items: [...new Array(10)].map((_, idx) => ({
+                  label: `198${idx}`,
+                  value: `198${idx}`,
+                })),
+              },
+              {
+                label: '90s',
+                value: '90s',
+                items: [...new Array(10)].map((_, idx) => ({
+                  label: `199${idx}`,
+                  value: `199${idx}`,
+                })),
+              },
+              {
+                label: '00s',
+                value: '00s',
+                items: [...new Array(10)].map((_, idx) => ({
+                  label: `200${idx}`,
+                  value: `200${idx}`,
+                })),
+              },
+              {
+                label: '10s',
+                value: '10s',
+                items: [...new Array(10)].map((_, idx) => ({
+                  label: `201${idx}`,
+                  value: `201${idx}`,
+                })),
+              },
+              {
+                label: '20s',
+                value: '20s',
+                items: [...new Array(5)].map((_, idx) => ({
+                  label: `201${idx}`,
+                  value: `201${idx}`,
+                })),
+              },
+            ],
+            modal: {
+              title: 'Select years to filter by',
+            },
+          },
+          {
+            type: 'checkbox',
+            label: 'Genre With Modal',
+            filterAttribute: 'genre',
+            items: genreFilterOptions,
+            modal: true,
+          },
+          {
+            type: 'checkbox',
+            label: 'Genre With fetched items',
+            filterAttribute: 'genre',
+            items: async () => genreFilterOptions,
+            modal: true,
+          },
+          {
+            type: 'checkbox',
+            label: 'Genre With fetched items and modal items',
+            filterAttribute: 'genre',
+            items: genreFilterOptions,
+            modal: {
+              items: async (
+                _serialisedState,
+                { pagination: { state } = { page: 1, perPage: 10 } } = {},
+              ) => {
+                const offset = (state?.page - 1) * state?.perPage;
+                const limit = state?.perPage;
+
+                return [
+                  genreFilterOptions
+                    .slice(offset, offset + limit)
+                    .map((item) => ({ ...item, id: item.value })),
+                  genreFilterOptions.length,
+                ];
+              },
+            },
+          },
+        ],
+      }}
+    />
+  );
 };
 
 export const WithFilterModal = {
@@ -148,123 +282,7 @@ export const WithFilterModal = {
       </TableStateProvider>
     ),
   ],
-  render: () => {
-    const { result: { data, meta: { total } = {} } = {} } =
-      useExampleDataQuery();
-    const genreFilterOptions = genres.map((genre) => ({
-      label: genre,
-      value: genre,
-    }));
-
-    return (
-      <TableToolsTable
-        items={data}
-        total={total}
-        columns={columns}
-        options={defaultOptions}
-        filters={{
-          filterConfig: [
-            {
-              type: 'group',
-              label: 'Years by decade',
-              filterSerialiser: (_filterConfigItem, value) => {
-                const allYears = Object.entries(value).reduce(
-                  (years, [, groupYears]) => [
-                    ...years,
-                    ...Object.keys(groupYears),
-                  ],
-                  [],
-                );
-
-                return `.releaseYear in [${allYears.join(', ')}]`;
-              },
-              groups: [
-                {
-                  label: '80s',
-                  value: '80s',
-                  items: [...new Array(10)].map((_, idx) => ({
-                    label: `198${idx}`,
-                    value: `198${idx}`,
-                  })),
-                },
-                {
-                  label: '90s',
-                  value: '90s',
-                  items: [...new Array(10)].map((_, idx) => ({
-                    label: `199${idx}`,
-                    value: `199${idx}`,
-                  })),
-                },
-                {
-                  label: '00s',
-                  value: '00s',
-                  items: [...new Array(10)].map((_, idx) => ({
-                    label: `200${idx}`,
-                    value: `200${idx}`,
-                  })),
-                },
-                {
-                  label: '10s',
-                  value: '10s',
-                  items: [...new Array(10)].map((_, idx) => ({
-                    label: `201${idx}`,
-                    value: `201${idx}`,
-                  })),
-                },
-                {
-                  label: '20s',
-                  value: '20s',
-                  items: [...new Array(5)].map((_, idx) => ({
-                    label: `201${idx}`,
-                    value: `201${idx}`,
-                  })),
-                },
-              ],
-              modal: {
-                title: 'Select years to filter by',
-              },
-            },
-            {
-              type: 'checkbox',
-              label: 'Genre With Modal',
-              filterAttribute: 'genre',
-              items: genreFilterOptions,
-              modal: true,
-            },
-            {
-              type: 'checkbox',
-              label: 'Genre With fetched items',
-              filterAttribute: 'genre',
-              items: async () => genreFilterOptions,
-              modal: true,
-            },
-            {
-              type: 'checkbox',
-              label: 'Genre With fetched items and modal items',
-              filterAttribute: 'genre',
-              items: genreFilterOptions,
-              modal: {
-                items: async (
-                  _serialisedState,
-                  { pagination: { state } = { page: 1, perPage: 10 } } = {},
-                ) => {
-                  const offset = (state?.page - 1) * state?.perPage;
-                  const limit = state?.perPage;
-
-                  return [
-                    genreFilterOptions
-                      .slice(offset, offset + limit)
-                      .map((item) => ({ ...item, id: item.value })),
-                    genreFilterOptions.length,
-                  ];
-                },
-              },
-            },
-          ],
-        }}
-      />
-    );
-  },
+  render: () => <WithFilterModalExample />,
 };
 
 const customNumberFilterType = {
@@ -280,6 +298,31 @@ const customNumberFilter = {
   filterAttribute: 'rating',
 };
 
+const WithCustomFilterExample = () => {
+  const {
+    loading,
+    result: { data, meta: { total } = {} } = {},
+    error,
+  } = useExampleDataQuery({ endpoint: '/api' });
+
+  return (
+    <TableToolsTable
+      loading={loading}
+      items={data}
+      total={total}
+      error={error}
+      columns={columns}
+      filters={{
+        filterConfig: [customNumberFilter],
+        customFilterTypes: {
+          number: customNumberFilterType,
+        },
+      }}
+      options={defaultOptions}
+    />
+  );
+};
+
 export const WithCustomFilter = {
   decorators: [
     (Story) => (
@@ -288,25 +331,7 @@ export const WithCustomFilter = {
       </TableStateProvider>
     ),
   ],
-  render: () => {
-    const { result: { data, meta: { total } = {} } = {} } =
-      useExampleDataQuery();
-
-    return (
-      <TableToolsTable
-        items={data}
-        columns={columns}
-        filters={{
-          filterConfig: [customNumberFilter],
-          customFilterTypes: {
-            number: customNumberFilterType,
-          },
-        }}
-        total={total}
-        options={defaultOptions}
-      />
-    );
-  },
+  render: () => <WithCustomFilterExample />,
 };
 
 export const WithTableTree = {
@@ -322,6 +347,8 @@ export const WithTableTree = {
 
     const {
       result: { data, meta: { total } = {} } = {},
+      loading,
+      error,
       exporter,
       itemIdsInTable,
       itemIdsOnPage,
@@ -331,16 +358,23 @@ export const WithTableTree = {
         : {}),
     });
 
-    const { result: tableTree } = useExampleDataQuery({
-      api: fakePlasticTreeApi,
+    const {
+      result: tableTree,
+      loading: treeLoading,
+      error: treeError,
+    } = useExampleDataQuery({
+      endpoint: '/treeapi',
+      fetchApi: fakePlasticTreeApi,
     });
 
     return (
       <TableToolsTable
+        loading={loading || treeLoading}
         items={data}
+        total={total}
+        error={error || treeError}
         columns={columns}
         filters={{ filterConfig: filters }}
-        total={total}
         options={{
           ...defaultOptions,
           manageColumns: true,
@@ -375,7 +409,7 @@ export const WithAsyncFunction = {
     customEmptyRows,
     customEmptyState,
   }) => {
-    const { fetch } = useExampleDataQuery();
+    const { fetch } = useExampleDataQuery({ endpoint: '/api' });
 
     const fetchItems = useCallback(
       async ({ pagination = {}, filters, sort } = {}) => {
@@ -384,8 +418,8 @@ export const WithAsyncFunction = {
           meta: { total },
         } = await fetch({
           ...pagination,
-          filters,
-          sort,
+          ...(filters ? { filters } : {}),
+          ...(sort ? { sort } : {}),
         });
 
         return [items, total];

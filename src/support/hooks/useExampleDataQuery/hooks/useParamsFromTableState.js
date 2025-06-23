@@ -1,13 +1,14 @@
-import { useMemo } from 'react';
+import { useDeepCompareMemo } from 'use-deep-compare';
 
-import { useSerialisedTableState } from '~/hooks';
-
-const useParamsFromTableState = () => {
-  const serialisedTableState = useSerialisedTableState();
-
-  const params = useMemo(() => {
+const useParamsFromTableState = (serialisedTableState) => {
+  const params = useDeepCompareMemo(() => {
+    console.log('Params change', serialisedTableState);
     const { filters, pagination, sort } = serialisedTableState || {};
-    return { filters, ...pagination, sort };
+    return {
+      ...(filters ? { filters } : {}),
+      ...(pagination ? pagination : {}),
+      ...(sort ? { sort } : {}),
+    };
   }, [serialisedTableState]);
 
   return params;

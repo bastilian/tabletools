@@ -1,75 +1,48 @@
-import React from 'react';
 import { ListIcon, TreeviewIcon } from '@patternfly/react-icons';
-import { Spinner } from '@patternfly/react-core';
-import { ErrorState } from '@redhat-cloud-services/frontend-components/ErrorState';
 
 import NoResultsTable from '~/components/NoResultsTable';
 
-import { treeColumns, getOnTreeSelect, emptyRows } from './helpers';
+import { treeColumns, getOnTreeSelect, emptyRows, errorRows } from './helpers';
 import rowsBuilder from './rowsBuilder';
 import treeChopper from './treeChopper';
 
 const views = {
-  loading: {
-    tableProps: (_items, columns) => ({
-      rows: [
-        {
-          cells: [
-            {
-              title: () => <Spinner />,
-              props: {
-                colSpan: columns.length,
-              },
-            },
-          ],
-        },
-      ],
-    }),
-    checkOptions: () => true,
-  },
-  error: {
-    tableProps: (_items, columns) => ({
-      rows: [
-        {
-          cells: [
-            {
-              title: () => <ErrorState />,
-              props: {
-                colSpan: columns.length,
-              },
-            },
-          ],
-        },
-      ],
-    }),
-    checkOptions: () => true,
-  },
-  empty: {
-    tableProps: (items, columns, options) => {
+  rows: {
+    tableProps: (_loading, items, error, total, options) => {
       const {
         emptyRows: customEmptyRows,
         kind,
         EmptyState: CustomEmptyState,
+        columns,
       } = options;
-      const EmptyStateComponent = CustomEmptyState || NoResultsTable;
 
-      return customEmptyRows
-        ? { rows: customEmptyRows }
-        : emptyRows(EmptyStateComponent, kind, columns, items, options);
-    },
-    checkOptions: () => true,
-  },
-  rows: {
-    tableProps: (items, columns, options) => {
-      const rows = rowsBuilder(items, columns, options);
+      if (error) {
+        return errorRows(columns);
+      }
 
-      return rows ? { rows } : {};
+      if (total === 0) {
+        const EmptyStateComponent = CustomEmptyState || NoResultsTable;
+
+        return customEmptyRows
+          ? { rows: customEmptyRows }
+          : emptyRows(EmptyStateComponent, kind, columns, items, options);
+      } else {
+        const rows = rowsBuilder(items, columns, options);
+
+        return rows ? { rows } : {};
+      }
     },
     icon: ListIcon,
     checkOptions: () => true,
   },
   tree: {
-    tableProps: (items, columns, options) => {
+    tableProps: (_loading, items, error, _total, options) => {
+      const { columns } = options;
+
+      if (error) {
+        return errorRows(columns);
+      }
+
       const rows = treeChopper(items, columns, options);
       const onSelect = getOnTreeSelect(options);
       const cells = treeColumns(

@@ -29,7 +29,6 @@ const useTableState = (namespace, initialState, options = {}) => {
     callbacks,
     state: [state, setState],
   } = useContextOrInternalStateAndRefs();
-
   useStateObservers(namespace, options.observers, observers);
   useSerialisers(namespace, options.serialiser, serialisers);
   useCallbacks(namespace, options.callbacks, callbacks);
@@ -46,27 +45,32 @@ const useTableState = (namespace, initialState, options = {}) => {
           namespace,
           currentState,
           newState,
-          observers.current,
+          [],
           serialisers.current,
           callbacks.current,
         );
 
-        // Comment out for debugging table issues
-        // console.group('State change by', namespace);
-        // console.log('New state for namespace', newState);
-        // console.log('Current state:', currentState?.tableState);
-        // console.log('Next State:', nextState?.tableState);
-        // console.groupEnd();
+        // if (debug) {
+        console.group('State change by', namespace);
+        console.log('New state for namespace:', newState);
+        console.log('Current state:', currentState?.tableState);
+        console.log('Next State:', nextState?.tableState);
+        console.groupEnd();
+        // }
 
         return nextState;
       });
     },
-    [observers, serialisers, callbacks, setState, namespace],
+    [serialisers, callbacks, setState, namespace],
   );
 
   useDeepCompareEffect(() => {
-    setTableState(initialState);
-  }, [initialState, setTableState]);
+    if (!state) {
+      console.log('ASDASDASD');
+
+      setTableState(initialState);
+    }
+  }, [initialState, setTableState, state]);
 
   return [
     state?.tableState?.[namespace],

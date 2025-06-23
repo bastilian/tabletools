@@ -2,7 +2,14 @@ import { useDeepCompareMemo } from 'use-deep-compare';
 
 import views from '../views';
 
-const useViews = (tableView = 'loading', items, columns, options) => {
+const useViews = (
+  tableView = 'loading',
+  loading,
+  items,
+  error,
+  total,
+  options,
+) => {
   const supportedViews = useDeepCompareMemo(() => {
     return Object.fromEntries(
       Object.entries(views).filter(([, { checkOptions }]) =>
@@ -18,15 +25,27 @@ const useViews = (tableView = 'loading', items, columns, options) => {
       ),
     [supportedViews],
   );
-  const tableProps = useDeepCompareMemo(
-    () =>
-      supportedViews[tableView]?.tableProps?.(items, columns, options) || {},
-    [supportedViews, tableView, items, columns, options],
-  );
-  const toolbarProps = useDeepCompareMemo(
-    () =>
-      supportedViews[tableView]?.toolbarProps?.(items, columns, options) || {},
-    [supportedViews, tableView, items, columns, options],
+
+  const { tableProps, toolbarProps } = useDeepCompareMemo(
+    () => ({
+      tableProps:
+        supportedViews[tableView]?.tableProps?.(
+          loading,
+          items,
+          error,
+          total,
+          options,
+        ) || {},
+      toolbarProps:
+        supportedViews[tableView]?.toolbarProps?.(
+          loading,
+          items,
+          error,
+          total,
+          options,
+        ) || {},
+    }),
+    [supportedViews, tableView, loading, items, error, total, options],
   );
 
   return { tableProps, toolbarProps, choosableViews };

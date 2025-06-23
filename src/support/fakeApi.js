@@ -4,7 +4,6 @@ import itemsFactory from '~/support/factories/items';
 import { buildTree } from '~/support/factories/tableTree';
 const DEFAULT_LIMIT = 10;
 const DEFAULT_ITEM_TOTAL = 2048;
-const DEFAULT_LATENCY = 1000;
 
 const items = itemsFactory(DEFAULT_ITEM_TOTAL);
 
@@ -16,44 +15,30 @@ const buildQuery = (filters, sort) => {
       ? [`sort(.${sortAttribute}, "${sortDirection}")`]
       : []),
   ].join(' | ');
-  console.log('JSONQuery:', query);
+  console.log('[API][JSONQuery]:', query);
 
   return query;
 };
-
-const sleep = (timeout) =>
-  new Promise((resolve) => setTimeout(resolve, timeout));
 
 /**
  *
  * This function serves as an "API" for examples and tests
  *
  */
-const fakeApi = async ({
-  filters,
-  sort,
-  offset = 0,
-  limit = DEFAULT_LIMIT,
-  latency = DEFAULT_LATENCY,
-} = {}) => {
-  console.log('Fake API call with:', { filters, sort, offset, limit, latency });
+export const fakeApi = (
+  endpoint,
+  { filters, sort, offset = 0, limit = DEFAULT_LIMIT } = {},
+) => {
   const query = buildQuery(filters, sort);
   const queriedItems = query.length ? jsonquery(items, query) : items;
   const actualLimit = limit === 'max' ? items.length : limit;
 
-  const result = {
+  return {
     data: queriedItems.slice(offset, offset + actualLimit),
     meta: {
       total: queriedItems.length,
     },
   };
-
-  await sleep(latency);
-
-  console.log('Fake API result:', result);
-  return result;
 };
 
 export const fakePlasticTreeApi = async () => buildTree({ items });
-
-export default fakeApi;

@@ -28,7 +28,7 @@ const useExpandable = (options) => {
   const enableExpandingRow = !!options?.detailsComponent || !!options.treeTable;
   const { selection: openItems, toggle } = useSelectionManager([]);
   // TODO If the selection manager is based on `useTableState`, observes can be used to reset open items
-  const [, setOpenItemsState] = useTableState('open-items');
+  const [, setOpenItemsState] = useTableState('open-items', openItems);
 
   const onCollapse = (_event, _index, _isOpen, { item: { itemId } }) =>
     toggle(itemId);
@@ -57,7 +57,8 @@ const useExpandable = (options) => {
 
   // TODO This is hackish. We should rather have a selection manager based on a table state
   useEffect(() => {
-    setOpenItemsState(openItems || []);
+    console.log('SADASDASD');
+    setOpenItemsState(openItems);
   }, [openItems, setOpenItemsState]);
 
   return {
