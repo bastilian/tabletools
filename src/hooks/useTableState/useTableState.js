@@ -1,6 +1,8 @@
 import { useCallback } from 'react';
 import { useDeepCompareEffect } from 'use-deep-compare';
 
+import useDebug from '~/hooks/useDebug';
+
 import useContextOrInternalStateAndRefs from './hooks/useContextOrInternalStateAndRefs';
 import useStateObservers from './hooks/useStateObservers';
 import useSerialisers from './hooks/useSerialisers';
@@ -23,13 +25,13 @@ import compileState from './helpers/compileState';
  *
  */
 const useTableState = (namespace, initialState, options = {}) => {
+  const debug = useDebug();
   const {
     serialisers,
     observers,
     callbacks,
     state: [state, setState],
   } = useContextOrInternalStateAndRefs();
-
   useStateObservers(namespace, options.observers, observers);
   useSerialisers(namespace, options.serialiser, serialisers);
   useCallbacks(namespace, options.callbacks, callbacks);
@@ -46,22 +48,23 @@ const useTableState = (namespace, initialState, options = {}) => {
           namespace,
           currentState,
           newState,
-          observers.current,
+          [],
           serialisers.current,
           callbacks.current,
         );
 
-        // Comment out for debugging table issues
-        // console.group('State change by', namespace);
-        // console.log('New state for namespace', newState);
-        // console.log('Current state:', currentState?.tableState);
-        // console.log('Next State:', nextState?.tableState);
-        // console.groupEnd();
+        if (debug) {
+          console.group('State change by', namespace);
+          console.log('New state for namespace:', newState);
+          console.log('Current state:', currentState?.tableState);
+          console.log('Next State:', nextState?.tableState);
+          console.groupEnd();
+        }
 
         return nextState;
       });
     },
-    [observers, serialisers, callbacks, setState, namespace],
+    [serialisers, callbacks, setState, namespace, debug],
   );
 
   useDeepCompareEffect(() => {

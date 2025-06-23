@@ -16,3 +16,5 @@ export { default as useFullTableState } from './useTableState/hooks/useFullTable
 export { default as useRawTableState } from './useTableState/hooks/useRawTableState';
 export { default as useSerialisedTableState } from './useTableState/hooks/useSerialisedTableState';
 export { default as useStateCallbacks } from './useTableState/hooks/useStateCallbacks';
+
+export { default as useDebug } from './useDebug';

@@ -18,17 +18,17 @@ import { TableContext } from '~/hooks/useTableState/constants';
  */
 const TableStateProvider = ({ children }) => {
   const state = useState();
-  const observers = useRef({});
   const serialisers = useRef({});
   const callbacks = useRef({});
+  const debug = useRef(false);
 
   return (
     <TableContext.Provider
       value={{
         state,
-        observers,
         serialisers,
         callbacks,
+        debug,
       }}
     >
       {children}
