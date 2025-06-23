@@ -12,27 +12,26 @@ describe('useItems', () => {
 
   it('accepts an array as items and sets it as the state directly', async () => {
     const { result } = renderHook(
-      () => useItems(exampleItems),
+      () => useItems(false, exampleItems, undefined, exampleItems.length),
       DEFAULT_RENDER_OPTIONS,
     );
 
     await waitFor(() =>
       expect(result.current.items).toEqual(exampleItems.map(appendMockItemId)),
     );
-    await waitFor(() => expect(result.current.loaded).toEqual(true));
   });
 
   it('accepts an async function returning an array as items and sets it as the state directly and set loaded to true', async () => {
     const tenItems = exampleItems.slice(0, 10).map(appendMockItemId);
     const asyncItems = async () => [tenItems, exampleItems.length];
     const { result } = renderHook(
-      () => useItems(asyncItems),
+      () => useItems(undefined, asyncItems, undefined, undefined),
       DEFAULT_RENDER_OPTIONS,
     );
 
     await waitFor(() =>
       expect(result.current).toEqual({
-        loaded: true,
+        loading: false,
         items: tenItems,
         total: exampleItems.length,
       }),

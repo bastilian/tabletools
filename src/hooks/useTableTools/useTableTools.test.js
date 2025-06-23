@@ -9,26 +9,32 @@ import useTableTools from './useTableTools';
 describe('useTableTools', () => {
   const exampleItems = items(30).sort((item) => item.name);
 
-  const defaultArguments = [exampleItems, { columns }];
+  const defaultArguments = [
+    false,
+    exampleItems,
+    undefined,
+    exampleItems.length,
+    { columns },
+  ];
 
-  it('returns a object with tableProps and toolbarProps even with no items, columns or options passed', () => {
+  it('returns a object with tableProps and toolbarProps even with no items, columns or options passed', async () => {
     const { result } = renderHook(
-      () => useTableTools([], { columns: [] }),
+      () => useTableTools(false, [], undefined, 0, { columns }),
       DEFAULT_RENDER_OPTIONS,
     );
 
-    expect(result.current.tableProps).toBeDefined();
-    expect(result.current.toolbarProps).toBeDefined();
+    await waitFor(() => expect(result.current.tableProps).toBeDefined());
+    await waitFor(() => expect(result.current.toolbarProps).toBeDefined());
   });
 
-  it('returns a object with tableProps and toolbarProps with items array', () => {
+  it('returns a object with tableProps and toolbarProps with items array', async () => {
     const { result } = renderHook(
       () => useTableTools(...defaultArguments),
       DEFAULT_RENDER_OPTIONS,
     );
 
-    expect(result.current.tableProps).toBeDefined();
-    expect(result.current.toolbarProps).toBeDefined();
+    await waitFor(() => expect(result.current.tableProps).toBeDefined());
+    await waitFor(() => expect(result.current.toolbarProps).toBeDefined());
   });
 
   it('returns a object with tableProps and toolbarProps while fetching items async', async () => {
@@ -38,12 +44,13 @@ describe('useTableTools', () => {
     ]);
 
     renderHook(
-      () => useTableTools(asyncFunction, { columns }),
+      () =>
+        useTableTools(undefined, asyncFunction, undefined, undefined, {
+          columns,
+        }),
       DEFAULT_RENDER_OPTIONS,
     );
 
-    await waitFor(() => {
-      return expect(asyncFunction).toHaveBeenCalled();
-    });
+    await waitFor(() => expect(asyncFunction).toHaveBeenCalled());
   });
 });

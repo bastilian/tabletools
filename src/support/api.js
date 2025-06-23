@@ -27,7 +27,10 @@ const queriedItems = (itemsToQuery) => {
     const actualLimit = limit === 'max' ? items.length : limit;
 
     return {
-      data: items.slice(offset, offset + actualLimit),
+      data: items.slice(
+        parseInt(offset),
+        parseInt(offset) + parseInt(actualLimit),
+      ),
       meta: {
         total: items.length,
       },

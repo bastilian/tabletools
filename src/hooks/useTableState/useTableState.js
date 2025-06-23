@@ -56,7 +56,7 @@ const useTableState = (namespace, initialState, options = {}) => {
 
         if (debug) {
           console.group('State change by', namespace);
-          console.log('New state for namespace', newState);
+          console.log('New state for namespace:', newState);
           console.log('Current state:', currentState?.tableState);
           console.log('Next State:', nextState?.tableState);
           console.groupEnd();
