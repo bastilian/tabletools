@@ -1,5 +1,7 @@
 import { useMemo } from 'react';
+import { useDeepCompareEffect } from 'use-deep-compare';
 
+import useDebug from '~/hooks/useDebug';
 import usePagination from '~/hooks/usePagination';
 import useFilterConfig from '~/hooks/useFilterConfig';
 import useTableSort from '~/hooks/useTableSort';
@@ -32,22 +34,36 @@ import { toToolbarActions } from './helpers';
  *  @group Hooks
  *
  */
-const useAsyncTableTools = (items, columns, options = {}) => {
+const useTableTools = (
+  externalLoading,
+  externalItems,
+  externalError,
+  externalTotal,
+  options = {},
+) => {
   const {
     toolbarProps: toolbarPropsOption,
     tableProps: tablePropsOption,
     dedicatedAction,
     actionResolver,
+    debug: debugOption,
   } = options;
-  const { loaded, items: usableItems, total } = useItems(items, options);
-  const actionResolverEnabled = usableItems?.length > 0;
 
-  const {
-    columnManagerAction,
-    columns: managedColumns,
-    ColumnManager,
-  } = useColumnManager(columns, options);
+  const debug = useDebug(debugOption);
 
+  const { loading, items, error, total } = useItems(
+    externalLoading,
+    externalItems,
+    externalError,
+    externalTotal,
+  );
+  // TODO investigate and maybe refactor
+  const actionResolverEnabled = items?.length > 0;
+
+  const { columns, columnManagerAction, columnManagerModalProps } =
+    useColumnManager(options);
+
+  // TODO extract to separate hook
   const { toolbarProps: toolbarActionsProps } = useMemo(
     () =>
       toToolbarActions({
@@ -76,7 +92,7 @@ const useAsyncTableTools = (items, columns, options = {}) => {
 
   const { tableProps: radioSelectTableProps } = useRadioSelect({
     ...options,
-    total: usableItems?.length || 0,
+    total: items?.length || 0,
   });
 
   const {
@@ -86,20 +102,20 @@ const useAsyncTableTools = (items, columns, options = {}) => {
   } = useBulkSelect({
     ...options,
     total,
-    itemIdsOnPage: usableItems?.map(({ id }) => id),
+    itemIdsOnPage: items?.map(({ id }) => id),
   });
 
   const {
     toolbarProps: tableViewToolbarProps,
     tableProps: tableViewTableProps,
-    TableViewToggle,
-  } = useTableView(usableItems, managedColumns, {
+    tableViewToggleProps,
+  } = useTableView(loading, items, error, total, {
     ...options,
     expandable: expandableTableViewOptions,
     bulkSelect: bulkSelectTableViewOptions,
   });
 
-  const { tableProps: sortableTableProps } = useTableSort(managedColumns, {
+  const { tableProps: sortableTableProps } = useTableSort(columns, {
     ...options,
     onSelect:
       bulkSelectTableProps?.onSelect ||
@@ -108,7 +124,7 @@ const useAsyncTableTools = (items, columns, options = {}) => {
   });
 
   const exportConfig = useExport({
-    columns: managedColumns,
+    columns,
     ...options,
   });
 
@@ -135,9 +151,7 @@ const useAsyncTableTools = (items, columns, options = {}) => {
 
   const tableProps = useMemo(
     () => ({
-      // TODO we should have a hook that maintains columns.
-      // at least the columns manager and table sort hook "act" on columns, currently without a good interface
-      cells: managedColumns,
+      cells: columns,
       ...sortableTableProps,
       ...bulkSelectTableProps,
       ...expandableTableProps,
@@ -148,7 +162,7 @@ const useAsyncTableTools = (items, columns, options = {}) => {
       ...tableViewTableProps,
     }),
     [
-      managedColumns,
+      columns,
       sortableTableProps,
       bulkSelectTableProps,
       tablePropsOption,
@@ -160,15 +174,42 @@ const useAsyncTableTools = (items, columns, options = {}) => {
     ],
   );
 
+  useDeepCompareEffect(() => {
+    if (debug) {
+      console.group('TableTools props');
+      console.log('externalLoading', externalLoading);
+      console.log('externalItems', externalItems);
+      console.log('externalError', externalError);
+      console.log('externalTotal', externalTotal);
+      console.log('options', options);
+      console.groupEnd();
+    }
+  }, [
+    externalLoading,
+    externalItems,
+    externalError,
+    externalTotal,
+    options,
+    debug,
+  ]);
+
+  useDeepCompareEffect(() => {
+    if (debug) {
+      console.group('TableTools return props');
+      console.log('tableProps', tableProps);
+      console.log('toolbarProps', toolbarProps);
+      console.groupEnd();
+    }
+  }, [tableProps, toolbarProps, debug]);
+
   return {
-    loaded,
+    loading,
     toolbarProps,
     tableProps,
-    // TODO We could possibly just return the configuratin/props for these components instead
-    ColumnManager,
-    TableViewToggle,
+    columnManagerModalProps,
+    tableViewToggleProps,
     filterModalProps,
   };
 };
 
-export default useAsyncTableTools;
+export default useTableTools;

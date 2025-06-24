@@ -22,10 +22,14 @@ import queryItems from './helpers/jsonQueryHelpers';
  */
 const StaticTableToolsTable = ({ items, options, ...props }) => {
   const queriedItems = useCallback(
-    async ({ filters, pagination, sort } = {}) => [
-      await queryItems(items, { filters, ...pagination, sort }),
-      items.length,
-    ],
+    async ({ filters, pagination, sort } = {}) => {
+      const queriedItems = await queryItems(items, {
+        filters,
+        ...pagination,
+        sort,
+      });
+      return [queriedItems, queriedItems.length];
+    },
     [items],
   );
 
