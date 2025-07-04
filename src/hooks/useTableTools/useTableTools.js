@@ -1,5 +1,7 @@
 import { useMemo } from 'react';
+import { useDeepCompareEffect } from 'use-deep-compare';
 
+import useDebug from '~/hooks/useDebug';
 import usePagination from '~/hooks/usePagination';
 import useFilterConfig from '~/hooks/useFilterConfig';
 import useTableSort from '~/hooks/useTableSort';
@@ -32,13 +34,16 @@ import { toToolbarActions } from './helpers';
  *  @group Hooks
  *
  */
-const useAsyncTableTools = (items, columns, options = {}) => {
+const useTableTools = (items, columns, options = {}) => {
   const {
     toolbarProps: toolbarPropsOption,
     tableProps: tablePropsOption,
     dedicatedAction,
     actionResolver,
+    debug: debugOption,
   } = options;
+  const debug = useDebug(debugOption);
+
   const { loaded, items: usableItems, total } = useItems(items, options);
   const actionResolverEnabled = usableItems?.length > 0;
 
@@ -160,6 +165,25 @@ const useAsyncTableTools = (items, columns, options = {}) => {
     ],
   );
 
+  useDeepCompareEffect(() => {
+    if (debug) {
+      console.group('TableTools props');
+      console.log('externalItems', items);
+      console.log('externalTotal', total);
+      console.log('options', options);
+      console.groupEnd();
+    }
+  }, [items, total, options, debug]);
+
+  useDeepCompareEffect(() => {
+    if (debug) {
+      console.group('TableTools return props');
+      console.log('tableProps', tableProps);
+      console.log('toolbarProps', toolbarProps);
+      console.groupEnd();
+    }
+  }, [tableProps, toolbarProps, debug]);
+
   return {
     loaded,
     toolbarProps,
@@ -171,4 +195,4 @@ const useAsyncTableTools = (items, columns, options = {}) => {
   };
 };
 
-export default useAsyncTableTools;
+export default useTableTools;

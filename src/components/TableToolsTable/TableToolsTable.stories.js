@@ -1,5 +1,5 @@
-/* eslint-disable react-hooks/rules-of-hooks */
 import React, { useCallback } from 'react';
+import propTypes from 'prop-types';
 import {
   Page,
   PageSection,
@@ -13,18 +13,18 @@ import { useFullTableState } from '~/hooks';
 
 import CustomEmptyState from '~/support/components/CustomEmptyState';
 import DetailsRow from '~/support/components/DetailsRow';
-import NumberFilter from '~/support/components/NumberFilter';
 
 import columns from '~/support/factories/columns';
-import filters from '~/support/factories/filters';
-import { genres } from '~/support/factories/items';
-
+import filters, {
+  customNumberFilterType,
+  customNumberFilter,
+} from '~/support/factories/filters';
 import paginationSerialiser from '~/support/serialisers/pagination';
 import sortSerialiser from '~/support/serialisers/sort';
 import filtersSerialiser from '~/support/serialisers/filters';
 import useExampleDataQuery from '~/support/hooks/useExampleDataQuery';
 
-import { fakePlasticTreeApi } from '~/support/fakeApi';
+import mswHandlers from '~/support/mswHandler';
 
 const defaultOptions = {
   serialisers: {
@@ -34,8 +34,40 @@ const defaultOptions = {
   },
 };
 
+const argProps = {
+  debug: propTypes.bool,
+  columns: propTypes.array,
+  filters: propTypes.array,
+  filtered: propTypes.bool,
+  sortable: propTypes.bool,
+  manageColumns: propTypes.bool,
+  customEmptyRows: propTypes.bool,
+  customEmptyState: propTypes.bool,
+  enableExport: propTypes.bool,
+  enableDetails: propTypes.bool,
+  enableBulkSelect: propTypes.bool,
+};
+
 const meta = {
   title: 'TableToolsTable',
+  args: {
+    debug: true,
+    columns,
+    filters,
+    filtered: true,
+    sortable: true,
+    manageColumns: true,
+    customEmptyRows: true,
+    customEmptyState: true,
+    enableExport: true,
+    enableDetails: true,
+    enableBulkSelect: true,
+  },
+  parameters: {
+    msw: {
+      handlers: mswHandlers,
+    },
+  },
   decorators: [
     (Story) => (
       <Page>
@@ -66,81 +98,74 @@ const emptyRows = (_kind, colSpan) => [
   },
 ];
 
-export const Common = {
-  args: {
-    columns,
-    filters,
-    sortable: false,
-    manageColumns: false,
-    customEmptyRows: false,
-    customEmptyState: false,
-    enableExport: false,
-    enableDetails: false,
-    enableBulkSelect: false,
-  },
+const CommonExample = ({
+  debug,
+  columns,
+  filters,
+  filtered,
+  sortable,
+  manageColumns,
+  customEmptyRows,
+  customEmptyState,
+  enableExport,
+  enableDetails,
+  enableBulkSelect,
+}) => {
+  const {
+    loading,
+    result: { data, meta: { total } = {} } = {},
+    error,
+    exporter,
+    itemIdsInTable,
+    itemIdsOnPage,
+  } = useExampleDataQuery({ endpoint: '/api' });
 
-  decorators: [
-    (Story) => (
-      <TableStateProvider>
-        <Story />
-      </TableStateProvider>
-    ),
-  ],
-  render: ({
-    columns,
-    filters,
-    sortable,
-    manageColumns,
-    customEmptyRows,
-    customEmptyState,
-    enableExport,
-    enableDetails,
-    enableBulkSelect,
-  }) => {
-    const {
-      result: { data, meta: { total } = {} } = {},
-      exporter,
-      itemIdsInTable,
-      itemIdsOnPage,
-    } = useExampleDataQuery();
-
-    return (
-      <TableToolsTable
-        items={data}
-        columns={
-          sortable
-            ? columns
-            : columns.map((column) => ({ ...column, sortable: undefined }))
-        }
-        total={total}
-        {...(filters
+  return (
+    <TableToolsTable
+      loading={loading}
+      items={data}
+      total={total}
+      error={error}
+      columns={
+        sortable
+          ? columns
+          : columns.map((column) => ({ ...column, sortable: undefined }))
+      }
+      {...(filters && filtered
+        ? {
+            filters: {
+              filterConfig: [...filters, customNumberFilter],
+              customFilterTypes: {
+                number: customNumberFilterType,
+              },
+            },
+          }
+        : {})}
+      options={{
+        ...defaultOptions,
+        debug,
+        manageColumns,
+        ...(customEmptyRows ? { emptyRows: emptyRows(columns?.length) } : {}),
+        ...(customEmptyState ? { EmptyState: CustomEmptyState } : {}),
+        ...(enableExport ? { exporter } : {}),
+        ...(enableDetails ? { detailsComponent: DetailsRow } : {}),
+        ...(enableBulkSelect
           ? {
-              filters: { filterConfig: filters },
+              onSelect: (selected) => {
+                console.log('Currently selected', selected);
+              },
+              itemIdsInTable,
+              itemIdsOnPage,
             }
-          : {})}
-        options={{
-          ...defaultOptions,
-          manageColumns,
-          ...(customEmptyRows ? { emptyRows: emptyRows(2) } : {}),
-          ...(customEmptyState ? { EmptyState: CustomEmptyState } : {}),
-          ...(enableExport ? { exporter } : {}),
-          ...(enableDetails ? { detailsComponent: DetailsRow } : {}),
-          ...(enableBulkSelect
-            ? {
-                onSelect: (selected) => {
-                  console.log('Currently selected', selected);
-                },
-                itemIdsInTable,
-                itemIdsOnPage,
-              }
-            : {}),
-        }}
-      />
-    );
-  },
+          : {}),
+      }}
+    />
+  );
 };
 
-export const WithFilterModal = {
+CommonExample.propTypes = argProps;
+
+export const Common = {
   decorators: [
     (Story) => (
       <TableStateProvider>
@@ -148,166 +173,93 @@ export const WithFilterModal = {
       </TableStateProvider>
     ),
   ],
-  render: () => {
-    const { result: { data, meta: { total } = {} } = {} } =
-      useExampleDataQuery();
-    const genreFilterOptions = genres.map((genre) => ({
-      label: genre,
-      value: genre,
-    }));
+  render: (args) => <CommonExample {...args} />,
+};
 
-    return (
-      <TableToolsTable
-        items={data}
-        total={total}
-        columns={columns}
-        options={defaultOptions}
-        filters={{
-          filterConfig: [
-            {
-              type: 'group',
-              label: 'Years by decade',
-              filterSerialiser: (_filterConfigItem, value) => {
-                const allYears = Object.entries(value).reduce(
-                  (years, [, groupYears]) => [
-                    ...years,
-                    ...Object.keys(groupYears),
-                  ],
-                  [],
-                );
+const WithTableTreeExample = ({
+  debug,
+  columns,
+  filters,
+  filtered,
+  sortable,
+  manageColumns,
+  customEmptyRows,
+  customEmptyState,
+  enableExport,
+  enableDetails,
+  enableBulkSelect,
+}) => {
+  const { tableState: { tableView } = {} } = useFullTableState() || {};
 
-                return `.releaseYear in [${allYears.join(', ')}]`;
-              },
-              groups: [
-                {
-                  label: '80s',
-                  value: '80s',
-                  items: [...new Array(10)].map((_, idx) => ({
-                    label: `198${idx}`,
-                    value: `198${idx}`,
-                  })),
-                },
-                {
-                  label: '90s',
-                  value: '90s',
-                  items: [...new Array(10)].map((_, idx) => ({
-                    label: `199${idx}`,
-                    value: `199${idx}`,
-                  })),
-                },
-                {
-                  label: '00s',
-                  value: '00s',
-                  items: [...new Array(10)].map((_, idx) => ({
-                    label: `200${idx}`,
-                    value: `200${idx}`,
-                  })),
-                },
-                {
-                  label: '10s',
-                  value: '10s',
-                  items: [...new Array(10)].map((_, idx) => ({
-                    label: `201${idx}`,
-                    value: `201${idx}`,
-                  })),
-                },
-                {
-                  label: '20s',
-                  value: '20s',
-                  items: [...new Array(5)].map((_, idx) => ({
-                    label: `201${idx}`,
-                    value: `201${idx}`,
-                  })),
-                },
-              ],
-              modal: {
-                title: 'Select years to filter by',
+  const {
+    result: { data, meta: { total } = {} } = {},
+    loading,
+    error,
+    exporter,
+    itemIdsInTable,
+    itemIdsOnPage,
+  } = useExampleDataQuery({
+    endpoint: '/api',
+    ...(tableView === 'tree'
+      ? { params: { limit: 'max', sort: 'id:asc' } }
+      : {}),
+  });
+
+  const {
+    result: tableTree,
+    loading: treeLoading,
+    error: treeError,
+  } = useExampleDataQuery({
+    endpoint: '/api/tree',
+  });
+
+  return (
+    <TableToolsTable
+      loading={loading || treeLoading}
+      items={data}
+      total={total}
+      error={error || treeError}
+      columns={
+        sortable
+          ? columns
+          : columns.map((column) => ({ ...column, sortable: undefined }))
+      }
+      {...(filters && filtered
+        ? {
+            filters: {
+              filterConfig: [...filters, customNumberFilter],
+              customFilterTypes: {
+                number: customNumberFilterType,
               },
             },
-            {
-              type: 'checkbox',
-              label: 'Genre With Modal',
-              filterAttribute: 'genre',
-              items: genreFilterOptions,
-              modal: true,
-            },
-            {
-              type: 'checkbox',
-              label: 'Genre With fetched items',
-              filterAttribute: 'genre',
-              items: async () => genreFilterOptions,
-              modal: true,
-            },
-            {
-              type: 'checkbox',
-              label: 'Genre With fetched items and modal items',
-              filterAttribute: 'genre',
-              items: genreFilterOptions,
-              modal: {
-                items: async (
-                  _serialisedState,
-                  { pagination: { state } = { page: 1, perPage: 10 } } = {},
-                ) => {
-                  const offset = (state?.page - 1) * state?.perPage;
-                  const limit = state?.perPage;
-
-                  return [
-                    genreFilterOptions
-                      .slice(offset, offset + limit)
-                      .map((item) => ({ ...item, id: item.value })),
-                    genreFilterOptions.length,
-                  ];
-                },
+          }
+        : {})}
+      options={{
+        ...defaultOptions,
+        debug,
+        manageColumns,
+        tableTree,
+        enableTreeView: true,
+        defaultTableView: 'tree',
+        ...(customEmptyRows ? { emptyRows: emptyRows(columns?.length) } : {}),
+        ...(customEmptyState ? { EmptyState: CustomEmptyState } : {}),
+        ...(enableExport ? { exporter } : {}),
+        ...(enableDetails ? { detailsComponent: DetailsRow } : {}),
+        ...(enableBulkSelect
+          ? {
+              onSelect: (selected) => {
+                console.log('Currently selected', selected);
               },
-            },
-          ],
-        }}
-      />
-    );
-  },
+              itemIdsInTable,
+              itemIdsOnPage,
+            }
+          : {}),
+      }}
+    />
+  );
 };
 
-const customNumberFilterType = {
-  Component: NumberFilter,
-  chips: (value) => [value],
-  selectValue: (value) => [value, true],
-  deselectValue: () => [undefined, true],
-};
-
-const customNumberFilter = {
-  type: 'number',
-  label: 'Number Filter',
-  filterAttribute: 'rating',
-};
-
-export const WithCustomFilter = {
-  decorators: [
-    (Story) => (
-      <TableStateProvider>
-        <Story />
-      </TableStateProvider>
-    ),
-  ],
-  render: () => {
-    const { result: { data, meta: { total } = {} } = {} } =
-      useExampleDataQuery();
-
-    return (
-      <TableToolsTable
-        items={data}
-        columns={columns}
-        filters={{
-          filterConfig: [customNumberFilter],
-          customFilterTypes: {
-            number: customNumberFilterType,
-          },
-        }}
-        total={total}
-        options={defaultOptions}
-      />
-    );
-  },
-};
+WithTableTreeExample.propTypes = argProps;
 
 export const WithTableTree = {
   decorators: [
@@ -317,138 +269,145 @@ export const WithTableTree = {
       </TableStateProvider>
     ),
   ],
-  render: () => {
-    const { tableState: { tableView } = {} } = useFullTableState() || {};
-
-    const {
-      result: { data, meta: { total } = {} } = {},
-      exporter,
-      itemIdsInTable,
-      itemIdsOnPage,
-    } = useExampleDataQuery({
-      ...(tableView === 'tree'
-        ? { params: { limit: 'max', sort: 'id:asc' } }
-        : {}),
-    });
-
-    const { result: tableTree } = useExampleDataQuery({
-      api: fakePlasticTreeApi,
-    });
-
-    return (
-      <TableToolsTable
-        items={data}
-        columns={columns}
-        filters={{ filterConfig: filters }}
-        total={total}
-        options={{
-          ...defaultOptions,
-          manageColumns: true,
-          detailsComponent: DetailsRow,
-          exporter,
-          onSelect: (selected) => {
-            console.log('Currently selected', selected);
-          },
-          itemIdsInTable,
-          itemIdsOnPage,
-          enableTreeView: true,
-          defaultTableView: 'tree',
-          tableTree,
-        }}
-      />
-    );
-  },
+  render: (args) => <WithTableTreeExample {...args} />,
 };
+
+const WithAsyncFunctionExample = ({
+  debug,
+  columns,
+  filters,
+  filtered,
+  sortable,
+  manageColumns,
+  customEmptyRows,
+  customEmptyState,
+  enableExport,
+  enableDetails,
+  enableBulkSelect,
+}) => {
+  const { fetch, itemIdsInTable, itemIdsOnPage, exporter } =
+    useExampleDataQuery({
+      endpoint: '/api',
+      skip: true,
+    });
+
+  const fetchItems = useCallback(
+    async ({ pagination = {}, filters, sort } = {}) => {
+      const {
+        data: items,
+        meta: { total },
+      } = await fetch({
+        ...pagination,
+        ...(filters ? { filters } : {}),
+        ...(sort ? { sort } : {}),
+      });
+
+      return [items, total];
+    },
+    [fetch],
+  );
+
+  return (
+    <TableToolsTable
+      items={fetchItems}
+      columns={
+        sortable
+          ? columns
+          : columns.map((column) => ({ ...column, sortable: undefined }))
+      }
+      {...(filters && filtered
+        ? {
+            filters: {
+              filterConfig: [...filters, customNumberFilter],
+              customFilterTypes: {
+                number: customNumberFilterType,
+              },
+            },
+          }
+        : {})}
+      options={{
+        ...defaultOptions,
+        debug,
+        manageColumns,
+        ...(customEmptyRows ? { emptyRows: emptyRows(columns?.length) } : {}),
+        ...(customEmptyState ? { EmptyState: CustomEmptyState } : {}),
+        ...(enableExport ? { exporter } : {}),
+        ...(enableDetails ? { detailsComponent: DetailsRow } : {}),
+        ...(enableBulkSelect
+          ? {
+              onSelect: (selected) => {
+                console.log('Currently selected', selected);
+              },
+              itemIdsInTable,
+              itemIdsOnPage,
+            }
+          : {}),
+      }}
+    />
+  );
+};
+
+WithAsyncFunctionExample.propTypes = argProps;
 
 export const WithAsyncFunction = {
-  args: {
-    filtered: false,
-    sortable: false,
-    manageColumns: false,
-    customEmptyRows: false,
-    customEmptyState: false,
-  },
-  render: ({
-    filtered,
-    sortable,
-    manageColumns,
-    customEmptyRows,
-    customEmptyState,
-  }) => {
-    const { fetch } = useExampleDataQuery();
-
-    const fetchItems = useCallback(
-      async ({ pagination = {}, filters, sort } = {}) => {
-        const {
-          data: items,
-          meta: { total },
-        } = await fetch({
-          ...pagination,
-          filters,
-          sort,
-        });
-
-        return [items, total];
-      },
-      [fetch],
-    );
-
-    return (
-      <TableToolsTable
-        items={fetchItems}
-        columns={
-          sortable
-            ? columns
-            : columns.map((column) => ({ ...column, sortable: undefined }))
-        }
-        {...(filtered
-          ? {
-              filters: { filterConfig: filters },
-            }
-          : {})}
-        options={{
-          ...defaultOptions,
-          manageColumns,
-          ...(customEmptyRows ? { emptyRows: emptyRows(2) } : {}),
-          ...(customEmptyState ? { EmptyState: CustomEmptyState } : {}),
-        }}
-      />
-    );
-  },
+  render: (args) => <WithAsyncFunctionExample {...args} />,
 };
+
+const WithErroringAsyncFunctionExample = ({ debug }) => {
+  const { fetch } = useExampleDataQuery({ endpoint: '/api/error', skip: true });
+
+  return (
+    <TableToolsTable
+      items={fetch}
+      columns={columns}
+      filters={{ filterConfig: filters }}
+      options={{
+        ...defaultOptions,
+        debug,
+        manageColumns: true,
+        kind: 'songs',
+      }}
+    />
+  );
+};
+
+WithErroringAsyncFunctionExample.propTypes = argProps;
 
 export const WithErroringAsyncFunction = {
-  render: () => {
-    const failingFetchItems = useCallback(async () => {
-      throw 'Erorr loading items!';
-    }, []);
-
-    return (
-      <TableToolsTable
-        items={failingFetchItems}
-        columns={columns}
-        filters={{ filterConfig: filters }}
-        options={{
-          ...defaultOptions,
-          manageColumns: true,
-          kind: 'songs',
-        }}
-      />
-    );
-  },
+  render: (args) => <WithErroringAsyncFunctionExample {...args} />,
 };
 
+const WithErrorPassedExample = ({ debug }) => {
+  const {
+    loading,
+    result: { data, meta: { total } = {} } = {},
+    error,
+  } = useExampleDataQuery({ endpoint: '/api/error' });
+
+  return (
+    <TableToolsTable
+      loading={loading}
+      items={data}
+      error={error}
+      total={total}
+      columns={columns}
+      filters={{ filterConfig: filters }}
+      options={{ ...defaultOptions, debug }}
+    />
+  );
+};
+
+WithErrorPassedExample.propTypes = argProps;
+
 export const WithErrorPassed = {
-  render: () => {
-    return (
-      <TableToolsTable
-        items={undefined}
-        error={new Error('Error passed in to table')}
-        columns={columns}
-        filters={{ filterConfig: filters }}
-      />
-    );
-  },
+  decorators: [
+    (Story) => (
+      <TableStateProvider>
+        <Story />
+      </TableStateProvider>
+    ),
+  ],
+  render: (args) => <WithErrorPassedExample {...args} />,
 };
 
 export default meta;

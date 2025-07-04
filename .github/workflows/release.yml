@@ -27,6 +27,8 @@ jobs:
           node-version: "lts/*"
       - name: Install dependencies
         run: npm clean-install
+      - name: Run verify
+        run: npm run verify
       - name: Verify the integrity of provenance attestations and registry signatures for installed dependencies
         run: npm audit signatures
       - name: Build package
@@ -36,3 +38,8 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: npx semantic-release
+      - name: Upload coverage
+        uses: qltysh/qlty-action/coverage@v1
+        with:
+          token: ${{secrets.QLTY_COVERAGE_TOKEN}}
+          files: coverage/lcov.info

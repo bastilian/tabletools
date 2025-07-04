@@ -6,7 +6,11 @@ import filterConfig from '~/support/factories/filters';
 import useFilterConfig from './useFilterConfig';
 
 describe('useFilterConfig', () => {
-  it('returns a toolbar configuration', () => {
+  beforeAll(() => {
+    fetch.mockResponseOnce(JSON.stringify({ data: [] }));
+  });
+
+  it('returns a toolbar configuration', async () => {
     const { result } = renderHook(
       () =>
         useFilterConfig({
@@ -17,16 +21,16 @@ describe('useFilterConfig', () => {
       DEFAULT_RENDER_OPTIONS,
     );
 
-    expect(result.current.toolbarProps).toBeDefined();
+    await waitFor(() => expect(result.current.toolbarProps).toBeDefined());
   });
 
-  it('returns no toolbar configuration if no filters are provided', () => {
+  it('returns no toolbar configuration if no filters are provided', async () => {
     const { result } = renderHook(
       () => useFilterConfig(),
       DEFAULT_RENDER_OPTIONS,
     );
 
-    expect(result.current.toolbarProps).not.toBeDefined();
+    await waitFor(() => expect(result.current.toolbarProps).not.toBeDefined());
   });
 
   it('can add and delete filters and clears activeFilters', async () => {
@@ -40,7 +44,9 @@ describe('useFilterConfig', () => {
       DEFAULT_RENDER_OPTIONS,
     );
 
-    await waitFor(() => result.current.toolbarProps.filterConfig.items[0]);
+    await waitFor(
+      () => result.current.toolbarProps.filterConfig.items[0].filterValues,
+    );
 
     await act(() =>
       result.current.toolbarProps.filterConfig.items[0].filterValues.onChange(

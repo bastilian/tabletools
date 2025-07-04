@@ -7,7 +7,6 @@ import useResolvedProps from './useResolvedProps';
 
 const useFilterOptions = (options) => {
   const { filters, serialisers } = options || {};
-  const enableFilters = !!filters;
   const {
     filterConfig: staticFilterConfig = [],
     activeFilters: initialActiveFilters,
@@ -17,6 +16,7 @@ const useFilterOptions = (options) => {
     'items',
     'groups',
   ]);
+  const enableFilters = !!filters && filterConfig?.length;
 
   const config = useDeepCompareMemo(
     () => ({

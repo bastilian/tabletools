@@ -61,7 +61,7 @@ const TableToolsTable = ({
           columns={columns.map(({ title }) => title)}
         />
       ) : (
-        <Table {...tableProps}>
+        <Table aria-label="Table" {...tableProps}>
           <TableHeader {...tableHeaderProps} />
           <TableBody {...tableBodyProps} />
         </Table>

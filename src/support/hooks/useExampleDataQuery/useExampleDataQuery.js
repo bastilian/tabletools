@@ -1,52 +1,74 @@
-import { useCallback, useState } from 'react';
-import { useDeepCompareEffect } from 'use-deep-compare';
+import { useCallback, useState, useRef } from 'react';
+import { useDeepCompareEffect, useDeepCompareCallback } from 'use-deep-compare';
 
-import fakeApi from '~/support/fakeApi';
+import { useSerialisedTableState } from '~/hooks';
+
 import useParamsFromTableState from './hooks/useParamsFromTableState';
 
 const useExampleDataQuery = ({
-  api = fakeApi,
+  endpoint,
+  skip,
   params: paramsOption = {},
 } = {}) => {
-  const params = useParamsFromTableState();
+  const serialisedTableState = useSerialisedTableState();
+  const params = useParamsFromTableState(serialisedTableState);
   const [result, setResult] = useState();
   const [error, setError] = useState();
-  const [loading, setLoading] = useState(false);
+  const queryCache = useRef();
+  const responseCache = useRef();
+  const okCache = useRef();
 
-  // TODO Check why the API gets called twice on initialisation
-  useDeepCompareEffect(() => {
-    const fakeFetchDate = async (params) => {
-      setLoading(true);
+  const api = useDeepCompareCallback(
+    async (params) => {
+      const query = params ? '?' + new URLSearchParams(params).toString() : '';
 
-      try {
-        const apiResult = await api({ ...params, ...paramsOption });
-
-        setResult(apiResult);
-      } catch (e) {
-        console.log(e);
-        setError(e);
-      } finally {
-        setLoading(false);
+      if (queryCache.current !== endpoint + query) {
+        const response = await fetch(endpoint + query);
+        queryCache.current = endpoint + query;
+        okCache.current = response.ok;
+        responseCache.current = await response.json();
       }
-    };
 
-    fakeFetchDate(params);
+      if (okCache.current) {
+        return responseCache.current;
+      } else {
+        throw responseCache.current;
+      }
+    },
+    [endpoint],
+  );
 
-    return () => {
-      setLoading(false);
-    };
-  }, [api, params, paramsOption]);
+  useDeepCompareEffect(() => {
+    if (!skip) {
+      setResult(undefined);
+      setError(undefined);
+
+      const fetchData = async (params) => {
+        try {
+          const apiResult = await api({ ...params, ...paramsOption });
+
+          setResult(apiResult);
+        } catch (e) {
+          console.log(e);
+          setError(e);
+        }
+      };
+      if (serialisedTableState) {
+        fetchData(params);
+      }
+    }
+  }, [skip, api, params, paramsOption, serialisedTableState]);
 
   const exporter = useCallback(
     async () =>
-      (await api({ ...params, ...paramsOption, offset: 0, limit: 10000 })).data,
+      (await api({ ...params, ...paramsOption, offset: 0, limit: 'max' })).data,
     [api, params, paramsOption],
   );
 
   const itemIdsInTable = useCallback(
     async () =>
       (
-        await api({ ...params, ...paramsOption, offset: 0, limit: 10000 })
+        await api({ ...params, ...paramsOption, offset: 0, limit: 'max' })
       ).data.map(({ id }) => id),
     [api, params, paramsOption],
   );
@@ -57,7 +79,7 @@ const useExampleDataQuery = ({
     [api, params, paramsOption],
   );
 
-  const fetch = useCallback(
+  const _fetch = useCallback(
     async (params) => await api({ ...params, ...paramsOption }),
     [api, paramsOption],
   );
@@ -73,8 +95,8 @@ const useExampleDataQuery = ({
           error,
         }
       : {}),
-    loading,
-    fetch,
+    loading: !(result || error),
+    fetch: _fetch,
     exporter,
     itemIdsInTable,
     itemIdsOnPage,

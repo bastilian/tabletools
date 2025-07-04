@@ -1,7 +1,7 @@
 import { Factory } from 'fishery';
 import { faker } from '@faker-js/faker';
 
-export const genres = faker.helpers.uniqueArray(faker.music.genre, 20);
+export const genres = faker.helpers.uniqueArray(faker.music.genre, 50);
 
 const itemsFactory = Factory.define(({ sequence }) => ({
   id: sequence,

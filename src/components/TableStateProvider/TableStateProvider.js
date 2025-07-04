@@ -21,6 +21,7 @@ const TableStateProvider = ({ children }) => {
   const observers = useRef({});
   const serialisers = useRef({});
   const callbacks = useRef({});
+  const debug = useRef(false);
 
   return (
     <TableContext.Provider
@@ -29,6 +30,7 @@ const TableStateProvider = ({ children }) => {
         observers,
         serialisers,
         callbacks,
+        debug,
       }}
     >
       {children}
