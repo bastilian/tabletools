@@ -6,8 +6,8 @@ module.exports = {
         preset: 'angular',
         releaseRules: [
           { type: 'docs', release: 'patch' },
-          { type: 'refactor', release: 'patch' },
-          { type: 'chore', release: 'patch' },
+          { type: 'refactor', release: 'minor' },
+          { type: 'chore', release: 'minor' },
         ],
         parserOpts: {
           noteKeywords: ['BREAKING CHANGE', 'BREAKING CHANGES'],
