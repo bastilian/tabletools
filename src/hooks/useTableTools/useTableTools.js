@@ -34,7 +34,7 @@ import { toToolbarActions } from './helpers';
  *  @group Hooks
  *
  */
-const useTableTools = (items, columns, options = {}) => {
+const useTableTools = (items, options = {}) => {
   const {
     toolbarProps: toolbarPropsOption,
     tableProps: tablePropsOption,
@@ -47,11 +47,8 @@ const useTableTools = (items, columns, options = {}) => {
   const { loaded, items: usableItems, total } = useItems(items, options);
   const actionResolverEnabled = usableItems?.length > 0;
 
-  const {
-    columnManagerAction,
-    columns: managedColumns,
-    ColumnManager,
-  } = useColumnManager(columns, options);
+  const { columns, columnManagerAction, columnManagerModalProps } =
+    useColumnManager(options);
 
   const { toolbarProps: toolbarActionsProps } = useMemo(
     () =>
@@ -97,14 +94,14 @@ const useTableTools = (items, columns, options = {}) => {
   const {
     toolbarProps: tableViewToolbarProps,
     tableProps: tableViewTableProps,
-    TableViewToggle,
-  } = useTableView(usableItems, managedColumns, {
+    tableViewToggleProps,
+  } = useTableView(usableItems, columns, {
     ...options,
     expandable: expandableTableViewOptions,
     bulkSelect: bulkSelectTableViewOptions,
   });
 
-  const { tableProps: sortableTableProps } = useTableSort(managedColumns, {
+  const { tableProps: sortableTableProps } = useTableSort(columns, {
     ...options,
     onSelect:
       bulkSelectTableProps?.onSelect ||
@@ -113,7 +110,7 @@ const useTableTools = (items, columns, options = {}) => {
   });
 
   const exportConfig = useExport({
-    columns: managedColumns,
+    columns,
     ...options,
   });
 
@@ -142,7 +139,7 @@ const useTableTools = (items, columns, options = {}) => {
     () => ({
       // TODO we should have a hook that maintains columns.
       // at least the columns manager and table sort hook "act" on columns, currently without a good interface
-      cells: managedColumns,
+      cells: columns,
       ...sortableTableProps,
       ...bulkSelectTableProps,
       ...expandableTableProps,
@@ -153,7 +150,7 @@ const useTableTools = (items, columns, options = {}) => {
       ...tableViewTableProps,
     }),
     [
-      managedColumns,
+      columns,
       sortableTableProps,
       bulkSelectTableProps,
       tablePropsOption,
@@ -188,9 +185,8 @@ const useTableTools = (items, columns, options = {}) => {
     loaded,
     toolbarProps,
     tableProps,
-    // TODO We could possibly just return the configuratin/props for these components instead
-    ColumnManager,
-    TableViewToggle,
+    columnManagerModalProps,
+    tableViewToggleProps,
     filterModalProps,
   };
 };

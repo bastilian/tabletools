@@ -70,7 +70,7 @@ describe('useTableView', () => {
         DEFAULT_RENDER_OPTIONS,
       );
 
-      expect(result.current.TableViewToggle).not.toBeDefined();
+      expect(result.current.tableViewToggleProps).not.toBeDefined();
     });
 
     it('returns a toggle if enabled via showViewToggle', () => {
@@ -79,7 +79,7 @@ describe('useTableView', () => {
         DEFAULT_RENDER_OPTIONS,
       );
 
-      expect(result.current.TableViewToggle).toBeDefined();
+      expect(result.current.tableViewToggleProps).toBeDefined();
     });
 
     it('returns a toggle if there is a table tree', () => {
@@ -92,7 +92,7 @@ describe('useTableView', () => {
         DEFAULT_RENDER_OPTIONS,
       );
 
-      expect(result.current.TableViewToggle).toBeDefined();
+      expect(result.current.tableViewToggleProps).toBeDefined();
     });
 
     it('returns no toggle if there is a table tree, but showViewToggle is false', () => {
@@ -105,7 +105,7 @@ describe('useTableView', () => {
         DEFAULT_RENDER_OPTIONS,
       );
 
-      expect(result.current.TableViewToggle).not.toBeDefined();
+      expect(result.current.tableViewToggleProps).not.toBeDefined();
     });
   });
 

@@ -1,6 +1,4 @@
-import React, { useCallback, useState, useMemo } from 'react';
-import { ColumnManagementModal } from '@patternfly/react-component-groups';
-
+import { useCallback, useState, useMemo } from 'react';
 import { getFixedColumns } from './helper';
 
 /**
@@ -24,8 +22,9 @@ import { getFixedColumns } from './helper';
  *  @group Hooks
  *
  */
-const useColumnManager = (columns = [], options = {}) => {
+const useColumnManager = (options = {}) => {
   const {
+    columns,
     columnManagerSelectProp: selectProp = 'key',
     manageColumns: enableColumnManager,
     manageColumnLabel = 'Manage columns',
@@ -55,21 +54,6 @@ const useColumnManager = (columns = [], options = {}) => {
     [selectedColumns, unManagableColumns],
   );
 
-  // TODO We should be moving this out of the hook
-  const ColumnManager = useMemo(
-    // eslint-disable-next-line react/display-name
-    () => () => (
-      <ColumnManagementModal
-        appliedColumns={selectedColumns}
-        isOpen={isManagerOpen}
-        onClose={() => setIsManagerOpen(false)}
-        applyColumns={applyColumns}
-        selectProp={selectProp}
-      />
-    ),
-    [applyColumns, selectProp, isManagerOpen, selectedColumns],
-  );
-
   return enableColumnManager
     ? {
         columns: columnsToShow,
@@ -77,8 +61,13 @@ const useColumnManager = (columns = [], options = {}) => {
           label: manageColumnLabel,
           onClick,
         },
-        ColumnManager,
-        applyColumns,
+        columnManagerModalProps: {
+          appliedColumns: selectedColumns,
+          isOpen: isManagerOpen,
+          onClose: () => setIsManagerOpen(false),
+          applyColumns: applyColumns,
+          selectProp: selectProp,
+        },
       }
     : { columns };
 };

@@ -1,6 +1,4 @@
-import React, { useMemo } from 'react';
-
-import TableViewToggle from '~/components/TableViewToggle';
+import { useMemo } from 'react';
 
 import useViews from './hooks/useViews';
 import useViewState from './hooks/useViewState';
@@ -43,14 +41,10 @@ const useTableView = (items, columns, options = {}) => {
     ...(toolbarProps ? { toolbarProps } : {}),
     ...(enableToggle
       ? {
-          TableViewToggle: function Toggle() {
-            return (
-              <TableViewToggle
-                views={choosableViews}
-                onToggle={setTableView}
-                currentTableView={tableView}
-              />
-            );
+          tableViewToggleProps: {
+            views: choosableViews,
+            onToggle: setTableView,
+            currentTableView: tableView,
           },
         }
       : {}),

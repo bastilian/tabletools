@@ -9,11 +9,11 @@ import useTableTools from './useTableTools';
 describe('useTableTools', () => {
   const exampleItems = items(30).sort((item) => item.name);
 
-  const defaultArguments = [exampleItems, columns, {}];
+  const defaultArguments = [exampleItems, { columns }];
 
   it('returns a object with tableProps and toolbarProps even with no items, columns or options passed', () => {
     const { result } = renderHook(
-      () => useTableTools([], []),
+      () => useTableTools([], { columns: [] }),
       DEFAULT_RENDER_OPTIONS,
     );
 
@@ -38,7 +38,7 @@ describe('useTableTools', () => {
     ]);
 
     renderHook(
-      () => useTableTools(asyncFunction, columns),
+      () => useTableTools(asyncFunction, { columns }),
       DEFAULT_RENDER_OPTIONS,
     );
 

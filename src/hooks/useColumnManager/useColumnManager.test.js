@@ -5,17 +5,17 @@ import columns from '~/support/factories/columns';
 import useColumnManager from './useColumnManager';
 
 describe('useColumnManager', () => {
-  const defaultArguments = [columns, { manageColumns: true }];
+  const defaultArguments = [{ columns, manageColumns: true }];
 
   it('returns just columns if not enabled', () => {
-    const { result } = renderHook(() => useColumnManager(columns));
+    const { result } = renderHook(() => useColumnManager({ columns }));
     expect(result.current.columns).toBeDefined();
-    expect(result.current.ColumnManager).not.toBeDefined();
+    expect(result.current.columnManagerModalProps).not.toBeDefined();
   });
 
-  it('returns a ColumnManager if enabled', () => {
+  it('returns a columnManagerModalProps if enabled', () => {
     const { result } = renderHook(() => useColumnManager(...defaultArguments));
-    expect(result.current.ColumnManager).toBeDefined();
+    expect(result.current.columnManagerModalProps).toBeDefined();
   });
 
   it('applies columns', () => {
@@ -30,7 +30,7 @@ describe('useColumnManager', () => {
       .map((col) => col.id);
 
     act(() => {
-      result.current.applyColumns(columnsToSelect);
+      result.current.columnManagerModalProps.applyColumns(columnsToSelect);
     });
 
     const appliedIds = columnsToSelect.map((col) => col.id);

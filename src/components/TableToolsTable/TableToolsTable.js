@@ -6,13 +6,16 @@ import {
   TableBody,
   TableHeader,
 } from '@patternfly/react-table/deprecated';
-import { SkeletonTable } from '@patternfly/react-component-groups';
+import {
+  SkeletonTable,
+  ColumnManagementModal,
+} from '@patternfly/react-component-groups';
 import PrimaryToolbar from '@redhat-cloud-services/frontend-components/PrimaryToolbar';
 import TableToolbar from '@redhat-cloud-services/frontend-components/TableToolbar';
 
 import useTableTools from '~/hooks/useTableTools';
 import { TableContext } from '~/hooks/useTableState/constants';
-import { TableStateProvider, FilterModal } from '~/components';
+import { TableStateProvider, FilterModal, TableViewToggle } from '~/components';
 
 const TableToolsTable = ({
   items,
@@ -36,10 +39,11 @@ const TableToolsTable = ({
     toolbarProps,
     tableProps,
     filterModalProps,
-    ColumnManager,
-    TableViewToggle,
-  } = useTableTools(items, columns, {
+    columnManagerModalProps,
+    tableViewToggleProps,
+  } = useTableTools(items, {
     filters,
+    columns,
     toolbarProps: toolbarPropsProp,
     tableProps: tablePropsRest,
     total,
@@ -52,7 +56,7 @@ const TableToolsTable = ({
   return (
     <>
       <PrimaryToolbar aria-label="Table toolbar" {...toolbarProps}>
-        {TableViewToggle && <TableViewToggle />}
+        {tableViewToggleProps && <TableViewToggle {...tableViewToggleProps} />}
       </PrimaryToolbar>
 
       {skeletonLoading ? (
@@ -78,7 +82,9 @@ const TableToolsTable = ({
         )}
       </TableToolbar>
 
-      {ColumnManager && <ColumnManager />}
+      {columnManagerModalProps && (
+        <ColumnManagementModal {...columnManagerModalProps} />
+      )}
 
       {filterModalProps && <FilterModal {...filterModalProps} />}
     </>
