@@ -23,7 +23,10 @@ const queryItems = async (
   const queriedItems = query.length ? jsonquery(items, query) : items;
   const actualLimit = limit === 'max' ? items.length : limit;
 
-  return queriedItems.slice(offset, offset + actualLimit);
+  return [
+    queriedItems.slice(offset, offset + actualLimit),
+    queriedItems.length,
+  ];
 };
 
 export default queryItems;

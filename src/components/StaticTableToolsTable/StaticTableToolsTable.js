@@ -13,7 +13,7 @@ import queryItems from './helpers/jsonQueryHelpers';
  *
  *  @param   {object}             [props]         Component Props
  *  @param   {React.ReactElement} [props.items]   Array of items to filter, sort and paginate and show in the table
- *  @param   {React.ReactElement} [props.options] Additonal TableToolsTable options
+ *  @param   {React.ReactElement} [props.options] Additional TableToolsTable options
  *
  *  @returns {React.ReactElement}                 Static table tools table
  *
@@ -22,10 +22,12 @@ import queryItems from './helpers/jsonQueryHelpers';
  */
 const StaticTableToolsTable = ({ items, options, ...props }) => {
   const queriedItems = useCallback(
-    async ({ filters, pagination, sort } = {}) => [
-      await queryItems(items, { filters, ...pagination, sort }),
-      items.length,
-    ],
+    async ({ filters, pagination, sort } = {}) =>
+      await queryItems(items, {
+        filters,
+        ...pagination,
+        sort,
+      }),
     [items],
   );
 
