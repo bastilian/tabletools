@@ -17,6 +17,7 @@ exclude_patterns = [
   "**/*.d.ts",
   "**/dist/**",
   "**/node_modules/**",
+  "**/**/*.stories.*",
 ]
 
 test_patterns = [
