@@ -8,6 +8,7 @@ import useParamsFromTableState from './hooks/useParamsFromTableState';
 const useExampleDataQuery = ({
   endpoint,
   skip,
+  useTableState = false,
   params: paramsOption = {},
 } = {}) => {
   const serialisedTableState = useSerialisedTableState();
@@ -53,11 +54,16 @@ const useExampleDataQuery = ({
           setError(e);
         }
       };
-      if (serialisedTableState) {
+
+      if (useTableState) {
+        if (serialisedTableState) {
+          fetchData(params);
+        }
+      } else {
         fetchData(params);
       }
     }
-  }, [skip, api, params, paramsOption, serialisedTableState]);
+  }, [skip, api, params, paramsOption, serialisedTableState, useTableState]);
 
   const exporter = useCallback(
     async () =>

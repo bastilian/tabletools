@@ -118,7 +118,7 @@ const CommonExample = ({
     exporter,
     itemIdsInTable,
     itemIdsOnPage,
-  } = useExampleDataQuery({ endpoint: '/api' });
+  } = useExampleDataQuery({ endpoint: '/api', useTableState: true });
 
   return (
     <TableToolsTable
@@ -203,6 +203,7 @@ const WithTableTreeExample = ({
     ...(tableView === 'tree'
       ? { params: { limit: 'max', sort: 'id:asc' } }
       : {}),
+    useTableState: true,
   });
 
   const {
@@ -211,6 +212,7 @@ const WithTableTreeExample = ({
     error: treeError,
   } = useExampleDataQuery({
     endpoint: '/api/tree',
+    useTableState: true,
   });
 
   return (
