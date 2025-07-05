@@ -1,16 +1,10 @@
 import React from 'react';
-import {
-  Page,
-  PageSection,
-  Panel,
-  PanelMain,
-  PanelMainBody,
-} from '@patternfly/react-core';
+
+import defaultStoryMeta from '~/support/defaultStoryMeta';
 
 import { TableToolsTable, TableStateProvider } from '~/components';
 import { useSerialisedTableState } from '~/hooks';
 
-import mswHandlers from '~/support/mswHandler';
 import useExampleDataQuery from '~/support/hooks/useExampleDataQuery';
 import paginationSerialiser from '~/support/serialisers/pagination';
 
@@ -18,26 +12,7 @@ const convertToOffsetAndLimit = paginationSerialiser;
 
 const meta = {
   title: '"Using TableToolsTable" tutorial examples',
-  parameters: {
-    msw: {
-      handlers: mswHandlers,
-    },
-  },
-  decorators: [
-    (Story) => (
-      <Page>
-        <PageSection>
-          <Panel>
-            <PanelMain>
-              <PanelMainBody>
-                <Story />
-              </PanelMainBody>
-            </PanelMain>
-          </Panel>
-        </PageSection>
-      </Page>
-    ),
-  ],
+  ...defaultStoryMeta,
 };
 
 const BasicExample = () => {

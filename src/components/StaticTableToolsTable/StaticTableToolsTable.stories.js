@@ -1,12 +1,5 @@
 import React from 'react';
 import propTypes from 'prop-types';
-import {
-  Page,
-  PageSection,
-  Panel,
-  PanelMain,
-  PanelMainBody,
-} from '@patternfly/react-core';
 
 import { StaticTableToolsTable } from '~/components';
 
@@ -19,7 +12,7 @@ import filters, {
   customNumberFilter,
 } from '~/support/factories/filters';
 import itemsFactory from '~/support/factories/items';
-import mswHandlers from '~/support/mswHandler';
+import defaultStoryMeta from '~/support/defaultStoryMeta';
 
 const arrayOfItems = itemsFactory(505);
 
@@ -65,26 +58,7 @@ const meta = {
     enableDetails: true,
     enableBulkSelect: true,
   },
-  parameters: {
-    msw: {
-      handlers: mswHandlers,
-    },
-  },
-  decorators: [
-    (Story) => (
-      <Page>
-        <PageSection>
-          <Panel>
-            <PanelMain>
-              <PanelMainBody>
-                <Story />
-              </PanelMainBody>
-            </PanelMain>
-          </Panel>
-        </PageSection>
-      </Page>
-    ),
-  ],
+  ...defaultStoryMeta,
 };
 
 const StaticTableExample = ({

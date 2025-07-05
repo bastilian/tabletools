@@ -1,12 +1,5 @@
 import React, { useCallback } from 'react';
 import propTypes from 'prop-types';
-import {
-  Page,
-  PageSection,
-  Panel,
-  PanelMain,
-  PanelMainBody,
-} from '@patternfly/react-core';
 
 import { TableToolsTable, TableStateProvider } from '~/components';
 import { useFullTableState } from '~/hooks';
@@ -14,6 +7,7 @@ import { useFullTableState } from '~/hooks';
 import CustomEmptyState from '~/support/components/CustomEmptyState';
 import DetailsRow from '~/support/components/DetailsRow';
 
+import defaultStoryMeta from '~/support/defaultStoryMeta';
 import columns from '~/support/factories/columns';
 import filters, {
   customNumberFilterType,
@@ -24,7 +18,6 @@ import sortSerialiser from '~/support/serialisers/sort';
 import filtersSerialiser from '~/support/serialisers/filters';
 import useExampleDataQuery from '~/support/hooks/useExampleDataQuery';
 
-import mswHandlers from '~/support/mswHandler';
 
 const defaultOptions = {
   serialisers: {
@@ -63,26 +56,7 @@ const meta = {
     enableDetails: true,
     enableBulkSelect: true,
   },
-  parameters: {
-    msw: {
-      handlers: mswHandlers,
-    },
-  },
-  decorators: [
-    (Story) => (
-      <Page>
-        <PageSection>
-          <Panel>
-            <PanelMain>
-              <PanelMainBody>
-                <Story />
-              </PanelMainBody>
-            </PanelMain>
-          </Panel>
-        </PageSection>
-      </Page>
-    ),
-  ],
+  ...defaultStoryMeta,
 };
 
 const emptyRows = (_kind, colSpan) => [
