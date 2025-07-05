@@ -11,6 +11,7 @@ module.exports = {
     'src/**/*.{js,jsx}',
     '!src/**/*.test.js',
     '!src/**/index.js',
+    '!src/**/*.stories.*',
     '!src/support/**/*.{js,jsx}',
   ],
   roots: ['<rootDir>/src/'],
