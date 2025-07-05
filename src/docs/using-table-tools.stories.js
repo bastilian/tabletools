@@ -1,12 +1,11 @@
 import React from 'react';
 
 import defaultStoryMeta from '~/support/defaultStoryMeta';
+import useExampleDataQuery from '~/support/hooks/useExampleDataQuery';
+import paginationSerialiser from '~/components/StaticTableToolsTable/helpers/serialisers/pagination';
 
 import { TableToolsTable, TableStateProvider } from '~/components';
 import { useSerialisedTableState } from '~/hooks';
-
-import useExampleDataQuery from '~/support/hooks/useExampleDataQuery';
-import paginationSerialiser from '~/support/serialisers/pagination';
 
 const convertToOffsetAndLimit = paginationSerialiser;
 

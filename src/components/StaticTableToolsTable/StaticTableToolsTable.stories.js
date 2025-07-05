@@ -1,11 +1,6 @@
 import React from 'react';
 import propTypes from 'prop-types';
 
-import { StaticTableToolsTable } from '~/components';
-
-import CustomEmptyState from '~/support/components/CustomEmptyState';
-import DetailsRow from '~/support/components/DetailsRow';
-
 import columns from '~/support/factories/columns';
 import filters, {
   customNumberFilterType,
@@ -13,6 +8,10 @@ import filters, {
 } from '~/support/factories/filters';
 import itemsFactory from '~/support/factories/items';
 import defaultStoryMeta from '~/support/defaultStoryMeta';
+import CustomEmptyState from '~/support/components/CustomEmptyState';
+import DetailsRow from '~/support/components/DetailsRow';
+
+import { StaticTableToolsTable } from '~/components';
 
 const arrayOfItems = itemsFactory(505);
 

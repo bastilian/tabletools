@@ -1,23 +1,21 @@
 import React, { useCallback } from 'react';
 import propTypes from 'prop-types';
 
-import { TableToolsTable, TableStateProvider } from '~/components';
-import { useFullTableState } from '~/hooks';
-
-import CustomEmptyState from '~/support/components/CustomEmptyState';
-import DetailsRow from '~/support/components/DetailsRow';
-
 import defaultStoryMeta from '~/support/defaultStoryMeta';
 import columns from '~/support/factories/columns';
 import filters, {
   customNumberFilterType,
   customNumberFilter,
 } from '~/support/factories/filters';
-import paginationSerialiser from '~/support/serialisers/pagination';
-import sortSerialiser from '~/support/serialisers/sort';
-import filtersSerialiser from '~/support/serialisers/filters';
+import paginationSerialiser from '~/components/StaticTableToolsTable/helpers/serialisers/pagination';
+import sortSerialiser from '~/components/StaticTableToolsTable/helpers/serialisers/sort';
+import filtersSerialiser from '~/components/StaticTableToolsTable/helpers/serialisers/filters';
 import useExampleDataQuery from '~/support/hooks/useExampleDataQuery';
+import CustomEmptyState from '~/support/components/CustomEmptyState';
+import DetailsRow from '~/support/components/DetailsRow';
 
+import { TableToolsTable, TableStateProvider } from '~/components';
+import { useFullTableState } from '~/hooks';
 
 const defaultOptions = {
   serialisers: {
