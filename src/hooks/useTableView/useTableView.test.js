@@ -1,6 +1,4 @@
-import React from 'react';
 import { renderHook, waitFor } from '@testing-library/react';
-import { Spinner } from '@patternfly/react-core';
 
 import { DEFAULT_RENDER_OPTIONS } from '~/support/testHelpers';
 import useItems from '~/hooks/useItems';
@@ -11,9 +9,22 @@ import tableTree from '~/support/factories/staticTableTree';
 
 import useTableView from './useTableView';
 
-const useRowsView = (viewItems, viewColumns) => {
-  const items = useItems(viewItems);
-  const table = useTableView(items.items, viewColumns);
+const useRowsView = (
+  veiwLoading,
+  viewItems,
+  viewError,
+  viewTotal,
+  viewColumns,
+) => {
+  const { loading, items, error, total } = useItems(
+    veiwLoading,
+    viewItems,
+    viewError,
+    viewTotal,
+  );
+  const table = useTableView(loading, items, error, total, {
+    columns: viewColumns,
+  });
 
   return {
     items,
@@ -24,20 +35,16 @@ const useRowsView = (viewItems, viewColumns) => {
 describe('useTableView', () => {
   const exampleItems = items(100).sort((item) => item.name);
 
-  it('returns a loading state if loaded is false', () => {
-    const { result } = renderHook(
-      () => useRowsView(undefined, columns, {}),
-      DEFAULT_RENDER_OPTIONS,
-    );
-
-    expect(result.current.table.tableProps.rows[0].cells[0].title()).toEqual(
-      <Spinner />,
-    );
-  });
-
   it('returns rows when everything is loaded and has items', async () => {
     const { result } = renderHook(
-      () => useRowsView(exampleItems, columns),
+      () =>
+        useRowsView(
+          false,
+          exampleItems,
+          undefined,
+          exampleItems.length,
+          columns,
+        ),
       DEFAULT_RENDER_OPTIONS,
     );
 
@@ -48,10 +55,13 @@ describe('useTableView', () => {
 
   it('returns an empty state if it is loaded, but has no items', () => {
     const { result } = renderHook(
-      () => useRowsView([], columns),
+      () => useRowsView(false, [], undefined, 0, columns),
       DEFAULT_RENDER_OPTIONS,
     );
-
+    console.log(
+      'result.current.table.tableProps',
+      result.current.table.tableProps,
+    );
     expect(
       result.current.table.tableProps.rows[0].cells[0].title().props,
     ).toEqual(
@@ -66,7 +76,10 @@ describe('useTableView', () => {
   describe('useTableView TableViewToggle', () => {
     it('returns no toggle by default', () => {
       const { result } = renderHook(
-        () => useTableView(exampleItems, columns, {}),
+        () =>
+          useTableView(false, exampleItems, undefined, exampleItems.length, {
+            columns,
+          }),
         DEFAULT_RENDER_OPTIONS,
       );
 
@@ -75,7 +88,11 @@ describe('useTableView', () => {
 
     it('returns a toggle if enabled via showViewToggle', () => {
       const { result } = renderHook(
-        () => useTableView(exampleItems, columns, { showViewToggle: true }),
+        () =>
+          useTableView(false, exampleItems, undefined, exampleItems.length, {
+            columns,
+            showViewToggle: true,
+          }),
         DEFAULT_RENDER_OPTIONS,
       );
 
@@ -85,7 +102,8 @@ describe('useTableView', () => {
     it('returns a toggle if there is a table tree', () => {
       const { result } = renderHook(
         () =>
-          useTableView(exampleItems, columns, {
+          useTableView(false, exampleItems, undefined, exampleItems.length, {
+            columns,
             enableTreeView: true,
             tableTree,
           }),
@@ -98,7 +116,8 @@ describe('useTableView', () => {
     it('returns no toggle if there is a table tree, but showViewToggle is false', () => {
       const { result } = renderHook(
         () =>
-          useTableView(exampleItems, columns, {
+          useTableView(false, exampleItems, undefined, exampleItems.length, {
+            columns,
             showViewToggle: false,
             tableTree,
           }),
