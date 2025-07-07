@@ -71,6 +71,7 @@ const BasicStateExample = () => {
     { pagination: { state: pagination } = {} } = {},
   ) => {
     const params = new URLSearchParams(
+      // returns {limit: XXX, offset: XXX}
       convertToOffsetAndLimit(pagination),
     ).toString();
     const response = await fetch('/api?' + params);

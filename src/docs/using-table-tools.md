@@ -41,7 +41,6 @@ We also provide an async "`fetchItems`" function, which will be called by the `T
 should return the items to show in the table for the current page and
 the overall total number of items that are available to browse.
 
-Providing an async function as for the `items` prop is one way to use the `TableToolsTable`.
 Another way is by passing an array as the `items`, as well as the `total` and `loading` as a prop,
 if you are using a `useQuery`(-like) hook like in the following example:
 
@@ -96,6 +95,7 @@ const BasicStateExample = () => {
     { pagination: { state: pagination } = {} } = {},
   ) => {
     const params = new URLSearchParams(
+      // returns {limit: XXX, offset: XXX}
       convertToOffsetAndLimit(pagination),
     ).toString();
     const response = await fetch('/api?' + params);
@@ -117,8 +117,11 @@ const BasicStateExample = () => {
 export default BasicStateExample;
 ```
 
-The **first** parameter passed to the function is the __serialisedState_. The serialised state is used
-when a "serialiser" is provided, which is a function that converts a table state into any wanted format when the state is changed.
+## Serialising the table state
+
+The **first** parameter passed to the function is the *_serialisedTableState*.
+This a "serialised" representation of the tables' state and is used when a "serialiser" is provided,
+which is a function that converts a table state into any wanted format when the state is changed.
 
 We can for example provide the `convertToOffsetAndLimit` function as a serialiser for the pagination state:
 
@@ -156,6 +159,8 @@ const BasicSerialisedStateExample = () => {
 
 export default BasicSerialisedStateExample;
 ```
+
+## Accessing the state via context
 
 In cases where the `TableToolsTable` is used with a query hook or similar,
 the table state can be accessed via a hook to access the table context.
@@ -214,4 +219,4 @@ export default BasicQueryWithSerialisedStateExampleWrapper;
 
 With this you should be able to build a basic paginated table for any API resource.
 The `TableToolsTable` also allows adding filters, enable sorting, enhance columns and
-many other features covered in other parts of the/future documentation.
+many other features covered in other parts of the documentation.
