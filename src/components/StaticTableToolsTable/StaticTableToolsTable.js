@@ -20,13 +20,28 @@ import queryItems from './helpers/jsonQueryHelpers';
  *  @group Components
  *
  */
-const StaticTableToolsTable = ({ items, options, ...props }) => {
+const StaticTableToolsTable = ({
+  items,
+  options: { onSelect, enableExport, ...options } = {},
+  ...props
+}) => {
   const queriedItems = useCallback(
     async ({ filters, pagination, sort } = {}) =>
       await queryItems(items, {
         filters,
         ...pagination,
         sort,
+      }),
+    [items],
+  );
+
+  const queryAll = useCallback(
+    async ({ filters, sort } = {}) =>
+      await queryItems(items, {
+        filters,
+        sort,
+        offset: 0,
+        limit: 'max',
       }),
     [items],
   );
@@ -41,6 +56,19 @@ const StaticTableToolsTable = ({ items, options, ...props }) => {
           sort: sortSerialiser,
           filters: filtersSerialiser,
         },
+        ...(enableExport
+          ? {
+              exporter: async (serialisedTableState) =>
+                (await queryAll(serialisedTableState))[0],
+            }
+          : {}),
+        ...(onSelect
+          ? {
+              itemIdsInTable: async (serialisedTableState) =>
+                (await queryAll(serialisedTableState))[0].map(({ id }) => id),
+              onSelect,
+            }
+          : {}),
       }}
       {...props}
     />

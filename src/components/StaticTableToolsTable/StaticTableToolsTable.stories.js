@@ -94,18 +94,15 @@ const StaticTableExample = ({
       options={{
         debug,
         manageColumns,
+        enableExport,
         ...(customEmptyRows ? { emptyRows: emptyRows(columns?.length) } : {}),
         ...(customEmptyState ? { EmptyState: CustomEmptyState } : {}),
-        ...(enableExport ? { exporter: () => arrayOfItems } : {}),
         ...(enableDetails ? { detailsComponent: DetailsRow } : {}),
         ...(enableBulkSelect
           ? {
               onSelect: (selected) => {
                 console.log('Currently selected', selected);
               },
-              // TODO verify these work when using an async function
-              itemIdsInTable: () => arrayOfItems.map(({ id }) => id),
-              itemIdsOnPage: () => arrayOfItems.map(({ id }) => id),
             }
           : {}),
       }}

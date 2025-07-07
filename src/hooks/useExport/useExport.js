@@ -1,5 +1,7 @@
 import { useCallback } from 'react';
 
+import { useFullTableState } from '~/hooks';
+
 import { downloadItems, exportableColumns } from './helpers';
 
 /**
@@ -35,12 +37,14 @@ const useExport = ({
 }) => {
   const enableExport = !!exporter;
   const exportColumns = exportableColumns(columns);
+  const { tableState, serialisedTableState } = useFullTableState() || {};
+
   const exportWithFormat = useCallback(
     async (format) => {
       onStart?.();
 
       try {
-        const items = await exporter();
+        const items = await exporter(serialisedTableState, tableState);
 
         downloadItems(exportColumns, items, format);
         onComplete?.(items);
@@ -49,7 +53,15 @@ const useExport = ({
         onError?.(error);
       }
     },
-    [onStart, onError, onComplete, exporter, exportColumns],
+    [
+      onStart,
+      onError,
+      onComplete,
+      exporter,
+      exportColumns,
+      tableState,
+      serialisedTableState,
+    ],
   );
 
   return enableExport
