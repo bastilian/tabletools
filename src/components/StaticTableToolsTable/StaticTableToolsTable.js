@@ -17,6 +17,8 @@ import queryItems from './helpers/jsonQueryHelpers';
  *
  *  @returns {React.ReactElement}                 Static table tools table
  *
+ *  @document ../../docs/using-static-tabletoolstable.md
+ *
  *  @group Components
  *
  */
@@ -50,7 +52,6 @@ const StaticTableToolsTable = ({
     <TableToolsTable
       items={queriedItems}
       options={{
-        ...options,
         serialisers: {
           pagination: paginationSerialiser,
           sort: sortSerialiser,
@@ -69,6 +70,7 @@ const StaticTableToolsTable = ({
               onSelect,
             }
           : {}),
+        ...options,
       }}
       {...props}
     />

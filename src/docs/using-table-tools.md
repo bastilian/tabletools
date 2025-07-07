@@ -1,5 +1,5 @@
 ---
-title: Using the table tools
+title: Using the TableToolsTable component
 group: Documents
 category: Guides
 ---
