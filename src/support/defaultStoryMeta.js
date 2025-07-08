@@ -17,7 +17,7 @@ const meta = {
   },
   decorators: [
     (Story) => (
-      <Page>
+      <Page sidebar={null}>
         <PageSection>
           <Panel>
             <PanelMain>

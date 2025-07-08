@@ -5,7 +5,6 @@ import {
   EmptyState,
   EmptyStateBody,
   EmptyStateVariant,
-  EmptyStateHeader,
   EmptyStateFooter,
   EmptyStateActions,
 } from '@patternfly/react-core';
@@ -16,12 +15,11 @@ const CustomEmptyState = ({ kind, items, columns }) => {
     current: { clearFilters },
   } = useStateCallbacks();
   return (
-    <EmptyState variant={EmptyStateVariant.full}>
-      <EmptyStateHeader
-        titleText={<>No matching {kind} found</>}
-        headingLevel="h5"
-      />
-
+    <EmptyState
+      variant={EmptyStateVariant.full}
+      titleText={<>No matching {kind} found</>}
+      headingLevel="h5"
+    >
       <EmptyStateBody>
         Custom Empty State for {kind}, because there are {items.length} items
         and no data for the{' '}
