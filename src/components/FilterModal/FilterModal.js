@@ -1,6 +1,12 @@
 import React, { useState } from 'react';
 import propTypes from 'prop-types';
-import { Modal, Button } from '@patternfly/react-core';
+import {
+  Modal,
+  ModalHeader,
+  ModalBody,
+  ModalFooter,
+  Button,
+} from '@patternfly/react-core';
 
 import { TableToolsTable, TableStateProvider } from '~/components';
 
@@ -33,45 +39,45 @@ const FilterModal = ({
   return (
     <Modal
       variant="medium"
-      title={title}
       isOpen={isFilterModalOpen}
-      footer={
-        <>
-          <Button
-            key="confirm"
-            variant="primary"
-            onClick={() => {
-              onChange?.(selectedFilterValues);
-              onClose?.();
-            }}
-          >
-            {applyLabel}
-          </Button>
-          <Button
-            key="cancel"
-            variant="link"
-            onClick={() => {
-              onClose?.();
-            }}
-          >
-            Cancel
-          </Button>
-        </>
-      }
       onClose={() => {
         onClose?.();
       }}
     >
-      <TableToolsTable
-        variant="compact"
-        items={fetchItems}
-        columns={columns}
-        options={{
-          preselected,
-          onSelect: (values) =>
-            setSelectedFilterValues(convertToFilterValues(values, filter)),
-        }}
-      />
+      <ModalHeader title={title} />
+      <ModalBody>
+        <TableToolsTable
+          variant="compact"
+          items={fetchItems}
+          columns={columns}
+          options={{
+            preselected,
+            onSelect: (values) =>
+              setSelectedFilterValues(convertToFilterValues(values, filter)),
+          }}
+        />
+      </ModalBody>
+      <ModalFooter>
+        <Button
+          key="confirm"
+          variant="primary"
+          onClick={() => {
+            onChange?.(selectedFilterValues);
+            onClose?.();
+          }}
+        >
+          {applyLabel}
+        </Button>
+        <Button
+          key="cancel"
+          variant="link"
+          onClick={() => {
+            onClose?.();
+          }}
+        >
+          Cancel
+        </Button>
+      </ModalFooter>
     </Modal>
   );
 };
