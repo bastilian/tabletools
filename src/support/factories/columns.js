@@ -44,6 +44,7 @@ export const rating = {
       .join(''),
   renderExport: ({ rating }) => rating,
   sortable: 'rating',
+  isShown: false,
 };
 
 export default [title, artist, releaseYear, genre, rating];
