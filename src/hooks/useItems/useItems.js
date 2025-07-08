@@ -32,7 +32,7 @@ const useItems = (
 
   const useInternalState = typeof externalItems === 'function';
 
-  const items = useInternalState ? internalItems : externalItems;
+  const items = useInternalState ? internalItems : identifyItems(externalItems);
   const total = useInternalState ? internalTotal : externalTotal;
 
   const [internalError, setInternalError] = useState();
