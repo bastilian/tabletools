@@ -48,10 +48,11 @@ const useColumnManager = (options = {}) => {
   }, []);
 
   const columnsToShow = useMemo(
-    () => [
-      ...selectedColumns.filter(({ isShown }) => isShown),
-      ...unManagableColumns,
-    ],
+    () =>
+      [
+        ...selectedColumns.filter(({ isShown }) => isShown),
+        ...unManagableColumns,
+      ].map(({ isShown: _isShown, ...column }) => column),
     [selectedColumns, unManagableColumns],
   );
 
