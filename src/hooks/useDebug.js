@@ -2,7 +2,7 @@ import { useContext, useEffect } from 'react';
 import { TableContext } from './useTableState/constants';
 
 const useDebug = (debugProp) => {
-  const { debug: contextDebug } = useContext(TableContext);
+  const { debug: contextDebug } = useContext(TableContext) || {};
 
   useEffect(() => {
     if (debugProp) {
@@ -11,7 +11,7 @@ const useDebug = (debugProp) => {
     }
   }, [debugProp, contextDebug]);
 
-  return contextDebug.current;
+  return contextDebug?.current || false;
 };
 
 export default useDebug;

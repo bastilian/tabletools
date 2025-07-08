@@ -1,7 +1,7 @@
 import { useCallback, useState } from 'react';
 import { useDeepCompareEffect } from 'use-deep-compare';
 
-import { useFullTableState } from '~/hooks';
+import useTableState, { useFullTableState } from '~/hooks/useTableState';
 import useSelectionManager from '~/hooks/useSelectionManager';
 import useCallbacksCallback from '~/hooks/useTableState/hooks/useCallbacksCallback';
 
@@ -66,6 +66,7 @@ const useBulkSelect = ({
     selectedIds,
   );
   const { tableState, serialisedTableState } = useFullTableState() || {};
+  const [, setSelected] = useTableState('selected');
 
   // TODO this is not totally wrong, but when the tree view is active there is currently no total, which causes the selection to be disabled there.
   // The bug may not even be fixed here, but in the tables that use selection and the tree view. They will need to provide an appropriate total still
@@ -139,6 +140,10 @@ const useBulkSelect = ({
     },
     [selectedIds],
   );
+
+  useDeepCompareEffect(() => {
+    setSelected(selectedIds);
+  }, [selectedIds, setSelected]);
 
   useDeepCompareEffect(() => {
     if (selected) {
