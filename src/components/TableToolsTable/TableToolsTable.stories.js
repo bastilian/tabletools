@@ -1,5 +1,10 @@
 import React, { useCallback } from 'react';
 import propTypes from 'prop-types';
+import {
+  useQuery,
+  QueryClient,
+  QueryClientProvider,
+} from '@tanstack/react-query';
 
 import defaultStoryMeta from '~/support/defaultStoryMeta';
 import columns from '~/support/factories/columns';
@@ -15,7 +20,7 @@ import CustomEmptyState from '~/support/components/CustomEmptyState';
 import DetailsRow from '~/support/components/DetailsRow';
 
 import { TableToolsTable, TableStateProvider } from '~/components';
-import { useFullTableState } from '~/hooks';
+import { useFullTableState, useSerialisedTableState } from '~/hooks';
 
 const defaultOptions = {
   serialisers: {
@@ -382,6 +387,74 @@ export const WithErrorPassed = {
     ),
   ],
   render: (args) => <WithErrorPassedExample {...args} />,
+};
+
+const WithUseQueryExample = ({ debug, filters: filtersConfig, filtered }) => {
+  const serialisedTableState = useSerialisedTableState();
+  const { filters, pagination, sort } = serialisedTableState || {};
+
+  const {
+    data: { data, meta: { total } = {} } = {},
+    isFetching,
+    error,
+  } = useQuery({
+    queryKey: [
+      'songs',
+      (pagination?.offset || 0) + (pagination?.limit || 0),
+      filters,
+      sort,
+    ],
+    queryFn: async () => {
+      const params = {
+        ...(filters ? { filters } : {}),
+        ...(pagination ? pagination : {}),
+        ...(sort ? { sort } : {}),
+      };
+      const query = params ? '?' + new URLSearchParams(params).toString() : '';
+      const response = await fetch('/api' + query);
+      const json = await response.json();
+
+      return json;
+    },
+  });
+
+  return (
+    <TableToolsTable
+      loading={isFetching}
+      items={data}
+      error={error}
+      total={total}
+      columns={columns}
+      options={{ ...defaultOptions, debug }}
+      {...(filtersConfig && filtered
+        ? {
+            filters: {
+              filterConfig: [...filtersConfig, customNumberFilter],
+              customFilterTypes: {
+                number: customNumberFilterType,
+              },
+            },
+          }
+        : {})}
+    />
+  );
+};
+
+WithUseQueryExample.propTypes = argProps;
+
+const queryClient = new QueryClient();
+
+export const WithUseQuery = {
+  decorators: [
+    (Story) => (
+      <TableStateProvider>
+        <QueryClientProvider client={queryClient}>
+          <Story />
+        </QueryClientProvider>
+      </TableStateProvider>
+    ),
+  ],
+  render: (args) => <WithUseQueryExample {...args} />,
 };
 
 export default meta;
