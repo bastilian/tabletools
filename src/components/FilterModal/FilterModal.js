@@ -84,6 +84,14 @@ FilterModal.propTypes = {
   onClose: propTypes.func,
 };
 
+/**
+ * Component used to provide a modal for filters that have the modal enabled
+ *
+ *  @returns {React.ReactElement}
+ *
+ *  @group Components
+ *
+ */
 const FilterModalWithProvider = (props) => {
   // TODO Pass down "primary table" state
 
