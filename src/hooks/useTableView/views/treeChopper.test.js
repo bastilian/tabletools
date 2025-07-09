@@ -5,11 +5,11 @@ import treeChopper from './treeChopper';
 const columns = [
   {
     title: 'Name',
-    renderFunc: (_a, _b, { name }) => name,
+    key:'name',
   },
   {
     title: 'Description',
-    renderFunc: (_a, _b, { description }) => description,
+    key:"description",
   },
 ];
 

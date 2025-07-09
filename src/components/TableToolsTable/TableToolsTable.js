@@ -112,7 +112,7 @@ TableToolsTable.propTypes = {
       sortByProperty: propTypes.string,
       sortByArray: propTypes.array,
       sortByFunction: propTypes.func,
-      renderFunc: propTypes.func,
+      
     }),
   ).isRequired,
   filters: propTypes.object,
