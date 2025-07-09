@@ -11,8 +11,7 @@ import useColumnManager from '~/hooks/useColumnManager';
 import useTableView from '~/hooks/useTableView';
 import useExport from '~/hooks/useExport';
 import useRadioSelect from '~/hooks/useRadioSelect';
-
-import { toToolbarActions } from './helpers';
+import useToolbarActions from '~/hooks/useToolbarActions';
 
 /**
  *  @typedef {object} useTableToolsReturn
@@ -62,18 +61,10 @@ const useTableTools = (
   const { columns, columnManagerAction, columnManagerModalProps } =
     useColumnManager(options);
 
-  // TODO extract to separate hook
-  const { toolbarProps: toolbarActionsProps } = useMemo(
-    () =>
-      toToolbarActions({
-        ...options,
-        firstAction: dedicatedAction,
-        actions: [
-          ...(options?.actions || []),
-          ...((columnManagerAction && [columnManagerAction]) || []),
-        ],
-      }),
-    [columnManagerAction, options, dedicatedAction],
+  const { toolbarProps: toolbarActionsProps } = useToolbarActions(
+    options,
+    dedicatedAction,
+    columnManagerAction,
   );
 
   const { toolbarProps: paginationToolbarProps } = usePagination({
