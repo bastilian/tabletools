@@ -63,7 +63,6 @@ const useTableTools = (
 
   const { toolbarProps: toolbarActionsProps } = useToolbarActions(
     options,
-    dedicatedAction,
     columnManagerAction,
   );
 
