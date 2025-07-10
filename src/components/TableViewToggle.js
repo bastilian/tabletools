@@ -2,6 +2,14 @@ import React from 'react';
 import propTypes from 'prop-types';
 import { ToggleGroup, ToggleGroupItem, Icon } from '@patternfly/react-core';
 
+/**
+ * Component used when more than 1 view type is available for a table
+ *
+ *  @returns {React.ReactElement}
+ *
+ *  @group Components
+ *
+ */
 const TableViewToggle = ({ views, onToggle, currentTableView }) => (
   <ToggleGroup>
     {Object.entries(views).map(([key, { icon: ToggleIcon }]) => (

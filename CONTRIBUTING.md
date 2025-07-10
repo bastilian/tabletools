@@ -71,3 +71,11 @@ $ npx serve
 ```
 
 This will start a small webserver and the docs should be available under http://localhost:3000/
+
+## Note on AI generated contributions
+
+We do not accept AI generated contributions. Some AI assistance is allowed.
+However, if we suspect contributions, like issues, pull requests or
+any other content, have primarily been AI generated we will not accept it,
+and remove it, when necessary.
+
