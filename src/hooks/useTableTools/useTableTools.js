@@ -43,7 +43,6 @@ const useTableTools = (
   const {
     toolbarProps: toolbarPropsOption,
     tableProps: tablePropsOption,
-    dedicatedAction,
     actionResolver,
     debug: debugOption,
   } = options;
