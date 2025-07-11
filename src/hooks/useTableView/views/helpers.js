@@ -119,6 +119,8 @@ export const getOnTreeSelect = (options) => {
 export const treeTableGroupColumns = [
   {
     key: 'title',
+    // eslint-disable-next-line react/prop-types
+    Component: ({ title }) => <strong>{title} </strong>,
   },
 ];
 
