@@ -31,6 +31,7 @@ describe('useItems', () => {
 
     await waitFor(() =>
       expect(result.current).toEqual({
+        error: null,
         loading: false,
         items: tenItems,
         total: exampleItems.length,

@@ -39,6 +39,7 @@ const useTableView = (loading, items, error, total, options = {}) => {
   );
 
   return {
+    ...(tableView ? { view: tableView } : {}),
     ...(tableProps ? { tableProps } : {}),
     ...(toolbarProps ? { toolbarProps } : {}),
     ...(enableToggle

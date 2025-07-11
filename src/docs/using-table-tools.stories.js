@@ -1,4 +1,5 @@
 import React from 'react';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 import defaultStoryMeta from '~/support/defaultStoryMeta';
 import useExampleDataQuery from '~/support/hooks/useExampleDataQuery';
@@ -8,6 +9,7 @@ import { TableToolsTable, TableStateProvider } from '~/components';
 import { useSerialisedTableState } from '~/hooks';
 
 const convertToOffsetAndLimit = paginationSerialiser;
+const queryClient = new QueryClient();
 
 const meta = {
   title: '"Using TableToolsTable" tutorial examples',
@@ -170,36 +172,14 @@ const BasicQueryWithSerialisedStateExampleWrapper = () => (
 );
 
 export const BasicQueryWithSerialisedState = {
+  decorators: [
+    (Story) => (
+      <QueryClientProvider client={queryClient}>
+        <Story />
+      </QueryClientProvider>
+    ),
+  ],
   render: () => <BasicQueryWithSerialisedStateExampleWrapper />,
-};
-
-const BasicQueryWithTableStateExample = () => {
-  const {
-    loading,
-    result: { data, meta: { total } = {} } = {},
-    error,
-  } = useExampleDataQuery({ endpoint: '/api' });
-
-  const columns = [
-    {
-      title: 'Title',
-      key: 'title',
-    },
-  ];
-
-  return (
-    <TableToolsTable
-      loading={loading}
-      items={data}
-      error={error}
-      total={total}
-      columns={columns}
-    />
-  );
-};
-
-export const BasicQueryWithTableState = {
-  render: () => <BasicQueryWithTableStateExample />,
 };
 
 export default meta;

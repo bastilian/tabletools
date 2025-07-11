@@ -1,4 +1,5 @@
-import { useState, useEffect } from 'react';
+import { useCallback } from 'react';
+import { useQuery } from '@tanstack/react-query';
 
 import {
   useSerialisedTableState,
@@ -27,50 +28,38 @@ const useItems = (
   externalError,
   externalTotal,
 ) => {
-  const [{ items: internalItems, total: internalTotal }, setInternalItems] =
-    useState(initialItemsState);
-
+  const tableState = useRawTableState();
+  const { filter, sort, pagination } = tableState || {};
+  const serialisedTableState = useSerialisedTableState();
   const useInternalState = typeof externalItems === 'function';
+
+  const queryFn = useCallback(async () => {
+    const [items, total] = await externalItems(
+      serialisedTableState,
+      tableState,
+    );
+
+    return {
+      items: identifyItems(items),
+      total,
+    };
+  }, [externalItems, serialisedTableState, tableState]);
+
+  const {
+    data: { items: internalItems, total: internalTotal } = initialItemsState,
+    isFetching: internalLoading,
+    error: internalError,
+  } = useQuery({
+    queryKey: ['items', serialisedTableState, filter, sort, pagination],
+    queryFn,
+    enabled: useInternalState,
+    refetchOnWindowFocus: false,
+  });
 
   const items = useInternalState ? internalItems : identifyItems(externalItems);
   const total = useInternalState ? internalTotal : externalTotal;
-
-  const [internalError, setInternalError] = useState();
   const error = useInternalState ? internalError : externalError;
-
-  const [internalLoading, setInternalLoading] = useState(true);
   const loading = useInternalState ? internalLoading : externalLoading;
-
-  const tableState = useRawTableState();
-  const serialisedTableState = useSerialisedTableState();
-
-  useEffect(() => {
-    if (useInternalState) {
-      setInternalLoading(true);
-      setInternalItems(initialItemsState);
-      setInternalError(undefined);
-
-      const setStateFromAsyncItems = async () => {
-        try {
-          const [items, total] = await externalItems(
-            serialisedTableState,
-            tableState,
-          );
-          setInternalItems({
-            items: identifyItems(items),
-            total,
-          });
-        } catch (error) {
-          console.error(error);
-          setInternalError(error);
-        }
-
-        setInternalLoading(false);
-      };
-
-      setStateFromAsyncItems();
-    }
-  }, [externalItems, tableState, serialisedTableState, useInternalState]);
 
   return {
     loading,

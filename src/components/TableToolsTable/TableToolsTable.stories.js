@@ -1,5 +1,6 @@
 import React, { useCallback } from 'react';
 import propTypes from 'prop-types';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 import defaultStoryMeta from '~/support/defaultStoryMeta';
 import columns from '~/support/factories/columns';
@@ -16,6 +17,8 @@ import DetailsRow from '~/support/components/DetailsRow';
 
 import { TableToolsTable, TableStateProvider } from '~/components';
 import { useFullTableState } from '~/hooks';
+
+const queryClient = new QueryClient();
 
 const defaultOptions = {
   serialisers: {
@@ -140,9 +143,11 @@ CommonExample.propTypes = argProps;
 export const Common = {
   decorators: [
     (Story) => (
-      <TableStateProvider>
-        <Story />
-      </TableStateProvider>
+      <QueryClientProvider client={queryClient}>
+        <TableStateProvider>
+          <Story />
+        </TableStateProvider>
+      </QueryClientProvider>
     ),
   ],
   render: (args) => <CommonExample {...args} />,
@@ -238,9 +243,11 @@ WithTableTreeExample.propTypes = argProps;
 export const WithTableTree = {
   decorators: [
     (Story) => (
-      <TableStateProvider>
-        <Story />
-      </TableStateProvider>
+      <QueryClientProvider client={queryClient}>
+        <TableStateProvider>
+          <Story />
+        </TableStateProvider>
+      </QueryClientProvider>
     ),
   ],
   render: (args) => <WithTableTreeExample {...args} />,
@@ -324,7 +331,53 @@ const WithAsyncFunctionExample = ({
 WithAsyncFunctionExample.propTypes = argProps;
 
 export const WithAsyncFunction = {
+  decorators: [
+    (Story) => (
+      <QueryClientProvider client={queryClient}>
+        <Story />
+      </QueryClientProvider>
+    ),
+  ],
   render: (args) => <WithAsyncFunctionExample {...args} />,
+};
+
+const WithPlainAsyncFunctionExample = ({ debug }) => {
+  const fetchItems = useCallback(
+    async ({ pagination = {}, filters, sort } = {}) => {
+      const query =
+        '?' +
+        new URLSearchParams({
+          ...pagination,
+          ...(filters ? { filters } : {}),
+          ...(sort ? { sort } : {}),
+        }).toString();
+      const response = await fetch('/api' + query);
+      const json = await response.json();
+
+      return [json.data, json.meta.total];
+    },
+    [],
+  );
+
+  return (
+    <TableToolsTable
+      items={fetchItems}
+      columns={columns}
+      filters={{ filterConfig: filters }}
+      options={{
+        ...defaultOptions,
+        debug,
+        manageColumns: true,
+        kind: 'songs',
+      }}
+    />
+  );
+};
+
+WithPlainAsyncFunctionExample.propTypes = argProps;
+
+export const WithPlainAsyncFunction = {
+  render: (args) => <WithPlainAsyncFunctionExample {...args} />,
 };
 
 const WithErroringAsyncFunctionExample = ({ debug }) => {
@@ -348,6 +401,13 @@ const WithErroringAsyncFunctionExample = ({ debug }) => {
 WithErroringAsyncFunctionExample.propTypes = argProps;
 
 export const WithErroringAsyncFunction = {
+  decorators: [
+    (Story) => (
+      <QueryClientProvider client={queryClient}>
+        <Story />
+      </QueryClientProvider>
+    ),
+  ],
   render: (args) => <WithErroringAsyncFunctionExample {...args} />,
 };
 
@@ -376,9 +436,11 @@ WithErrorPassedExample.propTypes = argProps;
 export const WithErrorPassed = {
   decorators: [
     (Story) => (
-      <TableStateProvider>
-        <Story />
-      </TableStateProvider>
+      <QueryClientProvider client={queryClient}>
+        <TableStateProvider>
+          <Story />
+        </TableStateProvider>
+      </QueryClientProvider>
     ),
   ],
   render: (args) => <WithErrorPassedExample {...args} />,

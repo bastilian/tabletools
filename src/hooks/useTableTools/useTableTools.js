@@ -106,6 +106,7 @@ const useTableTools = (
   });
 
   const {
+    view,
     toolbarProps: tableViewToolbarProps,
     tableProps: tableViewTableProps,
     tableViewToggleProps,
@@ -198,13 +199,15 @@ const useTableTools = (
   useDeepCompareEffect(() => {
     if (debug) {
       console.group('TableTools return props');
+      console.log('view', view);
       console.log('tableProps', tableProps);
       console.log('toolbarProps', toolbarProps);
       console.groupEnd();
     }
-  }, [tableProps, toolbarProps, debug]);
+  }, [tableProps, toolbarProps, debug, view]);
 
   return {
+    view,
     loading,
     toolbarProps,
     tableProps,

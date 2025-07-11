@@ -1,5 +1,6 @@
 import React, { useContext } from 'react';
 import propTypes from 'prop-types';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Pagination, PaginationVariant } from '@patternfly/react-core';
 import {
   Table,
@@ -18,6 +19,8 @@ import useTableTools from '~/hooks/useTableTools';
 import { TableContext } from '~/hooks/useTableState/constants';
 import { TableStateProvider, FilterModal, TableViewToggle } from '~/components';
 
+const queryClient = new QueryClient();
+
 const TableToolsTable = ({
   loading: externalLoading,
   items: externalItems,
@@ -25,7 +28,7 @@ const TableToolsTable = ({
   total: externalTotal,
   columns,
   filters,
-  options,
+  options: { treeTable, ...options } = {},
   // TODO I'm not sure if we need this level of customisation.
   // It might actually hurt in the long run. Consider removing until we really have the case where we need this
   toolbarProps: toolbarPropsProp,
@@ -36,6 +39,7 @@ const TableToolsTable = ({
   ...tablePropsRest
 }) => {
   const {
+    view,
     loading,
     toolbarProps,
     tableProps,
@@ -48,6 +52,7 @@ const TableToolsTable = ({
     externalError,
     externalTotal,
     {
+      treeTable,
       filters,
       columns,
       toolbarProps: toolbarPropsProp,
@@ -62,18 +67,21 @@ const TableToolsTable = ({
         {tableViewToggleProps && <TableViewToggle {...tableViewToggleProps} />}
       </PrimaryToolbar>
 
-      {loading ? (
-        <SkeletonTable
-          rowSize={toolbarProps?.pagination?.perPage || 10}
-          // TODO use Th when migrating to PF composable tables
-          columns={columns.map(({ title }) => title)}
-        />
-      ) : (
-        <Table aria-label="Table" {...tableProps}>
-          <TableHeader {...tableHeaderProps} />
-          <TableBody {...tableBodyProps} />
-        </Table>
-      )}
+      {
+        // TODO This is a bit hackish. We should rather have an indicator if data necessary for the current view is loading.
+        (view === 'rows' || (view === 'tree' && !treeTable)) && loading ? (
+          <SkeletonTable
+            rowSize={toolbarProps?.pagination?.perPage || 10}
+            // TODO use Th when migrating to PF composable tables
+            columns={columns.map(({ title }) => title)}
+          />
+        ) : (
+          <Table aria-label="Table" {...tableProps}>
+            <TableHeader {...tableHeaderProps} />
+            <TableBody {...tableBodyProps} />
+          </Table>
+        )
+      }
 
       <TableToolbar isFooter {...tableToolbarProps}>
         {toolbarProps.pagination && (
@@ -148,9 +156,11 @@ const TableToolsTableWithOrWithoutProvider = (props) => {
   const Wrapper = tableContext ? React.Fragment : TableStateProvider;
 
   return (
-    <Wrapper>
-      <TableToolsTable {...props} />
-    </Wrapper>
+    <QueryClientProvider client={queryClient}>
+      <Wrapper>
+        <TableToolsTable {...props} />
+      </Wrapper>
+    </QueryClientProvider>
   );
 };
 

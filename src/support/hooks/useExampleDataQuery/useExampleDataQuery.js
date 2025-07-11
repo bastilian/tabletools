@@ -1,5 +1,5 @@
-import { useCallback, useState, useRef } from 'react';
-import { useDeepCompareEffect, useDeepCompareCallback } from 'use-deep-compare';
+import { useCallback } from 'react';
+import { useQuery } from '@tanstack/react-query';
 
 import { useSerialisedTableState } from '~/hooks';
 
@@ -12,58 +12,35 @@ const useExampleDataQuery = ({
   params: paramsOption = {},
 } = {}) => {
   const serialisedTableState = useSerialisedTableState();
-  const params = useParamsFromTableState(serialisedTableState);
-  const [result, setResult] = useState();
-  const [error, setError] = useState();
-  const queryCache = useRef();
-  const responseCache = useRef();
-  const okCache = useRef();
+  const params = useParamsFromTableState({
+    paramsOption,
+    serialisedTableState,
+    useTableState,
+  });
 
-  const api = useDeepCompareCallback(
-    async (params) => {
-      const query = params ? '?' + new URLSearchParams(params).toString() : '';
+  const api = useCallback(
+    async (fetchParams) => {
+      const query =
+        params || fetchParams
+          ? '?' + new URLSearchParams({ ...params, ...fetchParams }).toString()
+          : '';
+      const response = await fetch(endpoint + query);
 
-      if (queryCache.current !== endpoint + query) {
-        const response = await fetch(endpoint + query);
-        queryCache.current = endpoint + query;
-        okCache.current = response.ok;
-        responseCache.current = await response.json();
-      }
-
-      if (okCache.current) {
-        return responseCache.current;
-      } else {
-        throw responseCache.current;
-      }
+      return await response.json();
     },
-    [endpoint],
+    [endpoint, params],
   );
 
-  useDeepCompareEffect(() => {
-    if (!skip) {
-      setResult(undefined);
-      setError(undefined);
-
-      const fetchData = async (params) => {
-        try {
-          const apiResult = await api({ ...params, ...paramsOption });
-
-          setResult(apiResult);
-        } catch (e) {
-          console.log(e);
-          setError(e);
-        }
-      };
-
-      if (useTableState) {
-        if (serialisedTableState) {
-          fetchData(params);
-        }
-      } else {
-        fetchData(params);
-      }
-    }
-  }, [skip, api, params, paramsOption, serialisedTableState, useTableState]);
+  const {
+    isFetching: loading,
+    data: result,
+    error,
+  } = useQuery({
+    queryKey: [endpoint, params],
+    queryFn: api,
+    enabled: !skip,
+    refetchOnWindowFocus: false,
+  });
 
   const exporter = useCallback(
     async () =>
@@ -101,7 +78,7 @@ const useExampleDataQuery = ({
           error,
         }
       : {}),
-    loading: !(result || error),
+    loading,
     fetch: _fetch,
     exporter,
     itemIdsInTable,
