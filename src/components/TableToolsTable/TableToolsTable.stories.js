@@ -14,6 +14,8 @@ import filtersSerialiser from '~/components/StaticTableToolsTable/helpers/serial
 import useExampleDataQuery from '~/support/hooks/useExampleDataQuery';
 import CustomEmptyState from '~/support/components/CustomEmptyState';
 import DetailsRow from '~/support/components/DetailsRow';
+import DedicatedAction from '~/support/components/DedicatedAction';
+import { actions, rowActionResolver } from '~/support/constants';
 
 import { TableToolsTable, TableStateProvider } from '~/components';
 import { useFullTableState } from '~/hooks';
@@ -34,6 +36,9 @@ const argProps = {
   filters: propTypes.array,
   filtered: propTypes.bool,
   sortable: propTypes.bool,
+  enableRowActions: propTypes.bool,
+  enableActions: propTypes.bool,
+  dedicatedAction: propTypes.bool,
   manageColumns: propTypes.bool,
   customEmptyRows: propTypes.bool,
   customEmptyState: propTypes.bool,
@@ -51,6 +56,9 @@ const meta = {
     filtered: true,
     sortable: true,
     manageColumns: true,
+    enableRowActions: true,
+    enableActions: true,
+    dedicatedAction: true,
     customEmptyRows: true,
     customEmptyState: true,
     enableExport: true,
@@ -80,6 +88,9 @@ const CommonExample = ({
   filtered,
   sortable,
   manageColumns,
+  enableRowActions,
+  enableActions,
+  dedicatedAction,
   customEmptyRows,
   customEmptyState,
   enableExport,
@@ -120,6 +131,13 @@ const CommonExample = ({
         ...defaultOptions,
         debug,
         manageColumns,
+        ...(enableRowActions
+          ? {
+              actionResolver: rowActionResolver,
+            }
+          : {}),
+        ...(enableActions ? { actions } : {}),
+        ...(dedicatedAction ? { dedicatedAction: DedicatedAction } : {}),
         ...(customEmptyRows ? { emptyRows: emptyRows(columns?.length) } : {}),
         ...(customEmptyState ? { EmptyState: CustomEmptyState } : {}),
         ...(enableExport ? { exporter } : {}),
@@ -159,6 +177,8 @@ const WithTableTreeExample = ({
   filters,
   filtered,
   sortable,
+  enableActions,
+  dedicatedAction,
   manageColumns,
   customEmptyRows,
   customEmptyState,
@@ -220,6 +240,8 @@ const WithTableTreeExample = ({
         tableTree,
         enableTreeView: true,
         defaultTableView: 'tree',
+        ...(enableActions ? { actions } : {}),
+        ...(dedicatedAction ? { dedicatedAction: DedicatedAction } : {}),
         ...(customEmptyRows ? { emptyRows: emptyRows(columns?.length) } : {}),
         ...(customEmptyState ? { EmptyState: CustomEmptyState } : {}),
         ...(enableExport ? { exporter } : {}),
@@ -259,6 +281,9 @@ const WithAsyncFunctionExample = ({
   filters,
   filtered,
   sortable,
+  enableRowActions,
+  enableActions,
+  dedicatedAction,
   manageColumns,
   customEmptyRows,
   customEmptyState,
@@ -310,6 +335,13 @@ const WithAsyncFunctionExample = ({
         ...defaultOptions,
         debug,
         manageColumns,
+        ...(enableRowActions
+          ? {
+              actionResolver: rowActionResolver,
+            }
+          : {}),
+        ...(enableActions ? { actions } : {}),
+        ...(dedicatedAction ? { dedicatedAction: DedicatedAction } : {}),
         ...(customEmptyRows ? { emptyRows: emptyRows(columns?.length) } : {}),
         ...(customEmptyState ? { EmptyState: CustomEmptyState } : {}),
         ...(enableExport ? { exporter } : {}),

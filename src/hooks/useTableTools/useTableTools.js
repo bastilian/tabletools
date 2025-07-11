@@ -1,5 +1,4 @@
-import { useMemo } from 'react';
-import { useDeepCompareEffect } from 'use-deep-compare';
+import { useEffect, useMemo } from 'react';
 
 import useDebug from '~/hooks/useDebug';
 import usePagination from '~/hooks/usePagination';
@@ -177,7 +176,7 @@ const useTableTools = (
     ],
   );
 
-  useDeepCompareEffect(() => {
+  useEffect(() => {
     if (debug) {
       console.group('TableTools props');
       console.log('externalLoading', externalLoading);
@@ -196,7 +195,7 @@ const useTableTools = (
     debug,
   ]);
 
-  useDeepCompareEffect(() => {
+  useEffect(() => {
     if (debug) {
       console.group('TableTools return props');
       console.log('view', view);

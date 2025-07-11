@@ -10,6 +10,8 @@ import itemsFactory from '~/support/factories/items';
 import defaultStoryMeta from '~/support/defaultStoryMeta';
 import CustomEmptyState from '~/support/components/CustomEmptyState';
 import DetailsRow from '~/support/components/DetailsRow';
+import DedicatedAction from '~/support/components/DedicatedAction';
+import { actions, rowActionResolver } from '~/support/constants';
 
 import { StaticTableToolsTable } from '~/components';
 
@@ -21,6 +23,9 @@ const argProps = {
   filters: propTypes.array,
   filtered: propTypes.bool,
   sortable: propTypes.bool,
+  enableRowActions: propTypes.bool,
+  enableActions: propTypes.bool,
+  dedicatedAction: propTypes.bool,
   manageColumns: propTypes.bool,
   customEmptyRows: propTypes.bool,
   customEmptyState: propTypes.bool,
@@ -50,6 +55,9 @@ const meta = {
     filters,
     filtered: true,
     sortable: true,
+    enableRowActions: true,
+    enableActions: true,
+    dedicatedAction: true,
     manageColumns: true,
     customEmptyRows: true,
     customEmptyState: true,
@@ -67,6 +75,9 @@ const StaticTableExample = ({
   filtered,
   sortable,
   manageColumns,
+  enableRowActions,
+  enableActions,
+  dedicatedAction,
   customEmptyRows,
   customEmptyState,
   enableExport,
@@ -95,6 +106,13 @@ const StaticTableExample = ({
         debug,
         manageColumns,
         enableExport,
+        ...(enableRowActions
+          ? {
+              actionResolver: rowActionResolver,
+            }
+          : {}),
+        ...(enableActions ? { actions } : {}),
+        ...(dedicatedAction ? { dedicatedAction: DedicatedAction } : {}),
         ...(customEmptyRows ? { emptyRows: emptyRows(columns?.length) } : {}),
         ...(customEmptyState ? { EmptyState: CustomEmptyState } : {}),
         ...(enableDetails ? { detailsComponent: DetailsRow } : {}),
