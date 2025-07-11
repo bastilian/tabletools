@@ -37,7 +37,7 @@ const useExampleDataQuery = ({
     error,
   } = useQuery({
     queryKey: [endpoint, params],
-    queryFn: api,
+    queryFn: (_queryContext, ...args) => api(...args),
     enabled: !skip,
     refetchOnWindowFocus: false,
   });
