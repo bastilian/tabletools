@@ -11,6 +11,7 @@ export { default as useTableSort } from './useTableSort';
 export { default as useTableState } from './useTableState';
 export { default as useTableTools } from './useTableTools';
 export { default as useTableView } from './useTableView';
+export { default as useToolbarActions } from './useToolbarActions';
 
 export { default as useFullTableState } from './useTableState/hooks/useFullTableState';
 export { default as useRawTableState } from './useTableState/hooks/useRawTableState';
