@@ -1,9 +1,15 @@
 import React from 'react';
 import propTypes from 'prop-types';
+import { Label } from '@patternfly/react-core';
 
 const Title = ({ title }) => <strong>{title}</strong>;
 Title.propTypes = {
   title: propTypes.string,
+};
+
+const Genre = ({ genre }) => <Label color="blue">{genre}</Label>;
+Genre.propTypes = {
+  genre: propTypes.string,
 };
 
 export const title = {
@@ -22,7 +28,7 @@ export const artist = {
 
 export const genre = {
   title: 'Genre',
-  Component: ({ genre }) => genre,
+  Component: Genre,
   renderExport: ({ genre }) => genre,
   sortable: 'genre',
 };
