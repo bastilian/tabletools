@@ -18,7 +18,6 @@ describe('TableToolsTable', () => {
       {
         title: 'Title',
         key: 'title',
-
       },
     ],
     items: itemsFunc,

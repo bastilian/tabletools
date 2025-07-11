@@ -12,7 +12,7 @@ const renderCell = (column, item) => {
     // NOTE: When using "deep compare" effects that have the rows
     // or the object containing rows as dependencies will raise a "too much recursion" error (via dequal)
     return <Component {...item} />;
-  }  else {
+  } else {
     return item[columnProp(column)];
   }
 };
@@ -119,7 +119,6 @@ export const getOnTreeSelect = (options) => {
 export const treeTableGroupColumns = [
   {
     key: 'title',
-    
   },
 ];
 

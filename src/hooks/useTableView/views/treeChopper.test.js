@@ -5,11 +5,11 @@ import treeChopper from './treeChopper';
 const columns = [
   {
     title: 'Name',
-    key:'name',
+    key: 'name',
   },
   {
     title: 'Description',
-    key:"description",
+    key: 'description',
   },
 ];
 
