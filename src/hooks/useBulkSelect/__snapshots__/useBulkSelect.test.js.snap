@@ -3,9 +3,9 @@
 exports[`useBulkSelect returns a bulk select configuration 1`] = `
 {
   "current": {
-    "tableProps": {
-      "canSelectAll": false,
-      "onSelect": undefined,
+    "bulkSelect": {
+      "isItemSelected": [Function],
+      "selectOne": [Function],
     },
     "tableView": {
       "deselect": [Function],
