@@ -1,11 +1,5 @@
 import React from 'react';
-import {
-  Page,
-  PageSection,
-  Panel,
-  PanelMain,
-  PanelMainBody,
-} from '@patternfly/react-core';
+import { Page, PageSection } from '@patternfly/react-core';
 
 import mswHandlers from './mswHandler';
 
@@ -17,15 +11,9 @@ const meta = {
   },
   decorators: [
     (Story) => (
-      <Page>
+      <Page defaultManagedSidebarIsOpen={false}>
         <PageSection>
-          <Panel>
-            <PanelMain>
-              <PanelMainBody>
-                <Story />
-              </PanelMainBody>
-            </PanelMain>
-          </Panel>
+          <Story />
         </PageSection>
       </Page>
     ),

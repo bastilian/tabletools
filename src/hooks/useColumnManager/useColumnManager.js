@@ -48,10 +48,11 @@ const useColumnManager = (options = {}) => {
   }, []);
 
   const columnsToShow = useMemo(
-    () => [
-      ...selectedColumns.filter(({ isShown }) => isShown),
-      ...unManagableColumns,
-    ],
+    () =>
+      [
+        ...selectedColumns.filter(({ isShown }) => isShown),
+        ...unManagableColumns,
+      ].map(({ isShown: _isShown, ...column }) => column), // eslint-disable-line @typescript-eslint/no-unused-vars
     [selectedColumns, unManagableColumns],
   );
 
