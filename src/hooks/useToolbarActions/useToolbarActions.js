@@ -3,9 +3,9 @@ import { toToolbarActions } from '../useTableTools/helpers';
 
 /**
  * Hook for managing toolbar actions including dedicated actions and column manager actions
- * @param {object} options - Configuration options
- * @param {*} columnManagerAction - Column manager action if available
- * @returns {object} Object containing toolbarProps for actions
+ *  @param   {object} options             - Configuration options
+ *  @param   {*}      columnManagerAction - Column manager action if available
+ *  @returns {object}                     Object containing toolbarProps for actions
  */
 const useToolbarActions = (options, columnManagerAction) => {
   const { dedicatedAction } = options;
@@ -25,4 +25,4 @@ const useToolbarActions = (options, columnManagerAction) => {
   return { toolbarProps: toolbarActionsProps };
 };
 
-export default useToolbarActions; 
+export default useToolbarActions;

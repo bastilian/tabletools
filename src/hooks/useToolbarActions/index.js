@@ -1,1 +1,1 @@
-export { default } from './useToolbarActions'; 
+export { default } from './useToolbarActions';
