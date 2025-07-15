@@ -1,27 +1,18 @@
 import React, { useContext } from 'react';
 import propTypes from 'prop-types';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { QueryClientProvider } from '@tanstack/react-query';
 import { Pagination, PaginationVariant } from '@patternfly/react-core';
-import {
-  Table,
-  TableBody,
-  TableHeader,
-} from '@patternfly/react-table/deprecated';
-import {
-  SkeletonTable,
-  ColumnManagementModal,
-} from '@patternfly/react-component-groups';
-
-import PrimaryToolbar from '@redhat-cloud-services/frontend-components/PrimaryToolbar';
+import { ColumnManagementModal } from '@patternfly/react-component-groups';
 import TableToolbar from '@redhat-cloud-services/frontend-components/TableToolbar';
 
 import useTableTools from '~/hooks/useTableTools';
 import { TableContext } from '~/hooks/useTableState/constants';
-import { TableStateProvider, FilterModal, TableViewToggle } from '~/components';
+import { TableStateProvider, FilterModal } from '~/components';
 
-const queryClient = new QueryClient();
+import { variants, queryClient } from './constants';
 
 const TableToolsTable = ({
+  tableToolsTableVariant = 'table',
   loading: externalLoading,
   items: externalItems,
   error: externalError,
@@ -32,20 +23,16 @@ const TableToolsTable = ({
   // TODO I'm not sure if we need this level of customisation.
   // It might actually hurt in the long run. Consider removing until we really have the case where we need this
   toolbarProps: toolbarPropsProp,
-  tableHeaderProps,
-  tableBodyProps,
   tableToolbarProps,
   paginationProps,
   ...tablePropsRest
 }) => {
+  const { TableComponent, ToolbarComponent } = variants[tableToolsTableVariant];
   const {
-    view,
-    loading,
     toolbarProps,
-    tableProps,
     filterModalProps,
     columnManagerModalProps,
-    tableViewToggleProps,
+    ...tableToolsProps
   } = useTableTools(
     externalLoading,
     externalItems,
@@ -63,25 +50,9 @@ const TableToolsTable = ({
 
   return (
     <>
-      <PrimaryToolbar aria-label="Table toolbar" {...toolbarProps}>
-        {tableViewToggleProps && <TableViewToggle {...tableViewToggleProps} />}
-      </PrimaryToolbar>
+      <ToolbarComponent {...{ ...tableToolsProps, ...{ toolbarProps } }} />
 
-      {
-        // TODO This is a bit hackish. We should rather have an indicator if data necessary for the current view is loading.
-        (view === 'rows' || (view === 'tree' && !treeTable)) && loading ? (
-          <SkeletonTable
-            rowSize={toolbarProps?.pagination?.perPage || 10}
-            // TODO use Th when migrating to PF composable tables
-            columns={columns.map(({ title }) => title)}
-          />
-        ) : (
-          <Table aria-label="Table" {...tableProps}>
-            <TableHeader {...tableHeaderProps} />
-            <TableBody {...tableBodyProps} />
-          </Table>
-        )
-      }
+      <TableComponent {...{ ...tableToolsProps, ...{ toolbarProps } }} />
 
       <TableToolbar isFooter {...tableToolbarProps}>
         {toolbarProps.pagination && (
@@ -104,6 +75,7 @@ const TableToolsTable = ({
 };
 
 TableToolsTable.propTypes = {
+  tableToolsTableVariant: propTypes.string,
   items: propTypes.oneOfType([propTypes.array, propTypes.func]).isRequired,
   columns: propTypes.arrayOf(
     propTypes.shape({
