@@ -17,6 +17,7 @@ export const title = {
   Component: Title,
   renderExport: ({ title }) => title,
   sortable: 'title',
+  manageable: false,
 };
 
 export const artist = {

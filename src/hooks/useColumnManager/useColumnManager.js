@@ -1,5 +1,5 @@
 import { useCallback, useState, useMemo } from 'react';
-import { getFixedColumns } from './helper';
+import { getColumnsForModal } from './helper';
 
 /**
  *  @typedef {object} useColumnManagerReturn
@@ -25,34 +25,44 @@ import { getFixedColumns } from './helper';
 const useColumnManager = (options = {}) => {
   const {
     columns,
-    columnManagerSelectProp: selectProp = 'key',
     manageColumns: enableColumnManager,
     manageColumnLabel = 'Manage columns',
   } = options;
-  const fixedColumns = useMemo(() => getFixedColumns(columns), [columns]);
-  const manageableColumns = fixedColumns.filter(({ manageable }) => manageable);
-  const unManagableColumns = fixedColumns.filter(
-    ({ manageable }) => !manageable,
+
+  const [selectedColumns, setSelectedColumns] = useState(
+    columns.filter(({ isShown = true }) => isShown).map(({ title }) => title),
   );
-  const [selectedColumns, setSelectedColumns] = useState(manageableColumns);
   const [isManagerOpen, setIsManagerOpen] = useState(false);
 
-  const onClick = useCallback(function innerClick() {
+  const onClick = useCallback(() => {
     setIsManagerOpen(true);
   }, []);
 
-  const applyColumns = useCallback((newSelectedColumns, ...rest) => {
-    console.log('newSelectedColumns', newSelectedColumns, ...rest);
-    setSelectedColumns(newSelectedColumns);
-    setIsManagerOpen(false);
-  }, []);
+  const onClose = useCallback(() => setIsManagerOpen(false), []);
+
+  const applyColumns = useCallback(
+    (columnsToApply) => {
+      setSelectedColumns(
+        columnsToApply
+          .filter(({ isShown }) => isShown)
+          .map(({ title }) => title),
+      );
+      onClose();
+    },
+    [onClose],
+  );
 
   const columnsToShow = useMemo(
-    () => [
-      ...selectedColumns.filter(({ isShown }) => isShown),
-      ...unManagableColumns,
-    ],
-    [selectedColumns, unManagableColumns],
+    () =>
+      selectedColumns.map((selectedTitle) =>
+        columns.find(({ title }) => title === selectedTitle),
+      ),
+    [selectedColumns, columns],
+  );
+
+  const appliedColumns = useMemo(
+    () => getColumnsForModal(columns, selectedColumns),
+    [columns, selectedColumns],
   );
 
   return enableColumnManager
@@ -63,11 +73,10 @@ const useColumnManager = (options = {}) => {
           onClick,
         },
         columnManagerModalProps: {
-          appliedColumns: selectedColumns,
+          appliedColumns,
           isOpen: isManagerOpen,
-          onClose: () => setIsManagerOpen(false),
+          onClose,
           applyColumns: applyColumns,
-          selectProp: selectProp,
         },
       }
     : { columns };
