@@ -100,6 +100,7 @@ const useTableTools = (
     tableViewToggleProps,
   } = useTableView(loading, items, error, total, {
     ...options,
+    columns,
     expandable: expandableTableViewOptions,
     bulkSelect: bulkSelectTableViewOptions,
   });
