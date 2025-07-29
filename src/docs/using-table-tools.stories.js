@@ -64,6 +64,13 @@ const BasicQueryExample = () => {
 };
 
 export const BasicQuery = {
+  decorators: [
+    (Story) => (
+      <QueryClientProvider client={queryClient}>
+        <Story />
+      </QueryClientProvider>
+    ),
+  ],
   render: () => <BasicQueryExample />,
 };
 
