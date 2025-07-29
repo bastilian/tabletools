@@ -35,7 +35,11 @@ const argProps = {
   columns: propTypes.array,
   filters: propTypes.array,
   filtered: propTypes.bool,
+  enableDefaultFilter: propTypes.bool,
+  defaultFilter: propTypes.object,
   sortable: propTypes.bool,
+  enableInitialSort: propTypes.bool,
+  initialSort: propTypes.object,
   enableRowActions: propTypes.bool,
   enableActions: propTypes.bool,
   dedicatedAction: propTypes.bool,
@@ -54,7 +58,16 @@ const meta = {
     columns,
     filters,
     filtered: true,
+    enableDefaultFilter: false,
+    defaultFilter: {
+      'released-in-decade': [[1960, 1970]],
+    },
     sortable: true,
+    enableInitialSort: false,
+    initialSort: {
+      index: 3,
+      direction: 'asc',
+    },
     manageColumns: true,
     enableRowActions: true,
     enableActions: true,
@@ -86,7 +99,11 @@ const CommonExample = ({
   columns,
   filters,
   filtered,
+  enableDefaultFilter,
+  defaultFilter,
   sortable,
+  initialSort,
+  enableInitialSort,
   manageColumns,
   enableRowActions,
   enableActions,
@@ -124,6 +141,7 @@ const CommonExample = ({
               customFilterTypes: {
                 number: customNumberFilterType,
               },
+              ...(enableDefaultFilter ? { activeFilters: defaultFilter } : {}),
             },
           }
         : {})}
@@ -131,6 +149,7 @@ const CommonExample = ({
         ...defaultOptions,
         debug,
         manageColumns,
+        ...(enableInitialSort ? { sortBy: initialSort } : {}),
         ...(enableRowActions
           ? {
               actionResolver: rowActionResolver,
@@ -176,7 +195,11 @@ const WithTableTreeExample = ({
   columns,
   filters,
   filtered,
+  enableDefaultFilter,
+  defaultFilter,
   sortable,
+  initialSort,
+  enableInitialSort,
   enableActions,
   dedicatedAction,
   manageColumns,
@@ -230,6 +253,7 @@ const WithTableTreeExample = ({
               customFilterTypes: {
                 number: customNumberFilterType,
               },
+              ...(enableDefaultFilter ? { activeFilters: defaultFilter } : {}),
             },
           }
         : {})}
@@ -240,6 +264,7 @@ const WithTableTreeExample = ({
         tableTree,
         enableTreeView: true,
         defaultTableView: 'tree',
+        ...(enableInitialSort ? { sortBy: initialSort } : {}),
         ...(enableActions ? { actions } : {}),
         ...(dedicatedAction ? { dedicatedAction: DedicatedAction } : {}),
         ...(customEmptyRows ? { emptyRows: emptyRows(columns?.length) } : {}),
@@ -280,7 +305,11 @@ const WithAsyncFunctionExample = ({
   columns,
   filters,
   filtered,
+  enableDefaultFilter,
+  defaultFilter,
   sortable,
+  initialSort,
+  enableInitialSort,
   enableRowActions,
   enableActions,
   dedicatedAction,
@@ -328,6 +357,7 @@ const WithAsyncFunctionExample = ({
               customFilterTypes: {
                 number: customNumberFilterType,
               },
+              ...(enableDefaultFilter ? { activeFilters: defaultFilter } : {}),
             },
           }
         : {})}
@@ -340,6 +370,8 @@ const WithAsyncFunctionExample = ({
               actionResolver: rowActionResolver,
             }
           : {}),
+        ...(enableInitialSort ? { sortBy: initialSort } : {}),
+
         ...(enableActions ? { actions } : {}),
         ...(dedicatedAction ? { dedicatedAction: DedicatedAction } : {}),
         ...(customEmptyRows ? { emptyRows: emptyRows(columns?.length) } : {}),
