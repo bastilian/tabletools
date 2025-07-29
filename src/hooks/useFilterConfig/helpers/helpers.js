@@ -40,6 +40,9 @@ export const isNotEmpty = (value) =>
   (isObject(value) && Object.keys(value).length > 0) ||
   typeof value === 'number';
 
+export const primitiveEqual = (firstValue, secondValue) =>
+  JSON.stringify(firstValue) == JSON.stringify(secondValue);
+
 export const prepareCustomFilterTypes = (customFilterTypes) =>
   Object.fromEntries(
     Object.entries(customFilterTypes).map(

@@ -195,6 +195,17 @@ const useTableTools = (
     }
   }, [tableProps, toolbarProps, debug, view]);
 
+  useEffect(() => {
+    if (debug) {
+      console.group('TableTools data states');
+      console.log('loading', loading);
+      console.log('items', items);
+      console.log('error', error);
+      console.log('total', total);
+      console.groupEnd();
+    }
+  }, [debug, loading, items, error, total]);
+
   return {
     view,
     loading,
