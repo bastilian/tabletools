@@ -5,6 +5,7 @@ import {
   itemForLabelInGroups,
   itemForValueInGroups,
   stringToId,
+  primitiveEqual,
 } from './helpers';
 
 const textType = {
@@ -73,11 +74,12 @@ const radioType = {
     value: value?.[0],
     ...defaultOnChange(handler, stringToId(label)),
   }),
-  filterChips: (configItem, value) => ({
+  filterChips: (configItem, values) => ({
     category: configItem.label,
-    chips: [
-      { name: configItem.items.find((item) => item.value === value[0]).label },
-    ],
+    chips: values.map((value) => ({
+      name: configItem.items.find((item) => primitiveEqual(item.value, value))
+        .label,
+    })),
   }),
   // The radio filter returns the selectedValues as selectedValue and the other way around
   toSelectValue: (configItem, selectedValue) => [
@@ -85,9 +87,10 @@ const radioType = {
     stringToId(configItem.label),
     true,
   ],
-  toDeselectValue: (configItem, chip) => [
-    configItemItemByLabel(configItem, chip.chips[0].name).value,
+  toDeselectValue: (configItem) => [
+    undefined,
     stringToId(configItem.label),
+    true,
   ],
 };
 
