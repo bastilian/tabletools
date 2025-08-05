@@ -50,7 +50,7 @@ const StaticTableToolsTable = ({
 
   return (
     <TableToolsTable
-      items={queriedItems}
+      items={items ? queriedItems : undefined}
       options={{
         serialisers: {
           pagination: paginationSerialiser,
