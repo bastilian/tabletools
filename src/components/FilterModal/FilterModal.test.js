@@ -16,7 +16,6 @@ describe('FilterModal', () => {
 
   describe('with group filter', function () {
     it('expect to render without error', async () => {
-      console.log('artistByGenre', artistByGenre, artistByGenre.items[0]);
       render(
         <FilterModal
           filter={artistByGenre}

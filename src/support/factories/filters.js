@@ -68,12 +68,17 @@ const artistsGroupedByGenre = Object.groupBy(items, ({ genre }) => genre);
 export const artistByGenre = {
   type: 'group',
   label: 'Artist by genre',
-  items: Object.entries(artistsGroupedByGenre).map(([genre, artists]) => ({
+  filterSerialiser: (_filterConfigItem, value) =>
+    `.artist in [${Object.entries(value)
+      .reduce((_genre, [, artists]) => [...Object.keys(artists)], [])
+      .map((artist) => `"${artist}"`)
+      .join(', ')}]`,
+  groups: Object.entries(artistsGroupedByGenre).map(([genre, artists]) => ({
     label: genre,
     value: genre,
-    items: artists.slice(0, 10).map(({ id, artist }) => ({
+    items: artists.slice(0, 10).map(({ artist }) => ({
       label: artist,
-      value: id,
+      value: artist,
     })),
   })),
   modal: true,
