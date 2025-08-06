@@ -49,6 +49,7 @@ const argProps = {
   enableExport: propTypes.bool,
   enableDetails: propTypes.bool,
   enableBulkSelect: propTypes.bool,
+  enableSimpleBulkSelect: propTypes.bool,
 };
 
 const meta = {
@@ -77,6 +78,7 @@ const meta = {
     enableExport: true,
     enableDetails: true,
     enableBulkSelect: true,
+    enableSimpleBulkSelect: false,
   },
   ...defaultStoryMeta,
 };
@@ -113,6 +115,7 @@ const CommonExample = ({
   enableExport,
   enableDetails,
   enableBulkSelect,
+  enableSimpleBulkSelect,
 }) => {
   const {
     loading,
@@ -170,6 +173,7 @@ const CommonExample = ({
               itemIdsOnPage,
             }
           : {}),
+        ...(enableSimpleBulkSelect ? { onSelect: true } : {}),
       }}
     />
   );

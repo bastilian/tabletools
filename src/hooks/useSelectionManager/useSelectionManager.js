@@ -13,17 +13,17 @@ import reducer, { init as initReducer } from './reducer';
  *  @group Hooks
  *
  */
-const useSelectionManager = (preselected, options = {}, handleSelect) => {
-  const { withGroups = false } = options;
+const useSelectionManager = (preselected, options = {}) => {
+  const { withGroups = false, onSelect } = options;
   const [selection, dispatch] = useReducer(
     (state, action) => {
       const newState = reducer(state, action);
 
-      if (handleSelect) {
-        handleSelect(withGroups ? newState : newState.default);
+      if (onSelect) {
+        onSelect(withGroups ? newState : newState.default);
+      } else {
+        return newState;
       }
-
-      return newState;
     },
     preselected,
     initReducer(withGroups),

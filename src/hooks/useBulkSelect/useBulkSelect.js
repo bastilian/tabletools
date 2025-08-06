@@ -56,7 +56,9 @@ const useBulkSelect = ({
     deselect,
     clear,
     reset,
-  } = useSelectionManager(preselected, {}, onSelect);
+  } = useSelectionManager(preselected, {
+    ...(typeof onSelect === 'function' ? { onSelect } : {}),
+  });
   const selectedIdsTotal = (selectedIds || []).length;
   const paginatedTotal = itemIdsOnPage?.length || total;
   const allSelected = selectedIdsTotal === total;
