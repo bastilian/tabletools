@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React from 'react';
 import propTypes from 'prop-types';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Pagination, PaginationVariant } from '@patternfly/react-core';
@@ -150,17 +150,12 @@ TableToolsTable.propTypes = {
  *  @group Components
  *
  */
-const TableToolsTableWithOrWithoutProvider = (props) => {
-  const tableContext = useContext(TableContext);
-  const Wrapper = tableContext ? React.Fragment : TableStateProvider;
-
-  return (
-    <QueryClientProvider client={queryClient}>
-      <Wrapper>
-        <TableToolsTable {...props} />
-      </Wrapper>
-    </QueryClientProvider>
-  );
-};
+const TableToolsTableWithOrWithoutProvider = (props) => (
+  <QueryClientProvider client={queryClient}>
+    <TableStateProvider>
+      <TableToolsTable {...props} />
+    </TableStateProvider>
+  </QueryClientProvider>
+);
 
 export default TableToolsTableWithOrWithoutProvider;

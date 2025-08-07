@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useContext, useState, useRef } from 'react';
 import propTypes from 'prop-types';
 
 import { TableContext } from '~/hooks/useTableState/constants';
@@ -42,4 +42,15 @@ TableStateProvider.propTypes = {
   children: propTypes.node,
 };
 
-export default TableStateProvider;
+const TableStateProviderWrapper = ({ children }) => {
+  const tableContext = useContext(TableContext);
+  const Wrapper = tableContext ? React.Fragment : TableStateProvider;
+
+  return <Wrapper>{children}</Wrapper>;
+};
+
+TableStateProviderWrapper.propTypes = {
+  children: propTypes.node,
+};
+
+export default TableStateProviderWrapper;
