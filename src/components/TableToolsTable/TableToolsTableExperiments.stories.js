@@ -1,5 +1,6 @@
-import React, { useEffect } from 'react';
+import React, { useCallback, useEffect } from 'react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { Card, CardBody, Spinner, Button, Label } from '@patternfly/react-core';
 
 import defaultStoryMeta from '~/support/defaultStoryMeta';
 import columns from '~/support/factories/columns';
@@ -9,7 +10,7 @@ import filtersSerialiser from '~/components/StaticTableToolsTable/helpers/serial
 import useExampleDataQuery from '~/support/hooks/useExampleDataQuery';
 
 import { TableToolsTable, TableStateProvider } from '~/components';
-import { useFullTableState } from '~/hooks';
+import { useFullTableState, useStateCallbacks } from '~/hooks';
 
 const queryClient = new QueryClient();
 
@@ -84,6 +85,89 @@ export const ContextStory = {
     ),
   ],
   render: (args) => <ContextExampleSecondWrapper {...args} />,
+};
+
+// This is an example for a table with bulk selection where the preselection is loaded from an API
+// NOTE: the `selected` option it *not* "reactive", meaning if it changes, the selection will *not* be updated
+// Therefore the `TableToolsTable` should not be rendered before the selection is loaded.
+const BulkSelectExample = () => {
+  const { loading: selectionLoading, result: selection } = useExampleDataQuery({
+    endpoint: '/api/selection',
+  });
+  const {
+    loading,
+    result: { data, meta: { total } = {} } = {},
+    error,
+    itemIdsInTable,
+  } = useExampleDataQuery({
+    endpoint: '/api',
+    useTableState: true,
+  });
+  const {
+    current: { resetSelection, setSelection },
+  } = useStateCallbacks();
+  const fullTableState = useFullTableState() || {};
+
+  const onSelect = useCallback((selection) => {
+    console.log('Current Selection', selection);
+  }, []);
+
+  return selectionLoading ? (
+    <Spinner />
+  ) : (
+    <>
+      <Card>
+        <CardBody>
+          <Button
+            variant="primary"
+            ouiaId="Primary"
+            onClick={() => resetSelection()}
+          >
+            Reset Selection
+          </Button>
+          <Button
+            variant="primary"
+            ouiaId="Primary"
+            onClick={() => setSelection(data.map(({ id }) => id))}
+          >
+            Select only page
+          </Button>
+          <Label>
+            Selected items in context:{' '}
+            {fullTableState?.tableState?.selected?.length}
+          </Label>
+        </CardBody>
+      </Card>
+      <br />
+      <TableToolsTable
+        loading={loading}
+        items={data}
+        total={total}
+        error={error}
+        columns={columns}
+        options={{
+          ...defaultOptions,
+          debug: true,
+          onSelect,
+          itemIdsInTable,
+          selected: selection,
+        }}
+      />
+    </>
+  );
+};
+
+export const BulkSelectStory = {
+  decorators: [
+    (Story) => (
+      <QueryClientProvider client={queryClient}>
+        <TableStateProvider>
+          <Story />
+        </TableStateProvider>
+      </QueryClientProvider>
+    ),
+  ],
+  render: (args) => <BulkSelectExample {...args} />,
 };
 
 export default meta;

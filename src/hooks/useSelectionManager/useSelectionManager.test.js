@@ -136,7 +136,7 @@ describe('useSelectionManager', () => {
       expect(result.current.selection.group1).toEqual([0, 9, 8, 45, 3]);
     });
 
-    it('resets selection to preselected on reset', () => {
+    it('resets selection to initially passed in selected on reset', () => {
       const { result } = renderHook(() =>
         useSelectionManager(...defaultArguments),
       );

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import propTypes from 'prop-types';
 import {
   Modal,
@@ -34,7 +34,12 @@ const FilterModal = ({
 
   // TODO Replace this with using the "StaticTableToolsTable" instead for cases where there is no function to fetch
   const fetchItems = useFetchItems(filter);
-  const preselected = convertToSelectValues(activeFilters, filter);
+  const selected = convertToSelectValues(activeFilters, filter);
+
+  const onSelect = useCallback(
+    (values) => setSelectedFilterValues(convertToFilterValues(values, filter)),
+    [filter],
+  );
 
   return (
     <Modal
@@ -51,9 +56,8 @@ const FilterModal = ({
           items={fetchItems}
           columns={columns}
           options={{
-            preselected,
-            onSelect: (values) =>
-              setSelectedFilterValues(convertToFilterValues(values, filter)),
+            selected,
+            onSelect,
           }}
         />
       </ModalBody>

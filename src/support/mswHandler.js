@@ -1,6 +1,11 @@
 import { http, HttpResponse, delay } from 'msw';
 
-import { apiHandler, apiTreehandler, apiGenresHandler } from './api';
+import {
+  apiHandler,
+  apiTreehandler,
+  apiGenresHandler,
+  apiSelectionHandler,
+} from './api';
 
 const DEFAULT_DELAY = 500;
 
@@ -29,4 +34,5 @@ export default [
       { status: 500 },
     );
   }),
+  http.get('/api/selection', withAllParams(apiSelectionHandler)),
 ];

@@ -39,3 +39,8 @@ export const selectItemTransformer = (item, selectedIds = []) => ({
     selected: selectedIds.includes(item.itemId),
   },
 });
+
+export const bulkSelectItem = (title, onClick) => ({
+  title,
+  onClick,
+});

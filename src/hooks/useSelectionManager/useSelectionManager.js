@@ -1,31 +1,23 @@
-import { useCallback, useReducer } from 'react';
+import { useCallback, useReducer, useRef } from 'react';
 
 import reducer, { init as initReducer } from './reducer';
 
 /**
  * Provides a generic API to manage selection stats of one (default) or multiple groups of selections.
  *
- *  @param   {Array}    preselected  Array of items initially selected
- *  @param   {object}   [options]    function to call when a selection is made
- *  @param   {Function} handleSelect function to call when a selection is made
- *  @returns {object}                Object containing the current selection state and functions to manipulate it
+ *  @param   {Array}  selected  Array of items initially selected
+ *  @param   {object} [options] function to call when a selection is made
+ *
+ *  @returns {object}           Object containing the current selection state and functions to manipulate it
  *
  *  @group Hooks
  *
  */
-const useSelectionManager = (preselected, options = {}) => {
-  const { withGroups = false, onSelect } = options;
+const useSelectionManager = (selected, { withGroups = false } = {}) => {
+  const initialSelection = useRef(selected);
   const [selection, dispatch] = useReducer(
-    (state, action) => {
-      const newState = reducer(state, action);
-
-      if (typeof onSelect === 'function') {
-        onSelect(withGroups ? newState : newState.default);
-      }
-
-      return newState;
-    },
-    preselected,
+    reducer,
+    selected,
     initReducer(withGroups),
   );
 
@@ -52,11 +44,13 @@ const useSelectionManager = (preselected, options = {}) => {
   );
 
   const reset = useCallback(
-    () => dispatch({ type: 'reset', preselected }),
-    [dispatch, preselected],
+    (group) => {
+      set(initialSelection.current, group);
+    },
+    [set, initialSelection],
   );
 
-  const clear = useCallback(() => dispatch({ type: 'clear' }), [dispatch]);
+  const clear = useCallback((group) => set(undefined, group), [set]);
 
   return {
     set,

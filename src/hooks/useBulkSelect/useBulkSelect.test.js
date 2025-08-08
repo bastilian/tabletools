@@ -33,7 +33,7 @@ describe('useBulkSelect', () => {
         useBulkSelect({
           ...defaultOptions,
           total: 2,
-          preselected: ['ID'],
+          selected: ['ID'],
           itemIdsInTable: () => {
             return ['ID', 'ID1'];
           },
@@ -51,7 +51,7 @@ describe('useBulkSelect', () => {
         useBulkSelect({
           ...defaultOptions,
           total: 2,
-          preselected: ['ID'],
+          selected: ['ID'],
           fetchAll: Promise.resolve(['2417de', '51b20a']),
           itemIdsOnPage: ['ID', 'ID1'],
         }),
@@ -67,7 +67,7 @@ describe('useBulkSelect', () => {
         useBulkSelect({
           ...defaultOptions,
           total: 2,
-          preselected: ['ID'],
+          selected: ['ID'],
           itemIdsInTable: () => ['ID', 'ID2'],
           itemIdsOnPage: ['ID'],
         }),

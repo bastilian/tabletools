@@ -1,16 +1,22 @@
 import { useCallback, useState } from 'react';
 import { useDeepCompareEffect } from 'use-deep-compare';
 
-import useTableState, { useFullTableState } from '~/hooks/useTableState';
-import useSelectionManager from '~/hooks/useSelectionManager';
-import useCallbacksCallback from '~/hooks/useTableState/hooks/useCallbacksCallback';
+import {
+  useTableState,
+  useSelectionManager,
+  useCallbacksCallback,
+} from '~/hooks';
 
 import {
   checkCurrentPageSelected,
   checkboxState,
   compileTitle,
-  selectOrUnselect,
 } from './helpers';
+import {
+  useSelectionActions,
+  useMarkSelectedRows,
+  useBulkSelectItems,
+} from './hooks';
 
 /**
  *  @typedef {object} useBulkSelectReturn
@@ -27,8 +33,7 @@ import {
  *  @param   {object}              [options]                AsyncTableTools options
  *  @param   {number}              [options.total]          Number to show as total count
  *  @param   {Function}            [options.onSelect]       function to call when a selection is made
- *  @param   {Array}               [options.selected]       Array of itemIds that should be currently selected. If it changes, the current selection will change
- *  @param   {Array}               [options.preselected]    Array of itemIds that should be selected when initialising
+ *  @param   {Array}               [options.selected]       Array of itemIds that should be selected.
  *  @param   {Function}            [options.itemIdsInTable] Function to call to retrieve IDs when "Select All" is chosen
  *  @param   {Array}               [options.itemIdsOnPage]  Array of item ids visible on the page
  *  @param   {string}              [options.identifier]     Property of the items that should be used as ID to select them
@@ -42,33 +47,25 @@ const useBulkSelect = ({
   total = 0,
   onSelect,
   selected,
-  preselected,
   itemIdsInTable,
   itemIdsOnPage,
   identifier = 'itemId',
 }) => {
-  const [loading, setLoading] = useState(false);
   const enableBulkSelect = !!onSelect;
-  const {
-    selection: selectedIds = [],
-    set,
-    select,
-    deselect,
-    clear,
-    reset,
-  } = useSelectionManager(preselected, {
-    ...(typeof onSelect === 'function' ? { onSelect } : {}),
-  });
+
+  const [loading, setLoading] = useState(false);
+  const [, setSelected] = useTableState('selected');
+  const { selection: selectedIds = [], ...actions } =
+    useSelectionManager(selected);
+  const { select, deselect, reset, set } = actions;
+
   const selectedIdsTotal = (selectedIds || []).length;
   const paginatedTotal = itemIdsOnPage?.length || total;
   const allSelected = selectedIdsTotal === total;
-  const noneSelected = selectedIdsTotal === 0;
   const currentPageSelected = checkCurrentPageSelected(
     itemIdsOnPage,
     selectedIds,
   );
-  const { tableState, serialisedTableState } = useFullTableState() || {};
-  const [, setSelected] = useTableState('selected');
 
   // TODO this is not totally wrong, but when the tree view is active there is currently no total, which causes the selection to be disabled there.
   // The bug may not even be fixed here, but in the tables that use selection and the tree view. They will need to provide an appropriate total still
@@ -82,76 +79,39 @@ const useBulkSelect = ({
     [selectedIds],
   );
 
-  const selectOne = useCallback(
-    (_, _selected, _key, { item }) => {
-      return isItemSelected(item.itemId)
-        ? deselect(item[identifier])
-        : select(item[identifier]);
-    },
-    [isItemSelected, select, deselect, identifier],
-  );
-  const selectPage = useCallback(
-    () =>
-      !currentPageSelected ? select(itemIdsOnPage) : deselect(itemIdsOnPage),
-    [select, deselect, itemIdsOnPage, currentPageSelected],
-  );
-
-  const resetSelection = useCallback(() => {
-    reset();
-  }, [reset]);
-
-  useCallbacksCallback('resetSelection', resetSelection);
-
-  const selectAll = useCallback(async () => {
-    setLoading(true);
-    if (allSelected) {
-      clear();
-    } else {
-      set(await itemIdsInTable(serialisedTableState, tableState));
-    }
-    setLoading(false);
-  }, [
+  const { selectOne, selectPage, selectAll } = useSelectionActions({
     allSelected,
-    clear,
-    set,
+    identifier,
+    isItemSelected,
+    currentPageSelected,
+    setLoading,
     itemIdsInTable,
-    tableState,
-    serialisedTableState,
-  ]);
+    itemIdsOnPage,
+    actions,
+  });
+  const bulkSelectItems = useBulkSelectItems({
+    total,
+    paginatedTotal,
+    selectedIdsTotal,
+    selectPage,
+    selectAll,
+    currentPageSelected,
+    ...actions,
+  });
 
-  const markRowSelected = useCallback(
-    (item, rowsForItem, _runningIndex, isTreeTable) => {
-      const firstRow = rowsForItem[0];
-      const remainingRows = rowsForItem.slice(1);
+  // TODO we should refactor this and expose "actions" of hooks more consistently and obvious
+  useCallbacksCallback('resetSelection', reset);
+  useCallbacksCallback('setSelection', set);
 
-      return [
-        {
-          ...firstRow,
-          ...(!isTreeTable
-            ? { selected: selectedIds.includes(item.itemId) }
-            : {}),
-          props: {
-            ...firstRow.props,
-            ...(isTreeTable && !item.isTreeBranch
-              ? { isChecked: selectedIds.includes(item.itemId) }
-              : {}),
-          },
-        },
-        ...remainingRows,
-      ];
-    },
-    [selectedIds],
-  );
+  const markRowSelected = useMarkSelectedRows(selectedIds);
 
   useDeepCompareEffect(() => {
     setSelected(selectedIds);
-  }, [selectedIds, setSelected]);
 
-  useDeepCompareEffect(() => {
-    if (selected) {
-      set(selected);
+    if (typeof onSelect === 'function') {
+      onSelect(selectedIds);
     }
-  }, [set, selected]);
+  }, [selectedIds, setSelected, onSelect]);
 
   return {
     tableView: {
@@ -173,35 +133,7 @@ const useBulkSelect = ({
                 ? { toggleProps: { children: [title] } }
                 : { count: selectedIdsTotal }),
               isDisabled,
-              items: [
-                {
-                  title: 'Select none',
-                  onClick: clear,
-                  props: {
-                    isDisabled: noneSelected,
-                  },
-                },
-                ...(itemIdsOnPage
-                  ? [
-                      {
-                        title: `${selectOrUnselect(
-                          currentPageSelected,
-                        )} page (${paginatedTotal} items)`,
-                        onClick: selectPage,
-                      },
-                    ]
-                  : []),
-                ...(itemIdsInTable
-                  ? [
-                      {
-                        title: `${selectOrUnselect(
-                          allSelected,
-                        )} all (${total} items)`,
-                        onClick: selectAll,
-                      },
-                    ]
-                  : []),
-              ],
+              items: bulkSelectItems,
               checked,
               onSelect: !isDisabled ? selectPage : undefined,
             },

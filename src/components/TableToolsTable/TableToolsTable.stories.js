@@ -16,11 +16,16 @@ import CustomEmptyState from '~/support/components/CustomEmptyState';
 import DetailsRow from '~/support/components/DetailsRow';
 import DedicatedAction from '~/support/components/DedicatedAction';
 import { actions, rowActionResolver } from '~/support/constants';
+import { selectedItemIds } from '~/support/api';
 
 import { TableToolsTable, TableStateProvider } from '~/components';
 import { useFullTableState } from '~/hooks';
 
 const queryClient = new QueryClient();
+
+const onSelect = (selected) => {
+  console.log('Currently selected', selected);
+};
 
 const defaultOptions = {
   serialisers: {
@@ -49,6 +54,7 @@ const argProps = {
   enableExport: propTypes.bool,
   enableDetails: propTypes.bool,
   enableBulkSelect: propTypes.bool,
+  enablePreselection: propTypes.bool,
   enableSimpleBulkSelect: propTypes.bool,
 };
 
@@ -78,6 +84,7 @@ const meta = {
     enableExport: true,
     enableDetails: true,
     enableBulkSelect: true,
+    enablePreselection: false,
     enableSimpleBulkSelect: false,
   },
   ...defaultStoryMeta,
@@ -115,6 +122,7 @@ const CommonExample = ({
   enableExport,
   enableDetails,
   enableBulkSelect,
+  enablePreselection,
   enableSimpleBulkSelect,
 }) => {
   const {
@@ -166,9 +174,8 @@ const CommonExample = ({
         ...(enableDetails ? { detailsComponent: DetailsRow } : {}),
         ...(enableBulkSelect
           ? {
-              onSelect: (selected) => {
-                console.log('Currently selected', selected);
-              },
+              ...(enablePreselection ? { selected: selectedItemIds } : {}),
+              onSelect,
               itemIdsInTable,
               itemIdsOnPage,
             }
@@ -212,6 +219,7 @@ const WithTableTreeExample = ({
   enableExport,
   enableDetails,
   enableBulkSelect,
+  enablePreselection,
 }) => {
   const { tableState: { tableView } = {} } = useFullTableState() || {};
 
@@ -277,9 +285,8 @@ const WithTableTreeExample = ({
         ...(enableDetails ? { detailsComponent: DetailsRow } : {}),
         ...(enableBulkSelect
           ? {
-              onSelect: (selected) => {
-                console.log('Currently selected', selected);
-              },
+              ...(enablePreselection ? { selected: selectedItemIds } : {}),
+              onSelect,
               itemIdsInTable,
               itemIdsOnPage,
             }
@@ -384,9 +391,7 @@ const WithAsyncFunctionExample = ({
         ...(enableDetails ? { detailsComponent: DetailsRow } : {}),
         ...(enableBulkSelect
           ? {
-              onSelect: (selected) => {
-                console.log('Currently selected', selected);
-              },
+              onSelect,
               itemIdsInTable,
               itemIdsOnPage,
             }
