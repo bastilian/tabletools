@@ -19,11 +19,11 @@ const useSelectionManager = (preselected, options = {}) => {
     (state, action) => {
       const newState = reducer(state, action);
 
-      if (onSelect) {
+      if (typeof onSelect === 'function') {
         onSelect(withGroups ? newState : newState.default);
-      } else {
-        return newState;
       }
+
+      return newState;
     },
     preselected,
     initReducer(withGroups),
