@@ -22,7 +22,7 @@ const resolveObjectsProps = async (objects, propsToResolve) => {
 
 // TODO this hook may be useful elsewhere as well, move it higher up and/or into som utils hook folder
 const useResolvedProps = (objects, propsToResolve) => {
-  const [resolvedObjects, setResolvedObjects] = useState([]);
+  const [resolvedObjects, setResolvedObjects] = useState();
 
   useDeepCompareEffect(() => {
     const resolveObjects = async (objects, propsToResolve) => {
@@ -34,8 +34,10 @@ const useResolvedProps = (objects, propsToResolve) => {
       setResolvedObjects(newResolvedObjects);
     };
 
-    resolveObjects(objects, propsToResolve);
-  }, [objects, propsToResolve]);
+    if (!resolvedObjects) {
+      resolveObjects(objects, propsToResolve);
+    }
+  }, [objects, propsToResolve, resolvedObjects]);
 
   return resolvedObjects;
 };
