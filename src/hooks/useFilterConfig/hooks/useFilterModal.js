@@ -33,7 +33,10 @@ const useFilterModal = ({
       onChange: (values) =>
         onFilterUpdate(stringToId(filter.label), undefined, values),
       onClose: closeFilterModal,
-      tableOptions: { serialisers },
+      tableOptions: {
+        serialisers,
+        ...((filter?.modal || {}).tableOptions || {}),
+      },
       setAsyncItems,
     },
   };

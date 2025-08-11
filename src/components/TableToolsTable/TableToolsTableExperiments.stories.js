@@ -192,6 +192,10 @@ const FilterModalExample = () => {
     useTableState: true,
   });
 
+  // This function is used in two ways
+  // It is called without a serialisedTableState and tableState when it is called for the filter dropdown
+  // If now separate fetch function is provided it is also called from the table in the modal WITH a serialisedTableState
+  // In case the request for filter items does require any state of the table it should be explicitly added and NOT use the passed serialisedTableState or tableState params
   const genreItemFetch = useCallback(
     async (
       { filters, pagination, sort } = {
@@ -222,11 +226,17 @@ const FilterModalExample = () => {
         type: 'checkbox',
         label: 'Genre with fetched items',
         filterAttribute: 'genre',
-        // This function is used in two ways
-        // It is called without a serialisedTableState and tableState when it is called for the filter dropdown
-        // It is also called from the table in the modal WITH a serialisedTableState
         items: genreItemFetch,
-        modal: true,
+        modal: {
+          tableOptions: {
+            exporter: async () =>
+              (await genreItemFetch({ pagination: { limit: 'max' } }))[0],
+            itemIdsInTable: async () =>
+              (await genreItemFetch({ pagination: { limit: 'max' } }))[0].map(
+                ({ value: id }) => id,
+              ),
+          },
+        },
       },
       {
         type: 'checkbox',
