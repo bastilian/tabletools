@@ -29,10 +29,11 @@ const useItems = (
   externalTotal,
 ) => {
   const tableState = useRawTableState();
-  const { filter, sort, pagination } = tableState || {};
   const serialisedTableState = useSerialisedTableState();
-  const useInternalState = typeof externalItems === 'function';
+  const { filters, sort, pagination } =
+    serialisedTableState || tableState || {};
 
+  const useInternalState = typeof externalItems === 'function';
   const queryFn = useCallback(async () => {
     const [items, total] = await externalItems(
       serialisedTableState,
@@ -50,9 +51,9 @@ const useItems = (
     isFetching: internalLoading,
     error: internalError,
   } = useQuery({
-    queryKey: ['items', serialisedTableState, filter, sort, pagination],
+    queryKey: ['items', filters, sort, pagination],
     queryFn,
-    enabled: useInternalState,
+    enabled: useInternalState && (!!tableState || !!serialisedTableState),
     refetchOnWindowFocus: false,
   });
 
