@@ -10,6 +10,8 @@ import { toFilterChips } from './helpers/filterChipHelpers';
 import useEventHandlers from './hooks/useEventHandlers';
 import useFilterOptions from './hooks/useFilterOptions';
 import useFilterModal from './hooks/useFilterModal';
+import useAsyncFilterCache from './hooks/useAsyncFilterCache';
+
 import { TABLE_STATE_NAMESPACE } from './constants';
 
 /**
@@ -42,6 +44,7 @@ const useFilterConfig = (options) => {
     enableFilters,
     filterTypes,
   } = useFilterOptions(options);
+  const [asyncItems, setAsyncItems] = useAsyncFilterCache();
 
   const { selection: activeFilters, ...selectionActions } = useSelectionManager(
     initialActiveFilters,
@@ -53,20 +56,29 @@ const useFilterConfig = (options) => {
     activeFilters,
     selectionActions,
     filterTypes,
+    asyncItems,
   });
 
   const { isFilterModalOpen, openFilterModal, filterModalProps } =
-    useFilterModal({ filterConfig, activeFilters, onFilterUpdate });
+    useFilterModal({
+      filterConfig: options.filters?.filterConfig,
+      activeFilters,
+      onFilterUpdate,
+      serialisers: options.serialisers,
+      setAsyncItems,
+    });
 
   const builtFilterConfig = useMemo(
     () =>
-      toFilterConfig(
-        filterConfig,
-        filterTypes,
-        activeFilters,
-        onFilterUpdate,
-        openFilterModal,
-      ),
+      filterConfig
+        ? toFilterConfig(
+            filterConfig,
+            filterTypes,
+            activeFilters,
+            onFilterUpdate,
+            openFilterModal,
+          )
+        : [],
     [filterConfig, activeFilters, onFilterUpdate, filterTypes, openFilterModal],
   );
 
@@ -76,7 +88,7 @@ const useFilterConfig = (options) => {
     serialisers?.filters
       ? {
           serialiser: (state) =>
-            serialisers.filters(state, filterConfig.map(toIdedFilters)),
+            serialisers.filters(state, filterConfig?.map(toIdedFilters)),
         }
       : {},
   );
@@ -94,7 +106,12 @@ const useFilterConfig = (options) => {
         toolbarProps: {
           filterConfig: builtFilterConfig,
           activeFiltersConfig: {
-            filters: toFilterChips(filterConfig, filterTypes, activeFilters),
+            filters: toFilterChips(
+              filterConfig,
+              filterTypes,
+              activeFilters,
+              asyncItems,
+            ),
             onDelete: onFilterDelete,
           },
         },
