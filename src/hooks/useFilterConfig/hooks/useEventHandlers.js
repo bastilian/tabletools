@@ -36,10 +36,16 @@ const useEventHandlers = ({
   const onFilterDelete = useCallback(
     async (_event, chips, clearAll = false) => {
       if (clearAll) {
+        const filtersToClear = Object.keys(activeFilters);
+
         if (resetOnClear) {
-          reset();
+          for (const filter of filtersToClear) {
+            reset(filter);
+          }
         } else {
-          clear();
+          for (const filter of filtersToClear) {
+            clear(filter);
+          }
         }
       } else {
         deselect(
