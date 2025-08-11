@@ -71,7 +71,7 @@ const TableToolsTable = ({
         // TODO This is a bit hackish. We should rather have an indicator if data necessary for the current view is loading.
         (view === 'rows' || (view === 'tree' && !treeTable)) && loading ? (
           <SkeletonTable
-            rowSize={toolbarProps?.pagination?.perPage || 10}
+            rowsCount={toolbarProps?.pagination?.perPage || 10}
             // TODO use Th when migrating to PF composable tables
             columns={columns.map(({ title }) => title)}
           />
