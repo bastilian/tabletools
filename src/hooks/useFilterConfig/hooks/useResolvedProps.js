@@ -8,9 +8,16 @@ const resolveObjectsProps = async (objects, propsToResolve) => {
     let newObject = { ...object };
 
     for (const prop of propsToResolve) {
-      // TODO Allow to pass function arguments when resolving props
       if (typeof object[prop] === 'function') {
-        newObject[prop] = await object[prop]();
+        const resolvedProp = await object[prop]();
+        if (
+          Array.isArray(resolvedProp[0]) &&
+          typeof resolvedProp[1] === 'number'
+        ) {
+          newObject[prop] = resolvedProp[0];
+        } else {
+          newObject[prop] = resolvedProp;
+        }
       }
     }
 
