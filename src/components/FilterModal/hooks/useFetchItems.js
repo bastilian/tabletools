@@ -1,26 +1,25 @@
 import { useCallback } from 'react';
-import { fetchStatic } from '../helpers';
+import { stringToId } from '~/hooks/useFilterConfig/helpers';
+import { labelToid } from '../helpers';
 
-const useFetchItems = ({
-  items: filterItems,
-  groups: groupItems,
-  modal: { items: modalItems } = {},
-  type,
-}) => {
+const useFetchItems = ({ items, filter, setAsyncItems }) => {
+  const id = stringToId(filter.label);
+
   const fetchItems = useCallback(
-    (...args) => {
-      if (modalItems) {
-        return modalItems(...args);
-      } else if (
-        typeof filterItems === 'function' ||
-        typeof groupItems === 'function'
-      ) {
-        return (filterItems || groupItems)(...args);
+    async (...args) => {
+      const filterItems = await items(...args);
+      // TODO extract identifying "table tools request returns"
+      if (Array.isArray(filterItems[0]) && typeof filterItems[1] === 'number') {
+        setAsyncItems(id, filterItems[0]);
+
+        return [filterItems[0].map(labelToid), filterItems[1]];
       } else {
-        return fetchStatic(filterItems || groupItems, type, ...args);
+        setAsyncItems(id, filterItems);
+
+        return [filterItems.map(labelToid), filterItems.length];
       }
     },
-    [modalItems, filterItems, groupItems, type],
+    [id, items, setAsyncItems],
   );
 
   return fetchItems;

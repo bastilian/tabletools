@@ -64,3 +64,8 @@ export const convertToSelectValues = (filterValues, filter) => {
     return filterValues;
   }
 };
+
+export const labelToid = (item) => ({
+  ...item,
+  id: item.label,
+});
