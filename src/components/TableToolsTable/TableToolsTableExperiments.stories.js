@@ -1,9 +1,11 @@
-import React, { useCallback, useEffect } from 'react';
+import React, { useCallback, useEffect, useMemo } from 'react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Card, CardBody, Spinner, Button, Label } from '@patternfly/react-core';
 
 import defaultStoryMeta from '~/support/defaultStoryMeta';
 import columns from '~/support/factories/columns';
+import { genres } from '~/support/factories/items';
+
 import paginationSerialiser from '~/components/StaticTableToolsTable/helpers/serialisers/pagination';
 import sortSerialiser from '~/components/StaticTableToolsTable/helpers/serialisers/sort';
 import filtersSerialiser from '~/components/StaticTableToolsTable/helpers/serialisers/filters';
@@ -168,6 +170,131 @@ export const BulkSelectStory = {
     ),
   ],
   render: (args) => <BulkSelectExample {...args} />,
+};
+
+const genreFilterOptions = genres.map((genre) => ({
+  label: genre,
+  value: genre,
+}));
+
+const FilterModalExample = () => {
+  const { fetch: fetchGenre } = useExampleDataQuery({
+    endpoint: '/api/genres',
+    skip: true,
+  });
+  const {
+    loading,
+    result: { data, meta: { total } = {} } = {},
+    error,
+    itemIdsInTable,
+  } = useExampleDataQuery({
+    endpoint: '/api',
+    useTableState: true,
+  });
+
+  const genreItemFetch = useCallback(
+    async (
+      { filters, pagination, sort } = {
+        pagination: { offset: 0, limit: 15 },
+      },
+    ) => {
+      const params = {
+        ...(filters ? { filters } : {}),
+        ...(pagination ? pagination : {}),
+        ...(sort ? { sort } : {}),
+      };
+      const genresJson = await fetchGenre(params);
+
+      return [
+        genresJson.data.map((genre) => ({
+          label: genre,
+          value: genre,
+        })),
+        genresJson.meta.total,
+      ];
+    },
+    [fetchGenre],
+  );
+
+  const filters = useMemo(() => {
+    return [
+      {
+        type: 'checkbox',
+        label: 'Genre with fetched items',
+        filterAttribute: 'genre',
+        // This function is used in two ways
+        // It is called without a serialisedTableState and tableState when it is called for the filter dropdown
+        // It is also called from the table in the modal WITH a serialisedTableState
+        items: genreItemFetch,
+        modal: true,
+      },
+      {
+        type: 'checkbox',
+        label: 'Genre with static items and modal',
+        filterAttribute: 'genre',
+        items: genreFilterOptions.slice(0, 30),
+        modal: true,
+      },
+      {
+        type: 'checkbox',
+        label: 'Genre with fetched items and modal items',
+        filterAttribute: 'genre',
+        items: genreFilterOptions.slice(0, 20),
+        modal: {
+          items: async (
+            _serialisedState,
+            { pagination: { state } = { page: 1, perPage: 10 } } = {},
+          ) => {
+            const offset = (state?.page - 1) * state?.perPage;
+            const limit = state?.perPage;
+            const genresResponse = await fetch(
+              `/api/genres?offset=${offset}&limit=${limit}`,
+            );
+            const genresJson = await genresResponse.json();
+
+            return [
+              genresJson.data.map((genre) => ({
+                label: genre,
+                value: genre,
+              })),
+              genresJson.meta.total,
+            ];
+          },
+        },
+      },
+    ];
+  }, [genreItemFetch]);
+
+  return (
+    <TableToolsTable
+      loading={loading}
+      items={data}
+      filters={{
+        filterConfig: filters,
+      }}
+      total={total}
+      error={error}
+      columns={columns}
+      options={{
+        ...defaultOptions,
+        debug: true,
+        itemIdsInTable,
+      }}
+    />
+  );
+};
+
+export const FilterModalStory = {
+  decorators: [
+    (Story) => (
+      <QueryClientProvider client={queryClient}>
+        <TableStateProvider>
+          <Story />
+        </TableStateProvider>
+      </QueryClientProvider>
+    ),
+  ],
+  render: (args) => <FilterModalExample {...args} />,
 };
 
 const AllEmptyExample = () => {
