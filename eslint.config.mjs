@@ -30,7 +30,7 @@ export default defineConfig([
       '@typescript-eslint/ban-ts-comment': 'warn',
       'rulesdir/forbid-pf-relative-imports': 'off',
       'rulesdir/disallow-fec-relative-imports': 'off',
-
+      'testing-library/no-node-access': 'off',
       'jsdoc/require-param': [
         'warn',
         {
