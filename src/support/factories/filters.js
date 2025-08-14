@@ -2,6 +2,50 @@ import NumberFilter from '~/support/components/NumberFilter';
 
 import { genres, items } from './items';
 
+export const yearsByDecade = [
+  {
+    label: '80s',
+    value: '80s',
+    groupSelectable: true,
+    items: [...new Array(10)].map((_, idx) => ({
+      label: `198${idx}`,
+      value: `198${idx}`,
+    })),
+  },
+  {
+    label: '90s',
+    value: '90s',
+    items: [...new Array(10)].map((_, idx) => ({
+      label: `199${idx}`,
+      value: `199${idx}`,
+    })),
+  },
+  {
+    label: '00s',
+    value: '00s',
+    items: [...new Array(10)].map((_, idx) => ({
+      label: `200${idx}`,
+      value: `200${idx}`,
+    })),
+  },
+  {
+    label: '10s',
+    value: '10s',
+    items: [...new Array(10)].map((_, idx) => ({
+      label: `201${idx}`,
+      value: `201${idx}`,
+    })),
+  },
+  {
+    label: '20s',
+    value: '20s',
+    items: [...new Array(5)].map((_, idx) => ({
+      label: `201${idx}`,
+      value: `201${idx}`,
+    })),
+  },
+];
+
 export const title = {
   type: 'text',
   label: 'Title',
@@ -94,7 +138,7 @@ export const invalidFilter = {
   filter: (items) => items,
 };
 
-export const yearsByDecade = {
+export const yearsByDecadeFilter = {
   type: 'group',
   label: 'Years by decade',
   filterSerialiser: (_filterConfigItem, value) => {
@@ -105,48 +149,7 @@ export const yearsByDecade = {
 
     return `.releaseYear in [${allYears.join(', ')}]`;
   },
-  groups: [
-    {
-      label: '80s',
-      value: '80s',
-      items: [...new Array(10)].map((_, idx) => ({
-        label: `198${idx}`,
-        value: `198${idx}`,
-      })),
-    },
-    {
-      label: '90s',
-      value: '90s',
-      items: [...new Array(10)].map((_, idx) => ({
-        label: `199${idx}`,
-        value: `199${idx}`,
-      })),
-    },
-    {
-      label: '00s',
-      value: '00s',
-      items: [...new Array(10)].map((_, idx) => ({
-        label: `200${idx}`,
-        value: `200${idx}`,
-      })),
-    },
-    {
-      label: '10s',
-      value: '10s',
-      items: [...new Array(10)].map((_, idx) => ({
-        label: `201${idx}`,
-        value: `201${idx}`,
-      })),
-    },
-    {
-      label: '20s',
-      value: '20s',
-      items: [...new Array(5)].map((_, idx) => ({
-        label: `201${idx}`,
-        value: `201${idx}`,
-      })),
-    },
-  ],
+  groups: yearsByDecade,
   modal: {
     title: 'Select years to filter by',
   },
@@ -235,7 +238,7 @@ export default [
   rating,
   decade,
   invalidFilter,
-  yearsByDecade,
+  yearsByDecadeFilter,
   genreWithModal,
   genreWithFetchedItems,
   genreWithFetchedItemsAndModalItems,

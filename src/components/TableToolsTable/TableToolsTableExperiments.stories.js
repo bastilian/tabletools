@@ -182,6 +182,10 @@ const FilterModalExample = () => {
     endpoint: '/api/genres',
     skip: true,
   });
+  const { fetch: fetchYearsByDecade } = useExampleDataQuery({
+    endpoint: '/api/years-by-decade',
+    skip: true,
+  });
   const {
     loading,
     result: { data, meta: { total } = {} } = {},
@@ -223,6 +227,25 @@ const FilterModalExample = () => {
   const filters = useMemo(() => {
     return [
       {
+        type: 'group',
+        label: 'Years by decade',
+        filterSerialiser: (_filterConfigItem, value) => {
+          const allYears = Object.entries(value).reduce(
+            (years, [, groupYears]) => [...years, ...Object.keys(groupYears)],
+            [],
+          );
+
+          return `.releaseYear in [${allYears.join(', ')}]`;
+        },
+        groups: async () => {
+          const yearsByDecade = await fetchYearsByDecade();
+          return yearsByDecade;
+        },
+        modal: {
+          title: 'Select years to filter by',
+        },
+      },
+      {
         type: 'checkbox',
         label: 'Genre with fetched items',
         filterAttribute: 'genre',
@@ -231,6 +254,8 @@ const FilterModalExample = () => {
           tableOptions: {
             exporter: async () =>
               (await genreItemFetch({ pagination: { limit: 'max' } }))[0],
+            // TODO Find way to put items fetch here to the async cache
+            // Or find different way to allow enabling "select all" in the modal
             itemIdsInTable: async () =>
               (await genreItemFetch({ pagination: { limit: 'max' } }))[0].map(
                 ({ value: id }) => id,

@@ -9,14 +9,15 @@ export const toFilterChips = (
   filterTypes,
   activeFilters,
   asyncItems,
-) =>
-  Object.entries(activeFilters || {})
+) => {
+  return Object.entries(activeFilters || {})
     .map(([filter, value]) => {
       const configItem = getFilterConfigItem(filterConfig, filter);
+      const itemsProp = configItem.type === 'groups' ? 'groups' : 'items';
       const configItemWithAsyncItems = {
         ...(configItem || {}),
-        items: [
-          ...(configItem?.items || []),
+        [itemsProp]: [
+          ...(configItem?.[itemsProp] || []),
           ...(asyncItems?.[stringToId(configItem?.label)] || []),
         ],
       };
@@ -30,23 +31,25 @@ export const toFilterChips = (
         : undefined;
     })
     .filter((v) => !!v);
+};
 
 export const toDeselectValue = (
   filterConfig,
   filterTypes,
   chip,
   activeFilters,
-
   asyncItems,
 ) => {
   const configItem = getFilterConfigItem(
     filterConfig,
     stringToId(chip.category),
   );
+  const itemsProp = configItem.type === 'groups' ? 'groups' : 'items';
+
   const configItemWithAsyncItems = {
     ...(configItem || {}),
-    items: [
-      ...(configItem?.items || []),
+    [itemsProp]: [
+      ...(configItem?.[itemsProp] || []),
       ...(asyncItems?.[stringToId(configItem.label)] || []),
     ],
   };

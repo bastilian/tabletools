@@ -4,6 +4,7 @@ import {
   apiHandler,
   apiTreehandler,
   apiGenresHandler,
+  apiYearsByDecadeHandler,
   apiSelectionHandler,
 } from './api';
 
@@ -25,6 +26,7 @@ export default [
   http.get('/api', withAllParams(apiHandler)),
   http.get('/api/tree', withAllParams(apiTreehandler)),
   http.get('/api/genres', withAllParams(apiGenresHandler)),
+  http.get('/api/years-by-decade', withAllParams(apiYearsByDecadeHandler)),
   http.get('/api/error', async () => {
     await delay(DEFAULT_DELAY);
     return HttpResponse.json(
