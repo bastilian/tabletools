@@ -1,4 +1,5 @@
 import { useEffect, useMemo } from 'react';
+import { useDebouncedCallback } from '@tanstack/react-pacer/debouncer';
 
 import useSelectionManager from '~/hooks/useSelectionManager';
 import useTableState from '~/hooks/useTableState';
@@ -80,9 +81,11 @@ const useFilterConfig = (options) => {
       : {},
   );
 
+  const debouncedSetState = useDebouncedCallback(setTableState, { wait: 500 });
+
   useEffect(() => {
-    setTableState(activeFilters);
-  }, [activeFilters, setTableState]);
+    debouncedSetState(activeFilters);
+  }, [activeFilters, debouncedSetState]);
 
   useCallbacksCallback('clearFilters', selectionActions.clear);
 
