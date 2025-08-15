@@ -8,12 +8,16 @@ import {
   Button,
 } from '@patternfly/react-core';
 
-import { TableToolsTable, TableStateProvider } from '~/components';
-
-import { filterOption, filterGroup } from './columns';
-import { convertToSelectValues, convertToFilterValues } from './helpers';
+import {
+  TableToolsTable,
+  TableStateProvider,
+  StaticTableToolsTable,
+} from '~/components';
 
 import useFetchItems from './hooks/useFetchItems';
+import { convertToSelectValues, convertToFilterValues } from './helpers';
+import { filterOption, filterGroup } from './columns';
+import filters from './filters';
 
 const FilterModal = ({
   isFilterModalOpen,
@@ -21,7 +25,13 @@ const FilterModal = ({
   onClose,
   activeFilters,
   onChange,
+  setAsyncItems,
+  tableOptions,
 }) => {
+  const items = filter.modal?.items || filter.items;
+  const isAsync = typeof (filter.modal?.items || filter.items) === 'function';
+  const TableComponent = isAsync ? TableToolsTable : StaticTableToolsTable;
+
   const title = filter?.modal?.title || `Filter by ${filter.label}`;
   const defaultColumns =
     filter.type === 'group' ? [filterOption, filterGroup] : [filterOption];
@@ -29,11 +39,14 @@ const FilterModal = ({
     modal: { columns = defaultColumns, applyLabel = 'Apply selected' } = {},
   } = filter;
 
+  const fetchItems = useFetchItems({
+    items,
+    filter,
+    setAsyncItems,
+  });
   const [selectedFilterValues, setSelectedFilterValues] =
     useState(activeFilters);
 
-  // TODO Replace this with using the "StaticTableToolsTable" instead for cases where there is no function to fetch
-  const fetchItems = useFetchItems(filter);
   const selected = convertToSelectValues(activeFilters, filter);
 
   const onSelect = useCallback(
@@ -51,13 +64,24 @@ const FilterModal = ({
     >
       <ModalHeader title={title} />
       <ModalBody>
-        <TableToolsTable
+        <TableComponent
           variant="compact"
-          items={fetchItems}
+          items={
+            isAsync
+              ? fetchItems
+              : items.map((item) => ({
+                  ...item,
+                  id: item.label,
+                }))
+          }
           columns={columns}
+          filters={{
+            filterConfig: filters,
+          }}
           options={{
             selected,
             onSelect,
+            ...tableOptions,
           }}
         />
       </ModalBody>
@@ -92,6 +116,8 @@ FilterModal.propTypes = {
   onChange: propTypes.func,
   isFilterModalOpen: propTypes.bool,
   onClose: propTypes.func,
+  setAsyncItems: propTypes.func,
+  tableOptions: propTypes.object,
 };
 
 /**
@@ -106,7 +132,7 @@ const FilterModalWithProvider = (props) => {
   // TODO Pass down "primary table" state
 
   return (
-    <TableStateProvider>
+    <TableStateProvider isNewContext>
       <FilterModal {...props} />
     </TableStateProvider>
   );
