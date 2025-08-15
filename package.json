@@ -89,5 +89,8 @@
     "workerDirectory": [
       "public"
     ]
+  },
+  "dependencies": {
+    "@tanstack/react-pacer": "^0.15.0"
   }
 }
