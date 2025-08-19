@@ -1,4 +1,5 @@
 import NumberFilter from '~/support/components/NumberFilter';
+import { stringToId } from '~/hooks/useFilterConfig/helpers';
 
 import { genres, items } from './items';
 
@@ -27,7 +28,7 @@ export const genre = {
   filterAttribute: 'genre',
   items: genres.sort().map((option) => ({
     label: option,
-    value: option,
+    value: stringToId(option),
   })),
 };
 
@@ -63,7 +64,10 @@ export const decade = {
     `(.releaseYear >= ${start}) and (.releaseYear <= ${end})`,
 };
 
-const artistsGroupedByGenre = Object.groupBy(items, ({ genre }) => genre);
+export const artistsGroupedByGenre = Object.groupBy(
+  items,
+  ({ genre }) => genre,
+);
 
 export const artistByGenre = {
   type: 'group',
@@ -76,7 +80,7 @@ export const artistByGenre = {
   groups: Object.entries(artistsGroupedByGenre).map(([genre, artists]) => ({
     label: genre,
     value: genre,
-    items: artists.slice(0, 10).map(({ artist }) => ({
+    items: artists.map(({ artist }) => ({
       label: artist,
       value: artist,
     })),
@@ -229,7 +233,7 @@ export const customNumberFilter = {
 export default [
   title,
   artist,
-  artistByGenre,
+  // artistByGenre,
   genre,
   singleGenre,
   rating,
