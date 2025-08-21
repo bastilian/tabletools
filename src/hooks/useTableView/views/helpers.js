@@ -157,9 +157,8 @@ export const emptyRows = (kind, columns, items, options) => {
   const EmptyStateComponent = CustomEmptyState || NoResultsTable;
 
   return customEmptyRows
-    ? { rows: customEmptyRows, onSelect: undefined }
+    ? { rows: customEmptyRows }
     : {
-        onSelect: undefined,
         rows: [
           {
             cells: [

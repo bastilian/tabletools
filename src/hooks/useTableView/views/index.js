@@ -29,7 +29,10 @@ const views = {
       if (error) {
         return errorRows(columns);
       } else if (tableTree?.length === 0) {
-        return emptyRows(kind, columns, items, options);
+        return {
+          ...emptyRows(kind, columns, items, options),
+          onSelect: undefined,
+        };
       } else {
         const rows = treeChopper(items, columns, options);
         const onSelect = getOnTreeSelect(options);
