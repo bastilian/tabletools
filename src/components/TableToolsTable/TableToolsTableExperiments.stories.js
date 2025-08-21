@@ -170,4 +170,40 @@ export const BulkSelectStory = {
   render: (args) => <BulkSelectExample {...args} />,
 };
 
+const AllEmptyExample = () => {
+  const { loading } = useExampleDataQuery({
+    endpoint: '/api',
+    useTableState: true,
+  });
+
+  return (
+    <TableToolsTable
+      loading={loading}
+      items={[]}
+      total={0}
+      columns={columns}
+      options={{
+        ...defaultOptions,
+        debug: true,
+        tableTree: [],
+        enableTreeView: true,
+        defaultTableView: 'tree',
+      }}
+    />
+  );
+};
+
+export const AllEmptyStory = {
+  decorators: [
+    (Story) => (
+      <QueryClientProvider client={queryClient}>
+        <TableStateProvider>
+          <Story />
+        </TableStateProvider>
+      </QueryClientProvider>
+    ),
+  ],
+  render: (args) => <AllEmptyExample {...args} />,
+};
+
 export default meta;

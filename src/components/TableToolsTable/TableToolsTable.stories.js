@@ -252,10 +252,10 @@ const WithTableTreeExample = ({
   } = useStateCallbacks();
 
   useEffect(() => {
-    if (filterState && tableView === 'tree') {
+    if (Object.keys(filterState || {}).length && tableView === 'tree') {
       setView('rows');
     }
-  }, [filterState]);
+  }, [filterState, setView, tableView]);
 
   return (
     <TableToolsTable

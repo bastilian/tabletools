@@ -1,6 +1,7 @@
 import React from 'react';
 import { treeRow } from '@patternfly/react-table';
 import { ErrorState } from '@patternfly/react-component-groups';
+import NoResultsTable from '~/components/NoResultsTable';
 
 const columnProp = (column) =>
   column.key || column.original?.toLowerCase() || column.title?.toLowerCase();
@@ -120,7 +121,7 @@ export const treeTableGroupColumns = [
   {
     key: 'title',
     // eslint-disable-next-line react/prop-types
-    Component: ({ title }) => <strong>{title} </strong>,
+    Component: ({ title }) => <strong>{title}</strong>,
   },
 ];
 
@@ -151,28 +152,32 @@ export const isBranchChecked = (tableTree, item, isItemSelected) => {
   return false;
 };
 
-export const emptyRows = (
-  EmptyStateComponent,
-  kind,
-  columns,
-  items,
-  options,
-) => ({
-  rows: [
-    {
-      cells: [
-        {
-          title: () => (
-            <EmptyStateComponent kind={kind} {...{ items, columns, options }} />
-          ),
-          props: {
-            colSpan: columns.length,
+export const emptyRows = (kind, columns, items, options) => {
+  const { emptyRows: customEmptyRows, EmptyState: CustomEmptyState } = options;
+  const EmptyStateComponent = CustomEmptyState || NoResultsTable;
+
+  return customEmptyRows
+    ? { rows: customEmptyRows }
+    : {
+        rows: [
+          {
+            cells: [
+              {
+                title: () => (
+                  <EmptyStateComponent
+                    kind={kind}
+                    {...{ items, columns, options }}
+                  />
+                ),
+                props: {
+                  colSpan: columns.length,
+                },
+              },
+            ],
           },
-        },
-      ],
-    },
-  ],
-});
+        ],
+      };
+};
 
 export const errorRows = (columns) => ({
   rows: [
