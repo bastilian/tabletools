@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useEffect } from 'react';
 import propTypes from 'prop-types';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
@@ -19,7 +19,7 @@ import { actions, rowActionResolver } from '~/support/constants';
 import { selectedItemIds } from '~/support/api';
 
 import { TableToolsTable, TableStateProvider } from '~/components';
-import { useFullTableState } from '~/hooks';
+import { useFullTableState, useStateCallbacks } from '~/hooks';
 
 const queryClient = new QueryClient();
 
@@ -221,7 +221,8 @@ const WithTableTreeExample = ({
   enableBulkSelect,
   enablePreselection,
 }) => {
-  const { tableState: { tableView } = {} } = useFullTableState() || {};
+  const { tableState: { tableView, filters: filterState } = {} } =
+    useFullTableState() || {};
 
   const {
     result: { data, meta: { total } = {} } = {},
@@ -246,6 +247,15 @@ const WithTableTreeExample = ({
     endpoint: '/api/tree',
     useTableState: true,
   });
+  const {
+    current: { setView },
+  } = useStateCallbacks();
+
+  useEffect(() => {
+    if (filterState && tableView === 'tree') {
+      setView('rows');
+    }
+  }, [filterState]);
 
   return (
     <TableToolsTable
