@@ -1,9 +1,10 @@
 import { conditionalFilterType } from '@redhat-cloud-services/frontend-components/ConditionalFilter';
 
-import textType from './filterTypeHelpers/textType';
-import checkboxType from './filterTypeHelpers/checkboxType';
-import radioType from './filterTypeHelpers/radioType';
-import groupType from './filterTypeHelpers/groupType';
+import textType from './textType';
+import checkboxType from './checkboxType';
+import radioType from './radioType';
+import groupType from './groupType';
+export { default as customType } from './customType';
 
 export default {
   [conditionalFilterType.text]: textType,
