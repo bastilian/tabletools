@@ -16,7 +16,7 @@ import { TableContext } from '~/hooks/useTableState/constants';
  *  @group Components
  *
  */
-const TableStateProvider = ({ children }) => {
+const TableStateProvider = ({ parentContext, children }) => {
   const state = useState();
   const observers = useRef({});
   const serialisers = useRef({});
@@ -26,6 +26,7 @@ const TableStateProvider = ({ children }) => {
   return (
     <TableContext.Provider
       value={{
+        parentContext,
         state,
         observers,
         serialisers,
@@ -40,17 +41,24 @@ const TableStateProvider = ({ children }) => {
 
 TableStateProvider.propTypes = {
   children: propTypes.node,
+  parentContext: propTypes.object,
 };
 
-const TableStateProviderWrapper = ({ children }) => {
+const TableStateProviderWrapper = ({ isNewContext, children }) => {
   const tableContext = useContext(TableContext);
-  const Wrapper = tableContext ? React.Fragment : TableStateProvider;
+  const Wrapper =
+    tableContext && !isNewContext ? React.Fragment : TableStateProvider;
 
-  return <Wrapper>{children}</Wrapper>;
+  return (
+    <Wrapper {...(isNewContext ? { parentContext: tableContext } : {})}>
+      {children}
+    </Wrapper>
+  );
 };
 
 TableStateProviderWrapper.propTypes = {
   children: propTypes.node,
+  isNewContext: propTypes.bool,
 };
 
 export default TableStateProviderWrapper;

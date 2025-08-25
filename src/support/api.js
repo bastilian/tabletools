@@ -2,6 +2,8 @@ import { faker } from '@faker-js/faker/locale/de';
 import { jsonquery } from '@jsonquerylang/jsonquery';
 
 import itemsFactory, { genres } from '~/support/factories/items';
+import { yearsByDecade } from '~/support/factories/filters';
+
 import { buildTree } from '~/support/factories/tableTree';
 
 const DEFAULT_LIMIT = 10;
@@ -44,5 +46,6 @@ const queriedItems = (itemsToQuery) => {
 
 export const apiHandler = queriedItems(items);
 export const apiGenresHandler = queriedItems(genres);
+export const apiYearsByDecadeHandler = () => yearsByDecade;
 export const apiTreehandler = async () => buildTree({ items });
 export const apiSelectionHandler = () => selectedItemIds;

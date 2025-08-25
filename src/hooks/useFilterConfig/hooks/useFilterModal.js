@@ -1,10 +1,16 @@
 import { useState, useCallback } from 'react';
 import { stringToId } from '../helpers';
 
-const useFilterModal = ({ filterConfig, activeFilters, onFilterUpdate }) => {
+const useFilterModal = ({
+  serialisers,
+  filterConfig,
+  activeFilters,
+  onFilterUpdate,
+  setAsyncItems,
+}) => {
   const [modalFilter, setModalFilter] = useState();
   const isFilterModalOpen = !!modalFilter;
-  const filter = filterConfig.find(
+  const filter = filterConfig?.find(
     ({ label }) => stringToId(label) === modalFilter,
   );
 
@@ -27,6 +33,11 @@ const useFilterModal = ({ filterConfig, activeFilters, onFilterUpdate }) => {
       onChange: (values) =>
         onFilterUpdate(stringToId(filter.label), undefined, values),
       onClose: closeFilterModal,
+      tableOptions: {
+        serialisers,
+        ...((filter?.modal || {}).tableOptions || {}),
+      },
+      setAsyncItems,
     },
   };
 };

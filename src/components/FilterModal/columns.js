@@ -4,6 +4,7 @@ const FilterGroupText = ({ group }) => group;
 export const filterOption = {
   title: '',
   Component: FilterOptionText,
+  exportKey: 'label',
 };
 
 export const filterGroup = {

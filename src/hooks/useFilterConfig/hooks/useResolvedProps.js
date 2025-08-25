@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { useDeepCompareEffect } from 'use-deep-compare';
 
 const resolveObjectsProps = async (objects, propsToResolve) => {
@@ -8,9 +8,16 @@ const resolveObjectsProps = async (objects, propsToResolve) => {
     let newObject = { ...object };
 
     for (const prop of propsToResolve) {
-      // TODO Allow to pass function arguments when resolving props
       if (typeof object[prop] === 'function') {
-        newObject[prop] = await object[prop]();
+        const resolvedProp = await object[prop]();
+        if (
+          Array.isArray(resolvedProp[0]) &&
+          typeof resolvedProp[1] === 'number'
+        ) {
+          newObject[prop] = resolvedProp[0];
+        } else {
+          newObject[prop] = resolvedProp;
+        }
       }
     }
 
@@ -22,20 +29,24 @@ const resolveObjectsProps = async (objects, propsToResolve) => {
 
 // TODO this hook may be useful elsewhere as well, move it higher up and/or into som utils hook folder
 const useResolvedProps = (objects, propsToResolve) => {
-  const [resolvedObjects, setResolvedObjects] = useState([]);
+  const resolving = useRef(false);
+  const [resolvedObjects, setResolvedObjects] = useState();
 
   useDeepCompareEffect(() => {
     const resolveObjects = async (objects, propsToResolve) => {
+      resolving.current = true;
       const newResolvedObjects = await resolveObjectsProps(
         objects,
         propsToResolve,
       );
-
+      resolving.current = false;
       setResolvedObjects(newResolvedObjects);
     };
 
-    resolveObjects(objects, propsToResolve);
-  }, [objects, propsToResolve]);
+    if (!resolvedObjects && !resolving.current) {
+      resolveObjects(objects, propsToResolve);
+    }
+  }, [objects, propsToResolve, resolvedObjects]);
 
   return resolvedObjects;
 };

@@ -16,10 +16,14 @@ export const defaultOnChange = (handler, label) => ({
 });
 
 export const flattenConfigItems = (configItem) =>
-  (configItem.items || configItem.groups).flatMap((parentItem) => [
-    parentItem,
-    ...parentItem.items.map((item) => ({ ...item, parent: parentItem })),
-  ]);
+  // TODO This is a hack. Somewhere an `items` prop with an empty array is introduced to group filters
+  // it should be either one or the other, but a filter should never have to have both `items` and `groups`
+  [...(configItem.items || []), ...(configItem.groups || [])].flatMap(
+    (parentItem) => [
+      parentItem,
+      ...parentItem.items.map((item) => ({ ...item, parent: parentItem })),
+    ],
+  );
 
 export const configItemItemByLabel = (configItem, label) =>
   configItem.items.find(({ label: itemLabel }) => itemLabel === label);
