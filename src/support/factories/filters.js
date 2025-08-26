@@ -1,4 +1,7 @@
 import NumberFilter from '~/support/components/NumberFilter';
+import GenresFilter from '~/support/components/GenresFilter';
+
+import { stringToId } from '~/hooks/useFilterConfig/helpers';
 
 import { genres, items } from './items';
 
@@ -27,7 +30,7 @@ export const genre = {
   filterAttribute: 'genre',
   items: genres.sort().map((option) => ({
     label: option,
-    value: option,
+    value: stringToId(option),
   })),
 };
 
@@ -63,7 +66,10 @@ export const decade = {
     `(.releaseYear >= ${start}) and (.releaseYear <= ${end})`,
 };
 
-const artistsGroupedByGenre = Object.groupBy(items, ({ genre }) => genre);
+export const artistsGroupedByGenre = Object.groupBy(
+  items,
+  ({ genre }) => genre,
+);
 
 export const artistByGenre = {
   type: 'group',
@@ -216,14 +222,27 @@ export const genreWithFetchedItemsAndModalItems = {
 export const customNumberFilterType = {
   Component: NumberFilter,
   chips: (value) => [value],
-  selectValue: (value) => [value, true],
-  deselectValue: () => [undefined, true],
+  selectValue: (value) => value,
+  deselectValue: () => undefined,
 };
 
 export const customNumberFilter = {
   type: 'number',
   label: 'Custom Number Filter',
   filterAttribute: 'rating',
+};
+
+export const customGenresFilterType = {
+  Component: GenresFilter,
+  chips: (value) => value,
+  selectValue: (value) => value,
+  deselectValue: (value) => value,
+};
+
+export const customGenresFilter = {
+  type: 'customGenres',
+  label: 'Custom Genres Filter',
+  filterAttribute: 'genre',
 };
 
 export default [
