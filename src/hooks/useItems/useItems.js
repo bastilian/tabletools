@@ -8,6 +8,7 @@ import {
 
 import { initialItemsState } from './constants';
 import { identifyItems } from './helpers';
+import useCallbacksCallback from '~/hooks/useTableState/hooks/useCallbacksCallback';
 
 /**
  * This hook handles either just returning a provided array of items
@@ -27,6 +28,7 @@ const useItems = (
   externalItems,
   externalError,
   externalTotal,
+  { itemsOptions: { queryKey } = {} },
 ) => {
   const tableState = useRawTableState();
   const { filter, sort, pagination } = tableState || {};
@@ -49,8 +51,16 @@ const useItems = (
     data: { items: internalItems, total: internalTotal } = initialItemsState,
     isFetching: internalLoading,
     error: internalError,
+    refetch,
   } = useQuery({
-    queryKey: ['items', serialisedTableState, filter, sort, pagination],
+    queryKey: [
+      'items',
+      serialisedTableState,
+      filter,
+      sort,
+      pagination,
+      queryKey,
+    ],
     queryFn,
     enabled: useInternalState,
     refetchOnWindowFocus: false,
@@ -60,6 +70,8 @@ const useItems = (
   const total = useInternalState ? internalTotal : externalTotal;
   const error = useInternalState ? internalError : externalError;
   const loading = useInternalState ? internalLoading : externalLoading;
+
+  useCallbacksCallback('reload', refetch);
 
   return {
     loading,

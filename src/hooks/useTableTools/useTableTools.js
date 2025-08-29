@@ -53,6 +53,7 @@ const useTableTools = (
     externalItems,
     externalError,
     externalTotal,
+    options,
   );
   // TODO investigate and maybe refactor
   const actionResolverEnabled = items?.length > 0;
