@@ -1,6 +1,6 @@
 import isArray from 'lodash/isEmpty';
 import isObject from 'lodash/isObject';
-import { customType as defaultCustomTypeHelper } from './filterTypeHelpers';
+import defaultCustomTypeHelper from './filterTypeHelpers/customType';
 
 export const stringToId = (string) =>
   string.split(/\s+/).join('-').toLowerCase();
