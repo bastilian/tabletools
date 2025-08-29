@@ -149,7 +149,7 @@ const SetFilterExample = () => {
               setFilter('title', ['ghost']);
             }}
           >
-            Set title filter to "ghost"
+            Set title filter to &quot;ghost&quot;
           </Button>
         </CardBody>
       </Card>
