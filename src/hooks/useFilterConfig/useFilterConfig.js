@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from 'react';
+import { useCallback, useEffect, useMemo } from 'react';
 import { useDebouncedCallback } from '@tanstack/react-pacer/debouncer';
 
 import useSelectionManager from '~/hooks/useSelectionManager';
@@ -87,7 +87,15 @@ const useFilterConfig = (options) => {
     debouncedSetState(activeFilters);
   }, [activeFilters, debouncedSetState]);
 
+  const setFilter = useCallback(
+    (filter, value) => {
+      selectionActions.set(value, filter);
+    },
+    [selectionActions],
+  );
+
   useCallbacksCallback('clearFilters', selectionActions.clear);
+  useCallbacksCallback('setFilter', setFilter);
 
   return enableFilters
     ? {
