@@ -28,7 +28,7 @@ const useItems = (
   externalItems,
   externalError,
   externalTotal,
-  { itemsOptions: { queryKey } = {} },
+  { itemsOptions: { queryKey } = {} } = {},
 ) => {
   const tableState = useRawTableState();
   const { filter, sort, pagination } = tableState || {};
