@@ -4,7 +4,6 @@ import textType from './textType';
 import checkboxType from './checkboxType';
 import radioType from './radioType';
 import groupType from './groupType';
-export { default as customType } from './customType';
 
 export default {
   [conditionalFilterType.text]: textType,
