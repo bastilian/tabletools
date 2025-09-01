@@ -64,6 +64,7 @@ const TableToolsTable = ({
   return (
     <>
       <PrimaryToolbar aria-label="Table toolbar" {...toolbarProps}>
+        {toolbarProps?.children}
         {tableViewToggleProps && <TableViewToggle {...tableViewToggleProps} />}
       </PrimaryToolbar>
 
