@@ -79,16 +79,18 @@ const useBulkSelect = ({
     [selectedIds],
   );
 
-  const { selectOne, selectPage, selectAll } = useSelectionActions({
-    allSelected,
-    identifier,
-    isItemSelected,
-    currentPageSelected,
-    setLoading,
-    itemIdsInTable,
-    itemIdsOnPage,
-    actions,
-  });
+  const { selectOne, selectPage, selectAll, deselectAll } = useSelectionActions(
+    {
+      allSelected,
+      identifier,
+      isItemSelected,
+      currentPageSelected,
+      setLoading,
+      itemIdsInTable,
+      itemIdsOnPage,
+      actions,
+    },
+  );
   const bulkSelectItems = useBulkSelectItems({
     total,
     paginatedTotal,
@@ -98,6 +100,7 @@ const useBulkSelect = ({
     currentPageSelected,
     ...actions,
   });
+  const onSelectAction = selectedIdsTotal ? deselectAll : selectPage;
 
   // TODO we should refactor this and expose "actions" of hooks more consistently and obvious
   useCallbacksCallback('resetSelection', reset);
@@ -135,7 +138,7 @@ const useBulkSelect = ({
               isDisabled,
               items: bulkSelectItems,
               checked,
-              onSelect: !isDisabled ? selectPage : undefined,
+              onSelect: !isDisabled ? onSelectAction : undefined,
             },
           },
         }

@@ -49,6 +49,7 @@ const useSelectionActions = ({
 
   return {
     selectOne,
+    deselectAll: () => clear(),
     ...(itemIdsOnPage ? { selectPage } : {}),
     ...(itemIdsInTable ? { selectAll } : {}),
   };

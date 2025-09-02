@@ -25,9 +25,16 @@ const buildQuery = (filters, sort) => {
 };
 
 const queriedItems = (itemsToQuery) => {
-  return ({ filters, sort, offset = 0, limit = DEFAULT_LIMIT } = {}) => {
+  return ({
+    filters,
+    sort,
+    offset = 0,
+    limit = DEFAULT_LIMIT,
+    total = 2048,
+  } = {}) => {
+    const totalItems = itemsToQuery.slice(0, total);
     const query = buildQuery(filters, sort);
-    const items = query.length ? jsonquery(itemsToQuery, query) : itemsToQuery;
+    const items = query.length ? jsonquery(totalItems, query) : totalItems;
     const actualLimit = limit === 'max' ? items.length : limit;
 
     return {
