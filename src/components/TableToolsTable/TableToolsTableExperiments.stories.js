@@ -1,6 +1,14 @@
-import React, { useCallback, useEffect } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
+import propTypes from 'prop-types';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { Card, CardBody, Spinner, Button, Label } from '@patternfly/react-core';
+import {
+  Card,
+  CardBody,
+  Spinner,
+  Button,
+  Label,
+  Slider,
+} from '@patternfly/react-core';
 
 import defaultStoryMeta from '~/support/defaultStoryMeta';
 import columns from '~/support/factories/columns';
@@ -90,9 +98,11 @@ export const ContextStory = {
 // This is an example for a table with bulk selection where the preselection is loaded from an API
 // NOTE: the `selected` option it *not* "reactive", meaning if it changes, the selection will *not* be updated
 // Therefore the `TableToolsTable` should not be rendered before the selection is loaded.
-const BulkSelectExample = () => {
+const BulkSelectExample = ({ enablePreselection }) => {
+  const [totalItems, setTotal] = useState(2048);
   const { loading: selectionLoading, result: selection } = useExampleDataQuery({
     endpoint: '/api/selection',
+    skip: !enablePreselection,
   });
   const {
     loading,
@@ -102,6 +112,9 @@ const BulkSelectExample = () => {
   } = useExampleDataQuery({
     endpoint: '/api',
     useTableState: true,
+    params: {
+      total: totalItems,
+    },
   });
   const {
     current: { resetSelection, setSelection },
@@ -116,6 +129,15 @@ const BulkSelectExample = () => {
     <Spinner />
   ) : (
     <>
+      <Card>
+        <CardBody>
+          <Slider
+            value={totalItems}
+            max={2048}
+            onChange={(_event, value) => setTotal(value)}
+          />
+        </CardBody>
+      </Card>
       <Card>
         <CardBody>
           <Button
@@ -150,14 +172,21 @@ const BulkSelectExample = () => {
           debug: true,
           onSelect,
           itemIdsInTable,
-          selected: selection,
+          ...(enablePreselection ? { selected: selection } : {}),
         }}
       />
     </>
   );
 };
 
+BulkSelectExample.propTypes = {
+  enablePreselection: propTypes.bool,
+};
+
 export const BulkSelectStory = {
+  args: {
+    enablePreselection: false,
+  },
   decorators: [
     (Story) => (
       <QueryClientProvider client={queryClient}>
