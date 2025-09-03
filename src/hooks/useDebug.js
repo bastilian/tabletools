@@ -1,5 +1,6 @@
-import { useContext, useEffect } from 'react';
-import { TableContext } from './useTableState/constants';
+import { useEffect } from 'react';
+
+import { useTableContext } from '~/hooks';
 
 /**
  * Hook used internally to set and read wether or not debug mode is enabled
@@ -10,7 +11,7 @@ import { TableContext } from './useTableState/constants';
  *
  */
 const useDebug = (debugProp = false) => {
-  const tableContext = useContext(TableContext);
+  const tableContext = useTableContext();
   const { debug: contextDebug } = tableContext || {};
 
   useEffect(() => {

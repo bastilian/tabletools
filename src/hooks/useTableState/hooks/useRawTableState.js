@@ -1,6 +1,4 @@
-import { useContext } from 'react';
-
-import { TableContext } from '../constants';
+import { useTableContext } from '~/hooks';
 
 /**
  * Hook to access the "raw" table state
@@ -11,7 +9,7 @@ import { TableContext } from '../constants';
  *
  */
 const useRawTableState = () => {
-  const context = useContext(TableContext);
+  const context = useTableContext();
 
   return context?.state?.[0]?.tableState;
 };

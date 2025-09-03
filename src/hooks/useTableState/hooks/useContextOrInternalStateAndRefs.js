@@ -1,9 +1,9 @@
-import { useEffect, useContext } from 'react';
+import { useEffect } from 'react';
 
-import { TableContext } from '../constants';
+import { useTableContext } from '~/hooks';
 
 const useContextOrInternalStateAndRefs = () => {
-  const context = useContext(TableContext);
+  const context = useTableContext();
   const {
     state: contextState,
     observers: contextObservers,
