@@ -1,6 +1,5 @@
 import React from 'react';
 import propTypes from 'prop-types';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Pagination, PaginationVariant } from '@patternfly/react-core';
 import {
   Table,
@@ -17,8 +16,6 @@ import TableToolbar from '@redhat-cloud-services/frontend-components/TableToolba
 
 import useTableTools from '~/hooks/useTableTools';
 import { TableStateProvider, FilterModal, TableViewToggle } from '~/components';
-
-const queryClient = new QueryClient();
 
 const TableToolsTable = ({
   loading: externalLoading,
@@ -151,11 +148,9 @@ TableToolsTable.propTypes = {
  *
  */
 const TableToolsTableWithOrWithoutProvider = (props) => (
-  <QueryClientProvider client={queryClient}>
-    <TableStateProvider>
-      <TableToolsTable {...props} />
-    </TableStateProvider>
-  </QueryClientProvider>
+  <TableStateProvider>
+    <TableToolsTable {...props} />
+  </TableStateProvider>
 );
 
 export default TableToolsTableWithOrWithoutProvider;
