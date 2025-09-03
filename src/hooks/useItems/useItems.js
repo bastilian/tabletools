@@ -1,14 +1,15 @@
-import { useCallback } from 'react';
+import { useEffect, useCallback } from 'react';
 import { useQuery } from '@tanstack/react-query';
 
 import {
   useSerialisedTableState,
   useRawTableState,
 } from '~/hooks/useTableState';
+import useCallbacksCallback from '~/hooks/useTableState/hooks/useCallbacksCallback';
+import { useTableContext } from '~/hooks';
 
 import { initialItemsState } from './constants';
 import { identifyItems } from './helpers';
-import useCallbacksCallback from '~/hooks/useTableState/hooks/useCallbacksCallback';
 
 /**
  * This hook handles either just returning a provided array of items
@@ -30,6 +31,7 @@ const useItems = (
   externalTotal,
   { itemsOptions: { queryKey } = {} } = {},
 ) => {
+  const { itemsData: itemsDataInContext } = useTableContext();
   const tableState = useRawTableState();
   const { filter, sort, pagination } = tableState || {};
   const serialisedTableState = useSerialisedTableState();
@@ -72,6 +74,15 @@ const useItems = (
   const loading = useInternalState ? internalLoading : externalLoading;
 
   useCallbacksCallback('reload', refetch);
+
+  useEffect(() => {
+    itemsDataInContext.current = {
+      loading,
+      items,
+      error,
+      total,
+    };
+  }, [itemsDataInContext, loading, items, error, total]);
 
   return {
     loading,

@@ -22,6 +22,7 @@ const TableStateProvider = ({ parentContext, children }) => {
   const observers = useRef({});
   const serialisers = useRef({});
   const callbacks = useRef({});
+  const itemsData = useRef({});
   const debug = useRef(false);
 
   return (
@@ -32,6 +33,7 @@ const TableStateProvider = ({ parentContext, children }) => {
         observers,
         serialisers,
         callbacks,
+        itemsData,
         debug,
       }}
     >

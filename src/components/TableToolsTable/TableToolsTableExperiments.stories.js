@@ -23,7 +23,7 @@ import filtersSerialiser from '~/components/StaticTableToolsTable/helpers/serial
 import useExampleDataQuery from '~/support/hooks/useExampleDataQuery';
 
 import { TableToolsTable, TableStateProvider } from '~/components';
-import { useFullTableState, useStateCallbacks } from '~/hooks';
+import { useFullTableState, useStateCallbacks, useItemsData } from '~/hooks';
 
 const queryClient = new QueryClient();
 
@@ -472,6 +472,65 @@ export const NestedContextIsolationStory = {
     ),
   ],
   render: (args) => <NestedContextIsolationExample {...args} />,
+};
+
+const DedicatedDeleteAction = () => {
+  const { items } = useItemsData();
+  const tableState = useFullTableState();
+  const { tableState: { selected } = {} } = tableState || {};
+  const itemsToDelete = items?.filter(({ id }) => selected.includes(id)) || [];
+
+  return (
+    <Button
+      isDisabled={itemsToDelete?.length === 0}
+      variant="primary"
+      ouiaId="Primary"
+      onClick={() => alert('Dedicated action clicked')}
+    >
+      {itemsToDelete.length === 1
+        ? `Only ${itemsToDelete[0].title} to delete`
+        : `${selected?.length || 0} items to delete`}
+    </Button>
+  );
+};
+
+const AccessItemsExample = () => {
+  const {
+    loading,
+    result: { data, meta: { total } = {} } = {},
+    error,
+  } = useExampleDataQuery({
+    endpoint: '/api',
+    useTableState: true,
+  });
+
+  return (
+    <TableToolsTable
+      loading={loading}
+      items={data}
+      total={total}
+      error={error}
+      columns={columns}
+      options={{
+        ...defaultOptions,
+        onSelect: true,
+        dedicatedAction: DedicatedDeleteAction,
+      }}
+    />
+  );
+};
+
+export const AccessItemsStory = {
+  decorators: [
+    (Story) => (
+      <QueryClientProvider client={queryClient}>
+        <TableStateProvider>
+          <Story />
+        </TableStateProvider>
+      </QueryClientProvider>
+    ),
+  ],
+  render: (args) => <AccessItemsExample {...args} />,
 };
 
 export default meta;
