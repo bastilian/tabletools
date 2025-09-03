@@ -1,5 +1,6 @@
 import React from 'react';
 import propTypes from 'prop-types';
+import { fitContent, nowrap } from '@patternfly/react-table';
 import { Label } from '@patternfly/react-core';
 
 const Title = ({ title }) => <strong>{title}</strong>;
@@ -32,13 +33,19 @@ export const genre = {
   Component: Genre,
   renderExport: ({ genre }) => genre,
   sortable: 'genre',
+  transforms: [fitContent],
 };
 
 export const releaseYear = {
-  title: 'Released',
+  title: (
+    <>
+      Released <span style={{ color: 'grey' }}>(year)</span>
+    </>
+  ),
   Component: ({ releaseYear }) => releaseYear,
   renderExport: ({ releaseYear }) => releaseYear,
   sortable: 'releaseYear',
+  transforms: [nowrap],
 };
 
 export const rating = {

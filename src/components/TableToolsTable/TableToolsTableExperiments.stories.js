@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import propTypes from 'prop-types';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import {
@@ -233,6 +233,52 @@ export const AllEmptyStory = {
     ),
   ],
   render: (args) => <AllEmptyExample {...args} />,
+};
+
+const CyclicColumnsIssueExample = () => {
+  const {
+    loading,
+    result: { data, meta: { total } = {} } = {},
+    error,
+  } = useExampleDataQuery({
+    endpoint: '/api',
+    useTableState: true,
+  });
+
+  const dynamicColumn = useMemo(() => {
+    return {
+      ...columns[0],
+      title: (
+        <>
+          <strong>Yolo</strong>
+        </>
+      ),
+    };
+  }, []);
+
+  return (
+    <TableToolsTable
+      loading={loading}
+      items={data}
+      error={error}
+      total={total}
+      columns={[dynamicColumn, ...columns.slice(1)]}
+      options={defaultOptions}
+    />
+  );
+};
+
+export const CyclicColumnsIssueStory = {
+  decorators: [
+    (Story) => (
+      <QueryClientProvider client={queryClient}>
+        <TableStateProvider>
+          <Story />
+        </TableStateProvider>
+      </QueryClientProvider>
+    ),
+  ],
+  render: (args) => <CyclicColumnsIssueExample {...args} />,
 };
 
 export default meta;

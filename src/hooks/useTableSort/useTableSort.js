@@ -1,4 +1,5 @@
-import { useCallback, useMemo } from 'react';
+import { useCallback } from 'react';
+import { useDeepCompareMemo } from 'use-deep-compare';
 
 import useTableState, { useRawTableState } from '~/hooks/useTableState';
 
@@ -35,25 +36,24 @@ import { TABLE_STATE_NAMESPACE } from './constants';
  *
  */
 const useTableSort = (columns, options = {}) => {
-  const { sortBy: initialSortBy, serialisers, onSort: onSortOption } = options;
-  const serialiser = useCallback(
-    (state) => options.serialisers.sort(state, columns),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [JSON.stringify(columns), JSON.stringify(options.serialisers)],
-  );
+  const {
+    sortBy: initialSortBy,
+    serialisers: { sort: serialiser } = {},
+    onSort: onSortOption,
+  } = options;
 
   const { tableView } = useRawTableState() || {};
   const offset = columnOffset({ ...options, tableView });
 
-  const stateOptions = useMemo(
+  const stateOptions = useDeepCompareMemo(
     () => ({
-      ...(serialisers?.sort
+      ...(serialiser
         ? {
-            serialiser,
+            serialiser: (state) => serialiser(state, columns),
           }
         : {}),
     }),
-    [serialisers, serialiser],
+    [serialiser, columns],
   );
   const [sortBy, setSortBy] = useTableState(
     TABLE_STATE_NAMESPACE,
