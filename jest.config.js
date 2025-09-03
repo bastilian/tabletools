@@ -15,6 +15,8 @@ module.exports = {
     '!src/support/**/*.{js,jsx}',
   ],
   roots: ['<rootDir>/src/'],
+  transformIgnorePatterns: ['/node_modules/(?!(@faker-js)/)'],
+
   moduleNameMapper: {
     '\\.(css|scss|svg)$': 'identity-obj-proxy',
     '^~/(.*)$': '<rootDir>/src/$1',
