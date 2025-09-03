@@ -2,8 +2,8 @@ import { useCallback } from 'react';
 import { useDeepCompareEffect } from 'use-deep-compare';
 
 import useDebug from '~/hooks/useDebug';
+import { useContextOrInternalStateAndRefs } from '~/hooks/useTableContext';
 
-import useContextOrInternalStateAndRefs from './hooks/useContextOrInternalStateAndRefs';
 import useStateObservers from './hooks/useStateObservers';
 import useSerialisers from './hooks/useSerialisers';
 import useCallbacks from './hooks/useCallbacks';
