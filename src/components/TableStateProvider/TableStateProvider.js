@@ -1,7 +1,7 @@
 import React, { useContext, useState, useRef } from 'react';
 import propTypes from 'prop-types';
 
-import { TableContext } from '~/hooks/useTableState/constants';
+import { TableContext } from '~/hooks/useTableContext/constants';
 
 /**
  * This component provides a context for components/hooks that want to use async tables and access it's state to perform API requests

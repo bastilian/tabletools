@@ -16,7 +16,6 @@ import PrimaryToolbar from '@redhat-cloud-services/frontend-components/PrimaryTo
 import TableToolbar from '@redhat-cloud-services/frontend-components/TableToolbar';
 
 import useTableTools from '~/hooks/useTableTools';
-import { TableContext } from '~/hooks/useTableState/constants';
 import { TableStateProvider, FilterModal, TableViewToggle } from '~/components';
 
 const queryClient = new QueryClient();

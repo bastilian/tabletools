@@ -20,3 +20,4 @@ export { default as useSerialisedTableState } from './useTableState/hooks/useSer
 export { default as useStateCallbacks } from './useTableState/hooks/useStateCallbacks';
 
 export { default as useDebug } from './useDebug';
+export { default as useTableContext } from './useTableContext';
