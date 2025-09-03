@@ -1,4 +1,4 @@
-import useContextOrInternalStateAndRefs from './useContextOrInternalStateAndRefs';
+import { useContextOrInternalStateAndRefs } from '~/hooks/useTableContext';
 
 /**
  * Hook to access "callbacks" provided by some of the other hooks
