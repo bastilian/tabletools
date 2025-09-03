@@ -3,7 +3,7 @@ export { default as useColumnManager } from './useColumnManager';
 export { default as useExpandable } from './useExpandable';
 export { default as useExport } from './useExport';
 export { default as useFilterConfig } from './useFilterConfig';
-export { default as useItems } from './useItems';
+export { useItemsData, default as useItems } from './useItems';
 export { default as usePagination } from './usePagination';
 export { default as useRadioSelect } from './useRadioSelect';
 export { default as useSelectionManager } from './useSelectionManager';
