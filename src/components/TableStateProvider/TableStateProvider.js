@@ -63,4 +63,3 @@ TableStateProviderWrapper.propTypes = {
 };
 
 export default TableStateProviderWrapper;
-export { TableStateProvider as IsolatedTableStateProvider };
