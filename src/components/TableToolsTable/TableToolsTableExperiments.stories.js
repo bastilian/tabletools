@@ -8,10 +8,15 @@ import {
   Button,
   Label,
   Slider,
+  Modal,
+  ModalHeader,
+  ModalBody,
+  ModalFooter,
 } from '@patternfly/react-core';
 
 import defaultStoryMeta from '~/support/defaultStoryMeta';
 import columns from '~/support/factories/columns';
+import filters, { title, genre } from '~/support/factories/filters';
 import paginationSerialiser from '~/components/StaticTableToolsTable/helpers/serialisers/pagination';
 import sortSerialiser from '~/components/StaticTableToolsTable/helpers/serialisers/sort';
 import filtersSerialiser from '~/components/StaticTableToolsTable/helpers/serialisers/filters';
@@ -279,6 +284,194 @@ export const CyclicColumnsIssueStory = {
     ),
   ],
   render: (args) => <CyclicColumnsIssueExample {...args} />,
+};
+
+// Modal component with isolated table context
+const DetailsModal = ({ isOpen, onClose, rowData }) => {
+  const {
+    loading,
+    result: { data, meta: { total } = {} } = {},
+    error,
+  } = useExampleDataQuery({
+    endpoint: '/api',
+    useTableState: true,
+  });
+
+  const modalTableState = useFullTableState();
+
+  useEffect(() => {
+    if (modalTableState?.tableState?.filters) {
+      console.log('Modal table filters:', modalTableState.tableState.filters);
+    }
+    if (modalTableState?.parentContext) {
+      console.log(
+        'Parent context available in modal:',
+        modalTableState.parentContext,
+      );
+    }
+  }, [modalTableState?.tableState?.filters, modalTableState?.parentContext]);
+
+  return (
+    <Modal variant="large" isOpen={isOpen} onClose={onClose}>
+      <ModalHeader title={`Details for: ${rowData?.title || 'Item'}`} />
+      <ModalBody>
+        <Card style={{ marginBottom: '1rem' }}>
+          <CardBody>
+            <Label color="blue">
+              Modal Table State:{' '}
+              {JSON.stringify(modalTableState?.tableState?.filters || {})}
+            </Label>
+            <br />
+            <Label color="purple">
+              Parent Context Available:{' '}
+              {modalTableState?.parentContext ? 'Yes' : 'No'}
+              {modalTableState?.parentContext && (
+                <>
+                  {' '}
+                  - Parent Filters:{' '}
+                  {JSON.stringify(
+                    modalTableState.parentContext.state?.[0]?.tableState
+                      ?.filters || {},
+                  )}
+                </>
+              )}
+            </Label>
+          </CardBody>
+        </Card>
+        <TableToolsTable
+          loading={loading}
+          items={data}
+          total={total}
+          error={error}
+          columns={columns.slice(0, 3)} // Show fewer columns in modal
+          filters={{
+            filterConfig: [title, genre], // Simple filters for modal
+          }}
+          options={{
+            ...defaultOptions,
+            debug: true,
+          }}
+        />
+      </ModalBody>
+      <ModalFooter>
+        <Button key="close" variant="primary" onClick={onClose}>
+          Close
+        </Button>
+      </ModalFooter>
+    </Modal>
+  );
+};
+
+DetailsModal.propTypes = {
+  isOpen: propTypes.bool,
+  onClose: propTypes.func,
+  rowData: propTypes.object,
+};
+
+// Main table with nested context isolation example
+const NestedContextIsolationExample = () => {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedRow, setSelectedRow] = useState(null);
+  const {
+    loading,
+    result: { data, meta: { total } = {} } = {},
+    error,
+  } = useExampleDataQuery({
+    endpoint: '/api',
+    useTableState: true,
+  });
+
+  const mainTableState = useFullTableState();
+
+  useEffect(() => {
+    if (mainTableState?.tableState?.filters) {
+      console.log('Main table filters:', mainTableState.tableState.filters);
+    }
+  }, [mainTableState?.tableState?.filters]);
+
+  const openModal = useCallback((rowData) => {
+    setSelectedRow(rowData);
+    setIsModalOpen(true);
+  }, []);
+
+  const closeModal = useCallback(() => {
+    setIsModalOpen(false);
+    setSelectedRow(null);
+  }, []);
+
+  const enhancedColumns = useMemo(
+    () => [
+      ...columns,
+      {
+        title: 'Actions',
+        props: { width: 10 },
+        // eslint-disable-next-line react/prop-types
+        Component: ({ rowData }) => (
+          <Button variant="link" onClick={() => openModal(rowData)} size="sm">
+            View Details
+          </Button>
+        ),
+      },
+    ],
+    [openModal],
+  );
+
+  return (
+    <>
+      <Card style={{ marginBottom: '1rem' }}>
+        <CardBody>
+          <Label color="green">
+            Main Table State:{' '}
+            {JSON.stringify(mainTableState?.tableState?.filters || {})}
+          </Label>
+          <br />
+          <small>
+            This demonstrates isolated table contexts with parent context
+            access. The modal table has its own isolated state but can still
+            access the parent table&apos;s context. Filtering in either table
+            won&apos;t affect the other.
+          </small>
+        </CardBody>
+      </Card>
+
+      <TableToolsTable
+        loading={loading}
+        items={data}
+        total={total}
+        error={error}
+        columns={enhancedColumns}
+        filters={{
+          filterConfig: filters.slice(0, 4),
+        }}
+        options={{
+          ...defaultOptions,
+          debug: true,
+        }}
+      />
+
+      {/* Modal with isolated table context using isNewContext */}
+      <TableStateProvider isNewContext={true}>
+        <DetailsModal
+          isOpen={isModalOpen}
+          onClose={closeModal}
+          rowData={selectedRow}
+        />
+      </TableStateProvider>
+    </>
+  );
+};
+
+export const NestedContextIsolationStory = {
+  decorators: [
+    (Story) => (
+      <QueryClientProvider client={queryClient}>
+        <TableStateProvider>
+          <Story />
+        </TableStateProvider>
+      </QueryClientProvider>
+    ),
+  ],
+  render: (args) => <NestedContextIsolationExample {...args} />,
 };
 
 export default meta;
