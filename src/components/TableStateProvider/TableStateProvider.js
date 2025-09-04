@@ -42,15 +42,18 @@ TableStateProvider.propTypes = {
   children: propTypes.node,
 };
 
-const TableStateProviderWrapper = ({ children }) => {
+const TableStateProviderWrapper = ({ children, forceNew = false }) => {
   const tableContext = useContext(TableContext);
-  const Wrapper = tableContext ? React.Fragment : TableStateProvider;
+  const Wrapper =
+    tableContext && !forceNew ? React.Fragment : TableStateProvider;
 
   return <Wrapper>{children}</Wrapper>;
 };
 
 TableStateProviderWrapper.propTypes = {
   children: propTypes.node,
+  forceNew: propTypes.bool,
 };
 
 export default TableStateProviderWrapper;
+export { TableStateProvider as IsolatedTableStateProvider };
