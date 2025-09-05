@@ -5,11 +5,13 @@ import jsdoc from 'eslint-plugin-jsdoc';
 import reactHooks from 'eslint-plugin-react-hooks';
 import testingLibrary from 'eslint-plugin-testing-library';
 import storybookPlugin from 'eslint-plugin-storybook';
+import pluginQuery from '@tanstack/eslint-plugin-query';
 import { defineConfig, globalIgnores } from 'eslint/config';
 import tseslint from 'typescript-eslint';
 import eslint from '@eslint/js';
 
 export default defineConfig([
+  ...pluginQuery.configs['flat/recommended'],
   tseslint.config(eslint.configs.recommended, tseslint.configs.recommended),
   globalIgnores(['node_modules/*', 'dist/*', 'docs/*', '**/coverage']),
   fecPlugin,
