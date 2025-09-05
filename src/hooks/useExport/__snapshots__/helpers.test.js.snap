@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`csvForItems returns an csv export of items 1`] = `
 "Title,Artist,Released,Genre,Rating
