@@ -18,7 +18,6 @@ export const title = {
   Component: Title,
   renderExport: ({ title }) => title,
   sortable: 'title',
-  manageable: false,
 };
 
 export const artist = {
@@ -58,6 +57,7 @@ export const rating = {
       .join(''),
   renderExport: ({ rating }) => rating,
   sortable: 'rating',
+  manageable: false,
 };
 
 export default [title, artist, releaseYear, genre, rating];
