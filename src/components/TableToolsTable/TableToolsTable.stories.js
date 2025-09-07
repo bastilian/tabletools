@@ -132,7 +132,15 @@ const CommonExample = ({
     exporter,
     itemIdsInTable,
     itemIdsOnPage,
-  } = useExampleDataQuery({ endpoint: '/api', useTableState: true });
+  } = useExampleDataQuery({
+    endpoint: '/api',
+    useTableState: true,
+    tableQueries: {
+      extraParams: {
+        itemIdsInTable: { idsOnly: true },
+      },
+    },
+  });
 
   return (
     <TableToolsTable
@@ -341,31 +349,15 @@ const WithAsyncFunctionExample = ({
   enableDetails,
   enableBulkSelect,
 }) => {
-  const { fetch, itemIdsInTable, itemIdsOnPage, exporter } =
+  const { items, itemIdsInTable, itemIdsOnPage, exporter } =
     useExampleDataQuery({
       endpoint: '/api',
-      skip: true,
+      enabled: false,
     });
-
-  const fetchItems = useCallback(
-    async ({ pagination = {}, filters, sort } = {}) => {
-      const {
-        data: items,
-        meta: { total },
-      } = await fetch({
-        ...pagination,
-        ...(filters ? { filters } : {}),
-        ...(sort ? { sort } : {}),
-      });
-
-      return [items, total];
-    },
-    [fetch],
-  );
 
   return (
     <TableToolsTable
-      items={fetchItems}
+      items={items}
       columns={
         sortable
           ? columns
@@ -464,11 +456,14 @@ export const WithPlainAsyncFunction = {
 };
 
 const WithErroringAsyncFunctionExample = ({ debug }) => {
-  const { fetch } = useExampleDataQuery({ endpoint: '/api/error', skip: true });
+  const { items } = useExampleDataQuery({
+    endpoint: '/api/error',
+    enabled: false,
+  });
 
   return (
     <TableToolsTable
-      items={fetch}
+      items={items}
       columns={columns}
       filters={{ filterConfig: filters }}
       options={{

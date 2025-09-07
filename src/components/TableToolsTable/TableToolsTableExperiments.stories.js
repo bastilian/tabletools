@@ -105,10 +105,12 @@ export const ContextStory = {
 // Therefore the `TableToolsTable` should not be rendered before the selection is loaded.
 const BulkSelectExample = ({ enablePreselection }) => {
   const [totalItems, setTotal] = useState(2048);
+
   const { loading: selectionLoading, result: selection } = useExampleDataQuery({
     endpoint: '/api/selection',
-    skip: !enablePreselection,
+    enabled: enablePreselection,
   });
+
   const {
     loading,
     result: { data, meta: { total } = {} } = {},
@@ -121,6 +123,7 @@ const BulkSelectExample = ({ enablePreselection }) => {
       total: totalItems,
     },
   });
+
   const {
     current: { resetSelection, setSelection },
   } = useStateCallbacks();
