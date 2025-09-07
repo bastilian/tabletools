@@ -35,17 +35,17 @@ const RefetchExample = () => {
     current: { reload },
   } = useStateCallbacks();
   const [selectedGenre, setSelectedGenre] = useState();
-  const { fetch } = useExampleDataQuery({
+  const { query } = useExampleDataQuery({
     endpoint: '/api',
-    skip: true,
+    enabled: false,
   });
 
-  const fetchItems = useCallback(
+  const queryItems = useCallback(
     async ({ pagination = {}, filters, sort } = {}) => {
       const {
         data: items,
         meta: { total },
-      } = await fetch({
+      } = await query({
         ...pagination,
         ...(filters ? { filters } : {}),
         ...(sort ? { sort } : {}),
@@ -56,7 +56,7 @@ const RefetchExample = () => {
 
       return [items, total];
     },
-    [fetch, selectedGenre],
+    [query, selectedGenre],
   );
 
   const onSelectGenre = useCallback((genre) => {
@@ -81,7 +81,7 @@ const RefetchExample = () => {
         </CardBody>
       </Card>
       <TableToolsTable
-        items={fetchItems}
+        items={queryItems}
         columns={columns}
         options={{
           ...defaultOptions,
@@ -106,17 +106,17 @@ export const RefetchStory = {
 
 const QueryKeyRefetchExample = () => {
   const [selectedGenre, setSelectedGenre] = useState();
-  const { fetch } = useExampleDataQuery({
+  const { query } = useExampleDataQuery({
     endpoint: '/api',
-    skip: true,
+    enabled: false,
   });
 
-  const fetchItems = useCallback(
+  const queryItems = useCallback(
     async ({ pagination = {}, filters, sort } = {}) => {
       const {
         data: items,
         meta: { total },
-      } = await fetch({
+      } = await query({
         ...pagination,
         ...(filters ? { filters } : {}),
         ...(sort ? { sort } : {}),
@@ -127,7 +127,7 @@ const QueryKeyRefetchExample = () => {
 
       return [items, total];
     },
-    [fetch, selectedGenre],
+    [query, selectedGenre],
   );
 
   const onSelectGenre = useCallback((genre) => {
@@ -149,7 +149,7 @@ const QueryKeyRefetchExample = () => {
         </CardBody>
       </Card>
       <TableToolsTable
-        items={fetchItems}
+        items={queryItems}
         columns={columns}
         options={{
           ...defaultOptions,

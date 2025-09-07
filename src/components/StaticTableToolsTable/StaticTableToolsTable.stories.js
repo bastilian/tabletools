@@ -1,6 +1,7 @@
 import React from 'react';
 import propTypes from 'prop-types';
-
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { Bullseye, Spinner } from '@patternfly/react-core';
 import columns from '~/support/factories/columns';
 import filters, {
   customNumberFilterType,
@@ -8,6 +9,7 @@ import filters, {
 } from '~/support/factories/filters';
 import itemsFactory from '~/support/factories/items';
 import defaultStoryMeta from '~/support/defaultStoryMeta';
+import useExampleDataQuery from '~/support/hooks/useExampleDataQuery';
 import CustomEmptyState from '~/support/components/CustomEmptyState';
 import DetailsRow from '~/support/components/DetailsRow';
 import DedicatedAction from '~/support/components/DedicatedAction';
@@ -16,6 +18,8 @@ import { actions, rowActionResolver } from '~/support/constants';
 import { StaticTableToolsTable } from '~/components';
 
 const arrayOfItems = itemsFactory(505);
+
+const queryClient = new QueryClient();
 
 const argProps = {
   debug: propTypes.bool,
@@ -134,4 +138,88 @@ export const Common = {
   render: (args) => <StaticTableExample {...args} />,
 };
 
+const StaticTableWithBatchfetchedItemsExample = ({
+  debug,
+  columns,
+  filters,
+  filtered,
+  sortable,
+  manageColumns,
+  enableRowActions,
+  enableActions,
+  dedicatedAction,
+  customEmptyRows,
+  customEmptyState,
+  enableExport,
+  enableDetails,
+  enableBulkSelect,
+}) => {
+  const { loading, result: { data } = {} } = useExampleDataQuery({
+    endpoint: '/api',
+    batched: true,
+  });
+
+  return (
+    <>
+      {loading ? (
+        <Bullseye>
+          <Spinner />
+        </Bullseye>
+      ) : (
+        <StaticTableToolsTable
+          items={data}
+          columns={
+            sortable
+              ? columns
+              : columns.map((column) => ({ ...column, sortable: undefined }))
+          }
+          {...(filters && filtered
+            ? {
+                filters: {
+                  filterConfig: [...filters, customNumberFilter],
+                  customFilterTypes: {
+                    number: customNumberFilterType,
+                  },
+                },
+              }
+            : {})}
+          options={{
+            debug,
+            manageColumns,
+            enableExport,
+            ...(enableRowActions
+              ? {
+                  actionResolver: rowActionResolver,
+                }
+              : {}),
+            ...(enableActions ? { actions } : {}),
+            ...(dedicatedAction ? { dedicatedAction: DedicatedAction } : {}),
+            ...(customEmptyRows
+              ? { emptyRows: emptyRows(columns?.length) }
+              : {}),
+            ...(customEmptyState ? { EmptyState: CustomEmptyState } : {}),
+            ...(enableDetails ? { detailsComponent: DetailsRow } : {}),
+            ...(enableBulkSelect
+              ? {
+                  onSelect: (selected) => {
+                    console.log('Currently selected', selected);
+                  },
+                }
+              : {}),
+          }}
+        />
+      )}
+    </>
+  );
+};
+
+StaticTableWithBatchfetchedItemsExample.propTypes = argProps;
+
+export const WithBatchfetchedItems = {
+  render: (args) => (
+    <QueryClientProvider client={queryClient}>
+      <StaticTableWithBatchfetchedItemsExample {...args} />
+    </QueryClientProvider>
+  ),
+};
 export default meta;
