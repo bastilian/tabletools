@@ -53,7 +53,7 @@ const emptyRows = (_kind, colSpan) => [
 ];
 
 const meta = {
-  title: 'Static TableToolsTable',
+  title: 'Components/StaticTableToolsTable',
   args: {
     debug: true,
     columns,

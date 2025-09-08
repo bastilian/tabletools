@@ -6,6 +6,27 @@ import useTableQueries from './hooks/useTableQueries';
 import useQueryTotalBatched from './hooks/useQueryTotalBatched';
 import useQueryQueue from './hooks/useQueryQueue';
 
+/**
+ * This hook is a wrapper around [TanStack's `useQuery`](https://tanstack.com/query/latest) and provides functions that can be directly utilised with a TableToolsTabls.
+ *
+ *  @param   {object}       [options]                             Options
+ *  @param   {Function}     [options.fetchFn]                     Fetch function that will be passed on to `useQuery`
+ *  @param   {Array}        [options.queryKey]                    The same queryKey option, to provide  attributes/keys/etc. to pass to `useQuery` in addition to the params
+ *  @param   {boolean}      [options.enabled]                     The same queryKey option. Wether or not it should fetch async after initially loading.
+ *  @param   {boolean}      [options.batched]                     Enables "batched fetching" for paginated fetch functions
+ *  @param   {boolean}      [options.useTableState]               Enables adding a serialised TableToolsTable state as params when calling the fetchFn
+ *  @param   {object}       [options.params]                      Parameters to pass when calling the fetchFn
+ *  @param   {object|Array} [options.queue]                       A "queue" array or object of fetchFn that should be called instead of a fetchFn
+ *  @param   {object}       [options.tableQueries]                Options to pass to the `useTableQueries hook
+ *  @param   {object}       [options.totalBatched]                Options to pass to the `useQueryTotalBatched` hook
+ *  @param   {Function}     [options.combineParamsWithTableState] Function to customise combining the table state with other parameters
+ *
+ *  @returns {object}
+ *
+ *  @group Utilities/Hooks
+ *
+ *
+ */
 const useQueryWithUtilities = ({
   fetchFn,
   queryKey: queryKeyOption = [],
@@ -17,6 +38,7 @@ const useQueryWithUtilities = ({
   tableQueries: tableQueriesOptions,
   totalBatched: totalBatchedOptions,
   combineParamsWithTableState,
+  // TODO The useQueryWithUtilities should allow to set onComplete/onError callbacks as options
 } = {}) => {
   const params = useParamsFromTableState({
     paramsOption,

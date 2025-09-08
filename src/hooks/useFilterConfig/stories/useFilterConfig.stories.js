@@ -73,7 +73,7 @@ const defaultOptions = {
 };
 
 const meta = {
-  title: 'useFilterConfig stories',
+  title: 'Hooks/useFilterConfig',
   ...defaultStoryMeta,
 };
 

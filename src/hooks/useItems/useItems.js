@@ -21,7 +21,7 @@ import { identifyItems } from './helpers';
  *
  *                                        TODO it might be good to use this hook as well to "identify" items similar to the `useItemIdentify` hook
  *
- *  @group Hooks
+ *  @ignore
  *
  */
 const useItems = (

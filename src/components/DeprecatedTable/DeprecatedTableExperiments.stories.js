@@ -36,7 +36,7 @@ const defaultOptions = {
 };
 
 const meta = {
-  title: 'TableToolsTable Experiments',
+  title: 'Components/TableToolsTable/Experiments',
   ...defaultStoryMeta,
 };
 
@@ -635,6 +635,43 @@ export const AccessItemsStory = {
     ),
   ],
   render: (args) => <AccessItemsExample {...args} />,
+};
+
+const Blank = () => {
+  const {
+    loading,
+    result: { data, meta: { total } = {} } = {},
+    error,
+  } = useExampleDataQuery({
+    endpoint: '/api',
+    useTableState: true,
+  });
+
+  return (
+    <TableToolsTable
+      loading={loading}
+      items={data}
+      total={total}
+      error={error}
+      columns={columns}
+      options={{
+        ...defaultOptions,
+      }}
+    />
+  );
+};
+
+export const BlankStory = {
+  decorators: [
+    (Story) => (
+      <QueryClientProvider client={queryClient}>
+        <TableStateProvider>
+          <Story />
+        </TableStateProvider>
+      </QueryClientProvider>
+    ),
+  ],
+  render: (args) => <Blank {...args} />,
 };
 
 export default meta;

@@ -7,9 +7,6 @@ const preview = {
   loaders: [mswLoader],
   parameters: {
     layout: 'fullscreen',
-    docs: {
-      codePanel: true,
-    },
     controls: {
       disableSaveFromUI: true,
     },

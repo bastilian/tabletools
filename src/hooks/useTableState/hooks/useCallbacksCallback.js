@@ -4,6 +4,16 @@ import useStateCallbacks from './useStateCallbacks';
 
 // TODO We should refactor this and move this hook higher up.
 // also maybe rename to something like "useContextActions" and maybe the hook to use in tables "useTableToolsAction"
+
+/**
+ * This component provides a context for components/hooks that want to use async tables and access it's state to perform API requests
+ *
+ *  @param {string} [namespace] Namespace the callback function should be put in
+ *  @param {string} [fn]        components to render within
+ *
+ *  @ignore
+ *
+ */
 const useCallbacksCallback = (namespace, fn) => {
   const callbacksRef = useStateCallbacks();
   useEffect(() => {

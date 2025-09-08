@@ -10,7 +10,7 @@ export default {
   core: {
     disableTelemetry: true,
   },
-  stories: ['../src/**/*.stories.@(js|jsx|mjs|ts|tsx)'],
+  stories: ['../src/**/*.stories.@(js|jsx|mjs|ts|tsx)', '../src/**/*.mdx'],
   addons: [
     '@storybook/addon-webpack5-compiler-swc',
     '@storybook/addon-docs',
@@ -28,7 +28,6 @@ export default {
         extensions: config.resolve.extensions,
       }),
     );
-
     return config;
   },
 };

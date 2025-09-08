@@ -1,14 +1,18 @@
+import { HttpResponse, delay } from 'msw';
 import { faker } from '@faker-js/faker/locale/de';
 import { jsonquery } from '@jsonquerylang/jsonquery';
 
 import itemsFactory, { genres } from '~/support/factories/items';
 import { buildTree } from '~/support/factories/tableTree';
 
+const DEFAULT_DELAY = 500;
+
 const DEFAULT_LIMIT = 10;
 const DEFAULT_ITEM_TOTAL = 2048;
 
 const items = itemsFactory(DEFAULT_ITEM_TOTAL);
-export const selectedItemIds = faker.helpers
+
+const selectedItemIds = faker.helpers
   .arrayElements(items, 500)
   .map(({ id }) => id);
 
@@ -25,7 +29,7 @@ const buildQuery = (filters, sort) => {
 };
 
 const queriedItems = (itemsToQuery) => {
-  return ({
+  return async ({
     filters,
     sort,
     offset = 0,
@@ -36,11 +40,12 @@ const queriedItems = (itemsToQuery) => {
     const totalItems = itemsToQuery.slice(0, total);
     const query = buildQuery(filters, sort);
     const items = query.length ? jsonquery(totalItems, query) : totalItems;
-    const actualLimit = limit === 'max' ? items.length : limit;
     const data = items.slice(
       parseInt(offset),
-      parseInt(offset) + parseInt(actualLimit),
+      parseInt(offset) + parseInt(limit),
     );
+
+    await delay(DEFAULT_DELAY);
 
     return {
       data: idsOnly ? data.map(({ id }) => ({ id })) : data,
@@ -59,3 +64,13 @@ export const apiHandler = queriedItems(items);
 export const apiGenresHandler = queriedItems(genres);
 export const apiTreehandler = async () => buildTree({ items });
 export const apiSelectionHandler = () => selectedItemIds;
+export const apiErrorHandler = () => async () => {
+  await delay(DEFAULT_DELAY);
+
+  return HttpResponse.json(
+    {
+      errorMessage: 'Missing session',
+    },
+    { status: 500 },
+  );
+};

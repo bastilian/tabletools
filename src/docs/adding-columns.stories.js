@@ -14,7 +14,8 @@ const convertToOffsetAndLimit = paginationSerialiser;
 const queryClient = new QueryClient();
 
 const meta = {
-  title: '"Adding Columns to a TableToolsTable" tutorial examples',
+  title:
+    'Guides Examples/"Adding Columns to a TableToolsTable" tutorial examples',
   ...defaultStoryMeta,
 };
 

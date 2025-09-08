@@ -6,28 +6,36 @@ import {
   PanelMain,
   PanelMainBody,
 } from '@patternfly/react-core';
+import DarkMode from './components/DarkMode';
 
-import mswHandlers from './mswHandler';
+import mswRestHandlers from './api/rest';
 
 const meta = {
   parameters: {
     msw: {
-      handlers: mswHandlers,
+      handlers: mswRestHandlers,
     },
   },
   decorators: [
     (Story) => (
-      <Page sidebar={null}>
-        <PageSection>
-          <Panel>
-            <PanelMain>
-              <PanelMainBody>
-                <Story />
-              </PanelMainBody>
-            </PanelMain>
-          </Panel>
-        </PageSection>
-      </Page>
+      <DarkMode>
+        <Page
+          sidebar={null}
+          style={{
+            paddingTop: '30px',
+          }}
+        >
+          <PageSection>
+            <Panel>
+              <PanelMain>
+                <PanelMainBody>
+                  <Story />
+                </PanelMainBody>
+              </PanelMain>
+            </Panel>
+          </PageSection>
+        </Page>
+      </DarkMode>
     ),
   ],
 };
