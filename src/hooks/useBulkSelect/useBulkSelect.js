@@ -124,11 +124,15 @@ const useBulkSelect = ({
       select,
       deselect,
     },
+
     ...(enableBulkSelect
       ? {
-          tableProps: {
-            onSelect: total > 0 ? selectOne : undefined,
-            canSelectAll: false,
+          bulkSelect: {
+            selectOne: (item) => {
+              console.log('onSelect', item);
+              return selectOne(undefined, undefined, undefined, { item });
+            },
+            isItemSelected,
           },
           toolbarProps: {
             bulkSelect: {
