@@ -1,8 +1,12 @@
 import React, { useCallback, useEffect } from 'react';
 import propTypes from 'prop-types';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { gql, request } from 'graphql-request';
 
 import defaultStoryMeta from '~/support/defaultStoryMeta';
+import mswGraphQlHandlers from '~/support/api/graphql';
+import mswRestHandlers from '~/support/api/rest';
+
 import columns from '~/support/factories/columns';
 import filters, {
   customNumberFilterType,
@@ -16,10 +20,12 @@ import CustomEmptyState from '~/support/components/CustomEmptyState';
 import DetailsRow from '~/support/components/DetailsRow';
 import DedicatedAction from '~/support/components/DedicatedAction';
 import { actions, rowActionResolver } from '~/support/constants';
-import { selectedItemIds } from '~/support/api';
-
+// TODO fix preselection
+// import { selectedItemIds } from '~/support/api';
+const selectedItemIds = [];
 import { TableToolsTable, TableStateProvider } from '~/components';
 import { useFullTableState, useStateCallbacks } from '~/hooks';
+import { useQueryWithUtilities } from '~/utilities';
 
 const queryClient = new QueryClient();
 
@@ -207,6 +213,124 @@ export const Common = {
     ),
   ],
   render: (args) => <CommonExample {...args} />,
+};
+const GET_TRACKS_QUERY = gql`
+  query GetTracks($sort: String) {
+    tracks(sort: $sort) {
+      id
+    }
+  }
+`;
+
+const GraphQLExample = ({
+  debug,
+  columns,
+  filters,
+  filtered,
+  enableDefaultFilter,
+  defaultFilter,
+  sortable,
+  initialSort,
+  enableInitialSort,
+  manageColumns,
+  enableRowActions,
+  enableActions,
+  dedicatedAction,
+  customEmptyRows,
+  customEmptyState,
+  enableExport,
+  enableDetails,
+  enableBulkSelect,
+  enablePreselection,
+  enableSimpleBulkSelect,
+}) => {
+  const fetchFn = useCallback(async (params) => {
+    console.log('params gql', params);
+    return await request('http://local.com/graphql', GET_TRACKS_QUERY, params);
+  }, []);
+
+  const {
+    loading,
+    result: { data, meta: { total } = {} } = {},
+    error,
+    exporter,
+    itemIdsInTable,
+    itemIdsOnPage,
+  } = useQueryWithUtilities({
+    fetchFn,
+    useTableState: true,
+  });
+
+  return (
+    <TableToolsTable
+      loading={loading}
+      items={data}
+      total={total}
+      error={error}
+      columns={
+        sortable
+          ? columns
+          : columns.map((column) => ({ ...column, sortable: undefined }))
+      }
+      {...(filters && filtered
+        ? {
+            filters: {
+              filterConfig: [...filters, customNumberFilter],
+              customFilterTypes: {
+                number: customNumberFilterType,
+              },
+              ...(enableDefaultFilter ? { activeFilters: defaultFilter } : {}),
+            },
+          }
+        : {})}
+      options={{
+        ...defaultOptions,
+        debug,
+        manageColumns,
+        ...(enableInitialSort ? { sortBy: initialSort } : {}),
+        ...(enableRowActions
+          ? {
+              actionResolver: rowActionResolver,
+            }
+          : {}),
+        ...(enableActions ? { actions } : {}),
+        ...(dedicatedAction ? { dedicatedAction: DedicatedAction } : {}),
+        ...(customEmptyRows ? { emptyRows: emptyRows(columns?.length) } : {}),
+        ...(customEmptyState ? { EmptyState: CustomEmptyState } : {}),
+        ...(enableExport ? { exporter } : {}),
+        ...(enableDetails ? { detailsComponent: DetailsRow } : {}),
+        ...(enableBulkSelect
+          ? {
+              ...(enablePreselection ? { selected: selectedItemIds } : {}),
+              onSelect,
+              itemIdsInTable,
+              itemIdsOnPage,
+            }
+          : {}),
+        ...(enableSimpleBulkSelect ? { onSelect: true } : {}),
+      }}
+    />
+  );
+};
+
+GraphQLExample.propTypes = argProps;
+
+export const GraphQL = {
+  parameters: {
+    msw: {
+      handlers: [...mswGraphQlHandlers, ...mswRestHandlers],
+    },
+  },
+  decorators: [
+    (Story) => (
+      <QueryClientProvider client={queryClient}>
+        <TableStateProvider>
+          <Story />
+        </TableStateProvider>
+      </QueryClientProvider>
+    ),
+  ],
+  render: (args) => <GraphQLExample {...args} />,
 };
 
 const WithTableTreeExample = ({

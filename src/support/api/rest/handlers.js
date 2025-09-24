@@ -36,10 +36,9 @@ const queriedItems = (itemsToQuery) => {
     const totalItems = itemsToQuery.slice(0, total);
     const query = buildQuery(filters, sort);
     const items = query.length ? jsonquery(totalItems, query) : totalItems;
-    const actualLimit = limit === 'max' ? items.length : limit;
     const data = items.slice(
       parseInt(offset),
-      parseInt(offset) + parseInt(actualLimit),
+      parseInt(offset) + parseInt(limit),
     );
 
     return {

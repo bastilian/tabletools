@@ -5,7 +5,7 @@ import {
   apiTreehandler,
   apiGenresHandler,
   apiSelectionHandler,
-} from './api';
+} from './handlers';
 
 const DEFAULT_DELAY = 500;
 
