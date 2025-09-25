@@ -8,13 +8,13 @@ import useTableState from '~/hooks/useTableState';
 import { TABLE_STATE_NAMESPACE } from '../constants';
 
 const usePaginationState = (options) => {
-  const { perPage = 10, serialisers } = options;
+  const { perPage = 10, page = 1, serialisers } = options;
   const defaultState = useMemo(() => {
     return {
       perPage,
-      page: 1,
+      page,
     };
-  }, [perPage]);
+  }, [perPage, page]);
   const resetPage = useCallback(
     (currentState) => {
       return {

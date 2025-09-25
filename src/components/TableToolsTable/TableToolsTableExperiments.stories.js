@@ -4,6 +4,8 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import {
   Card,
   CardBody,
+  Content,
+  ContentVariants,
   Spinner,
   Button,
   Label,
@@ -534,6 +536,64 @@ export const AccessItemsStory = {
     ),
   ],
   render: (args) => <AccessItemsExample {...args} />,
+};
+
+const UrlParamsExample = () => {
+  const exampleUrl =
+    'perPage=20&page=1&filters[title][0]=ds&filters[rating-above][0]=4&sort[index]=1&sort[direction]=desc';
+  const searchParams = new URLSearchParams(exampleUrl);
+  const [searchParamsState, setSearchParamsState] = useState();
+  const setSearchParams = useCallback((params) => {
+    setSearchParamsState(params);
+  }, []);
+
+  const {
+    loading,
+    result: { data, meta: { total } = {} } = {},
+    error,
+  } = useExampleDataQuery({
+    endpoint: '/api',
+    useTableState: true,
+  });
+
+  return (
+    <>
+      <Content component="p">
+        <strong>URL would be:</strong>{' '}
+        {decodeURI(searchParamsState?.toString() || '')}
+      </Content>
+      <TableToolsTable
+        loading={loading}
+        items={data}
+        total={total}
+        error={error}
+        columns={columns}
+        filters={{
+          filterConfig: filters,
+        }}
+        options={{
+          debug: true,
+          ...defaultOptions,
+          onSelect: true,
+          searchParams,
+          setSearchParams,
+        }}
+      />
+    </>
+  );
+};
+
+export const UrlParamsStory = {
+  decorators: [
+    (Story) => (
+      <QueryClientProvider client={queryClient}>
+        <TableStateProvider>
+          <Story />
+        </TableStateProvider>
+      </QueryClientProvider>
+    ),
+  ],
+  render: (args) => <UrlParamsExample {...args} />,
 };
 
 export default meta;
