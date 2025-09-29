@@ -3,10 +3,7 @@ import propTypes from 'prop-types';
 
 import { FormSelect, FormSelectOption } from '@patternfly/react-core';
 
-import { genres } from '../factories/items';
-
-// TODO Change to use the `ItemsDropdown` component
-const GenresDropdown = ({ selected, onSelect: onSelectProp }) => {
+const ItemsDropdown = ({ items, selected, onSelect: onSelectProp }) => {
   const onSelect = (_event, value) => {
     onSelectProp?.(value);
   };
@@ -18,16 +15,17 @@ const GenresDropdown = ({ selected, onSelect: onSelectProp }) => {
       aria-label="FormSelect Input"
       ouiaId="BasicFormSelect"
     >
-      {genres.map((genre, index) => (
-        <FormSelectOption key={index} value={genre} label={genre} />
+      {items.map(({ label, value }, index) => (
+        <FormSelectOption key={index} value={value} label={label} />
       ))}
     </FormSelect>
   );
 };
 
-GenresDropdown.propTypes = {
+ItemsDropdown.propTypes = {
+  items: propTypes.array,
   selected: propTypes.string,
   onSelect: propTypes.func,
 };
 
-export default GenresDropdown;
+export default ItemsDropdown;

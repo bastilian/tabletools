@@ -2,6 +2,7 @@ import { http, HttpResponse, delay } from 'msw';
 
 import {
   apiHandler,
+  apiItemHandler,
   apiTreehandler,
   apiGenresHandler,
   apiSelectionHandler,
@@ -23,6 +24,7 @@ const withAllParams = (fn) => {
 
 export default [
   http.get('/api', withAllParams(apiHandler)),
+  http.get('/api/item', withAllParams(apiItemHandler)),
   http.get('/api/tree', withAllParams(apiTreehandler)),
   http.get('/api/genres', withAllParams(apiGenresHandler)),
   http.get('/api/error', async () => {
