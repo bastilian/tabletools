@@ -8,8 +8,12 @@ export const toFilterChips = (filterConfig, filterTypes, activeFilters) =>
   Object.entries(activeFilters || {})
     .map(([filter, value]) => {
       const configItem = getFilterConfigItem(filterConfig, filter);
-      return configItem && isNotEmpty(value)
-        ? filterChipTemplates(configItem, value, filterTypes[configItem.type])
+      const filterChips =
+        configItem &&
+        filterChipTemplates(configItem, value, filterTypes[configItem.type]);
+
+      return configItem && isNotEmpty(value) && filterChips
+        ? filterChips
         : undefined;
     })
     .filter((v) => !!v);
