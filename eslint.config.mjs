@@ -13,7 +13,13 @@ import eslint from '@eslint/js';
 export default defineConfig([
   ...pluginQuery.configs['flat/recommended'],
   tseslint.config(eslint.configs.recommended, tseslint.configs.recommended),
-  globalIgnores(['node_modules/*', 'dist/*', 'docs/*', '**/coverage']),
+  globalIgnores([
+    'node_modules/*',
+    'dist/*',
+    'docs/*',
+    '**/coverage',
+    'storybook-static/*',
+  ]),
   fecPlugin,
   reactHooks.configs['recommended-latest'],
   jsdoc.configs['flat/recommended'],

@@ -2,7 +2,16 @@ import { useDeepCompareMemo } from 'use-deep-compare';
 
 import { useSerialisedTableState } from '~/hooks';
 
-const useParamsFromTableState = ({ paramsOption, useTableState }) => {
+const defaultCombine = (tableParams, optionParams) => ({
+  ...(tableParams || {}),
+  ...(optionParams || {}),
+});
+
+const useParamsFromTableState = ({
+  paramsOption,
+  useTableState,
+  combineParamsWithTableState = defaultCombine,
+}) => {
   const serialisedTableState = useSerialisedTableState();
 
   const params = useDeepCompareMemo(() => {
@@ -15,15 +24,18 @@ const useParamsFromTableState = ({ paramsOption, useTableState }) => {
         }
       : undefined;
 
-    // TODO There may be issues here if for example there is a filter passed via the paramsOption
-    // We should maybe have a "combineWithTableState" option to pass in a "transforming" function
-    const combinedParams = {
-      ...(tableStateParams ? tableStateParams : {}),
-      ...(paramsOption ? paramsOption : {}),
-    };
+    const combinedParams = combineParamsWithTableState(
+      tableStateParams,
+      paramsOption,
+    );
 
     return Object.keys(combinedParams).length ? combinedParams : undefined;
-  }, [serialisedTableState, useTableState, paramsOption]);
+  }, [
+    serialisedTableState,
+    useTableState,
+    paramsOption,
+    combineParamsWithTableState,
+  ]);
 
   return params;
 };

@@ -16,10 +16,12 @@ const useQueryWithUtilities = ({
   queue,
   tableQueries: tableQueriesOptions,
   totalBatched: totalBatchedOptions,
+  combineParamsWithTableState,
 } = {}) => {
   const params = useParamsFromTableState({
     paramsOption,
     useTableState,
+    combineParamsWithTableState,
   });
 
   const queryClient = useQueryClient();
@@ -32,8 +34,14 @@ const useQueryWithUtilities = ({
     [queryKeyOption, params],
   );
   const queryFn = useCallback(
-    async (queryFnParams) => await fetchFn({ ...params, ...queryFnParams }),
-    [fetchFn, params],
+    async (queryFnParams) => {
+      if (combineParamsWithTableState) {
+        const finalParams = combineParamsWithTableState(params, queryFnParams);
+        return await fetchFn(finalParams);
+      }
+      return await fetchFn({ ...params, ...queryFnParams });
+    },
+    [fetchFn, params, combineParamsWithTableState],
   );
 
   const {
