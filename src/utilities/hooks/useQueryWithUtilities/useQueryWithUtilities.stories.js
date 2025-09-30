@@ -254,3 +254,81 @@ export const QueryQueueStory = {
 };
 
 export default meta;
+
+const TableQueriesWithCombinedFiltersExample = () => {
+  const fetchFn = useCallback(
+    async (params) => await restApi('/api', params),
+    [],
+  );
+
+  const combineParamsWithTableState = useCallback(
+    (tableStateParams, additionalParams) => {
+      const tableFilters = tableStateParams?.filters;
+      const optionFilters = additionalParams?.filters;
+
+      const combinedParams = {
+        ...(tableStateParams ? tableStateParams : {}),
+        ...(additionalParams ? additionalParams : {}),
+      };
+      if (tableFilters && optionFilters) {
+        combinedParams.filters = `${tableFilters} and ${optionFilters}`;
+      }
+      return combinedParams;
+    },
+    [],
+  );
+
+  const {
+    loading,
+    result: { data, meta: { total } = {} } = {},
+    error,
+    exporter,
+    itemIdsInTable,
+    itemIdsOnPage,
+  } = useQueryWithUtilities({
+    fetchFn,
+    useTableState: true,
+    params: {
+      filters: '(.rating >= 3)',
+    },
+    combineParamsWithTableState,
+  });
+
+  return (
+    <>
+      <Content>
+        <p></p>
+      </Content>
+      <TableToolsTable
+        loading={loading}
+        items={data}
+        total={total}
+        error={error}
+        columns={columns}
+        filters={{
+          filterConfig: filters,
+        }}
+        options={{
+          ...defaultOptions,
+          onSelect: true,
+          exporter,
+          itemIdsInTable,
+          itemIdsOnPage,
+        }}
+      />
+    </>
+  );
+};
+
+export const TableQueriesWithCombinedFiltersStory = {
+  decorators: [
+    (Story) => (
+      <QueryClientProvider client={queryClient}>
+        <TableStateProvider>
+          <Story />
+        </TableStateProvider>
+      </QueryClientProvider>
+    ),
+  ],
+  render: (args) => <TableQueriesWithCombinedFiltersExample {...args} />,
+};
