@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import propTypes from 'prop-types';
 
 import {
@@ -40,10 +40,9 @@ const GenresFilter = ({
 
   const [isOpen, setIsOpen] = useState(false);
   const [inputValue, setInputValue] = useState('');
-  const [selectOptions, setSelectOptions] = useState(initialValues);
   const [focusedItemIndex, setFocusedItemIndex] = useState(null);
 
-  useEffect(() => {
+  const selectOptions = useMemo(() => {
     let newSelectOptions = initialValues;
 
     // filter menu items based on the text input value when one exists
@@ -65,9 +64,8 @@ const GenresFilter = ({
       }
     }
 
-    setSelectOptions(newSelectOptions);
-    setFocusedItemIndex(0);
-  }, [inputValue, initialValues]);
+    return newSelectOptions;
+  }, [initialValues, inputValue]);
 
   const handleMenuArrowKeys = (key) => {
     let indexToFocus;

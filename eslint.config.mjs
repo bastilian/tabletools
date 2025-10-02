@@ -66,9 +66,24 @@ export default defineConfig([
           },
         },
       ],
-
+      'react-hooks/component-hook-factories': 2,
+      'react-hooks/config': 2,
+      'react-hooks/error-boundaries': 2,
+      'react-hooks/gating': 2,
+      'react-hooks/globals': 2,
+      'react-hooks/immutability': 2,
+      'react-hooks/incompatible-library': 2,
+      'react-hooks/preserve-manual-memoization': 0,
+      'react-hooks/purity': 2,
+      'react-hooks/refs': 2,
+      'react-hooks/rules-of-hooks': 2,
+      'react-hooks/set-state-in-effect': 2,
+      'react-hooks/set-state-in-render': 2,
+      'react-hooks/static-components': 2,
+      'react-hooks/unsupported-syntax': 2,
+      'react-hooks/use-memo': 2,
       'react-hooks/exhaustive-deps': [
-        'warn',
+        'error',
         {
           additionalHooks:
             '(useDeepCompareEffect|useDeepCompareCallback|useDeepCompareMemo|useDeepCompareImperativeHandle|useDeepCompareLayoutEffect)',
