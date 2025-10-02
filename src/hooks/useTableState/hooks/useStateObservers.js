@@ -3,23 +3,23 @@ import { useDeepCompareEffect } from 'use-deep-compare';
 const useStateObservers = (
   observerNamespace,
   observers,
-  observersInContext,
+  observersInContextRef,
 ) => {
   useDeepCompareEffect(() => {
-    if (observers && observersInContext) {
+    if (observers && observersInContextRef) {
       for (const [observedStatekey, observerFunction] of Object.entries(
         observers,
       )) {
-        observersInContext.current = {
-          ...observersInContext?.current,
+        observersInContextRef.current = {
+          ...observersInContextRef?.current,
           [observedStatekey]: {
-            ...(observersInContext?.current?.[observedStatekey] || {}),
+            ...(observersInContextRef?.current?.[observedStatekey] || {}),
             [observerNamespace]: observerFunction,
           },
         };
       }
     }
-  }, [observers, observersInContext, observerNamespace]);
+  }, [observers, observersInContextRef, observerNamespace]);
 };
 
 export default useStateObservers;

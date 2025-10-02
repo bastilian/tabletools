@@ -3,16 +3,16 @@ import { useDeepCompareEffect } from 'use-deep-compare';
 const useSerialisers = (
   serialiserNamespace,
   serialiser,
-  serialiserInContext,
+  serialiserInContextRef,
 ) => {
   useDeepCompareEffect(() => {
     if (serialiser) {
-      serialiserInContext.current = {
-        ...serialiserInContext.current,
+      serialiserInContextRef.current = {
+        ...serialiserInContextRef.current,
         [serialiserNamespace]: serialiser,
       };
     }
-  }, [serialiserInContext, serialiserNamespace, serialiser]);
+  }, [serialiserInContextRef, serialiserNamespace, serialiser]);
 };
 
 export default useSerialisers;

@@ -31,7 +31,7 @@ const useItems = (
   externalTotal,
   { itemsOptions: { queryKey } = {} } = {},
 ) => {
-  const { itemsData: itemsDataInContext } = useTableContext();
+  const { itemsData: itemsDataInContextRef } = useTableContext();
   const tableState = useRawTableState();
   const { filter, sort, pagination } = tableState || {};
   const serialisedTableState = useSerialisedTableState();
@@ -76,13 +76,13 @@ const useItems = (
   useCallbacksCallback('reload', refetch);
 
   useEffect(() => {
-    itemsDataInContext.current = {
+    itemsDataInContextRef.current = {
       loading,
       items,
       error,
       total,
     };
-  }, [itemsDataInContext, loading, items, error, total]);
+  }, [itemsDataInContextRef, loading, items, error, total]);
 
   return {
     loading,

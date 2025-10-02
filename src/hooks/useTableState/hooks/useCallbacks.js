@@ -1,14 +1,14 @@
 import { useDeepCompareEffect } from 'use-deep-compare';
 
-const useCallbacks = (callbackNamespace, callback, callbackInContext) => {
+const useCallbacks = (callbackNamespace, callback, callbackInContextRef) => {
   useDeepCompareEffect(() => {
     if (callback) {
-      callbackInContext.current = {
-        ...callbackInContext.current,
+      callbackInContextRef.current = {
+        ...callbackInContextRef.current,
         [callbackNamespace]: callback,
       };
     }
-  }, [callback, callbackInContext, callbackNamespace]);
+  }, [callback, callbackInContextRef, callbackNamespace]);
 };
 
 export default useCallbacks;
