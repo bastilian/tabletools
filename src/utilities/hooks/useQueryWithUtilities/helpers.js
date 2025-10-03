@@ -17,7 +17,7 @@ export const defaultItemsSelect = ({ data: items, meta: { total } }) => [
 export const defaultExporterSelect = ({ data }) => data;
 
 export const defaultItemIdsInTableSelect = ({ data } = {}) =>
-  data?.map(({ id }) => id);
+  Array.isArray(data) ? data?.map(({ id }) => id) : undefined;
 
 export const defaultTotalBatchedSelect = (results, totalForBatched) => ({
   data: results?.reduce((acc, { data }) => [...acc, ...data], []),

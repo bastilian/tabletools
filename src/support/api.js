@@ -51,6 +51,10 @@ const queriedItems = (itemsToQuery) => {
   };
 };
 
+export const apiItemHandler = ({ id }) => ({
+  data: items.find(({ id: itemId }) => parseInt(id) === itemId),
+});
+
 export const apiHandler = queriedItems(items);
 export const apiGenresHandler = queriedItems(genres);
 export const apiTreehandler = async () => buildTree({ items });

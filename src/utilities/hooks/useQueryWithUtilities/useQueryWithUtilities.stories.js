@@ -1,6 +1,8 @@
 import React, { useCallback, useState } from 'react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import {
+  CodeBlock,
+  CodeBlockCode,
   Content,
   Spinner,
   Bullseye,
@@ -15,6 +17,7 @@ import axios from 'axios';
 import defaultStoryMeta from '~/support/defaultStoryMeta';
 import columns from '~/support/factories/columns';
 import filters from '~/support/factories/filters';
+import ItemsDropdown from '~/support/components/ItemsDropdown';
 
 import paginationSerialiser from '~/components/StaticTableToolsTable/helpers/serialisers/pagination';
 import sortSerialiser from '~/components/StaticTableToolsTable/helpers/serialisers/sort';
@@ -152,6 +155,77 @@ export const TableQueriesWithStatesStory = {
     ),
   ],
   render: (args) => <TableQueriesWithStatesExample {...args} />,
+};
+
+const QueryWithNonDefaultResultExample = () => {
+  const [selectedTrackId, setSelectedTrackId] = useState();
+
+  const listFetchFn = useCallback(
+    async (params) => await restApi('/api', params),
+    [],
+  );
+
+  const { loading: listLoading, result: { data: listData } = {} } =
+    useQueryWithUtilities({
+      fetchFn: listFetchFn,
+    });
+
+  const itemFetchFn = useCallback(
+    async (params) => await restApi('/api/item', params),
+    [],
+  );
+  const { loading: itemLoading, result: itemData } = useQueryWithUtilities({
+    fetchFn: itemFetchFn,
+    params: {
+      id: selectedTrackId,
+    },
+    useTableState: true,
+    enabled: !!selectedTrackId,
+  });
+
+  const onSelect = useCallback((selectedId) => {
+    setSelectedTrackId(selectedId);
+  }, []);
+
+  return (
+    <>
+      {listLoading ? (
+        <Spinner />
+      ) : (
+        <ItemsDropdown
+          selected={selectedTrackId}
+          items={listData?.map(({ id, title, artist }) => ({
+            label: `${title} - ${artist}`,
+            value: id,
+          }))}
+          onSelect={onSelect}
+        />
+      )}
+      {selectedTrackId &&
+        (itemLoading ? (
+          <Spinner />
+        ) : (
+          <CodeBlock>
+            <CodeBlockCode id="code-content">
+              {JSON.stringify(itemData, null, 2)}
+            </CodeBlockCode>
+          </CodeBlock>
+        ))}
+    </>
+  );
+};
+
+export const QueryWithNonDefaultResultStory = {
+  decorators: [
+    (Story) => (
+      <QueryClientProvider client={queryClient}>
+        <TableStateProvider>
+          <Story />
+        </TableStateProvider>
+      </QueryClientProvider>
+    ),
+  ],
+  render: (args) => <QueryWithNonDefaultResultExample {...args} />,
 };
 
 const QueryQueueExample = () => {
