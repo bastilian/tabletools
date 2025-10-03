@@ -69,6 +69,12 @@ const useExpandable = (options) => {
     },
     ...(enableExpandingRow
       ? {
+          expandable: {
+            onToggle: (itemId) => {
+              toggle(itemId);
+            },
+            isExpanded: isItemOpen,
+          },
           tableProps: {
             onCollapse,
           },
