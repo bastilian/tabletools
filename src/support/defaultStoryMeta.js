@@ -7,12 +7,12 @@ import {
   PanelMainBody,
 } from '@patternfly/react-core';
 
-import mswHandlers from './mswHandler';
+import mswRestHandlers from './api/rest';
 
 const meta = {
   parameters: {
     msw: {
-      handlers: mswHandlers,
+      handlers: mswRestHandlers,
     },
   },
   decorators: [
