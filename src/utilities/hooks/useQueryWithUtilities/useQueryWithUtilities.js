@@ -48,6 +48,7 @@ const useQueryWithUtilities = ({
     isFetching: queryLoading,
     data: queryResult,
     error: queryError,
+    refetch,
   } = useQuery({
     queryKey,
     queryFn: async () => await queryFn(),
@@ -118,6 +119,7 @@ const useQueryWithUtilities = ({
     loading,
     result,
     error,
+    refetch,
     query,
     queryTotalBatched,
     ...tableQueries,
