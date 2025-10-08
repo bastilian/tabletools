@@ -6,6 +6,8 @@ import {
   Content,
   Spinner,
   Bullseye,
+  Button,
+  Flex,
   Tabs,
   Tab,
   TabTitleText,
@@ -13,6 +15,7 @@ import {
   ListItem,
 } from '@patternfly/react-core';
 import axios from 'axios';
+import { faker } from '@faker-js/faker';
 
 import defaultStoryMeta from '~/support/defaultStoryMeta';
 import columns from '~/support/factories/columns';
@@ -405,4 +408,54 @@ export const TableQueriesWithCombinedFiltersStory = {
     ),
   ],
   render: (args) => <TableQueriesWithCombinedFiltersExample {...args} />,
+};
+
+const QueryRefetchExample = () => {
+  const fetchFn = useCallback(
+    async (params) => await restApi('/api', params),
+    [],
+  );
+
+  const { loading, refetch, query } = useQueryWithUtilities({
+    fetchFn,
+    params: {
+      limit: 1,
+    },
+  });
+  const onDataRefetch = async () => {
+    refetch();
+  };
+  const onDataFetch = async () => {
+    query();
+  };
+
+  return (
+    <>
+      <Flex columnGap={{ default: 'columnGapSm' }}>
+        <Content component="h4">Random text:</Content>
+        {loading ? (
+          <Spinner size="md" />
+        ) : (
+          <Content>{faker.commerce.productName()}</Content>
+        )}
+      </Flex>
+      <Flex columnGap={{ default: 'columnGapSm' }}>
+        <Button onClick={onDataRefetch}>Refetch data</Button>
+        <Button onClick={onDataFetch}>Fetch data</Button>
+      </Flex>
+    </>
+  );
+};
+
+export const QueryRefetchStory = {
+  decorators: [
+    (Story) => (
+      <QueryClientProvider client={queryClient}>
+        <TableStateProvider>
+          <Story />
+        </TableStateProvider>
+      </QueryClientProvider>
+    ),
+  ],
+  render: (args) => <QueryRefetchExample {...args} />,
 };
