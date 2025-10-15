@@ -104,6 +104,7 @@ const useFilterConfig = (options) => {
           activeFiltersConfig: {
             filters: toFilterChips(filterConfig, filterTypes, activeFilters),
             onDelete: onFilterDelete,
+            onDeleteGroup: onFilterDelete,
           },
         },
         ...(isFilterModalOpen ? { filterModalProps } : {}),
