@@ -207,6 +207,107 @@ export const BulkSelectStory = {
   render: (args) => <BulkSelectExample {...args} />,
 };
 
+const BulkSelectWithItemIdExample = () => {
+  const [totalItems, setTotal] = useState(101);
+
+  const {
+    loading,
+    result: { data, meta: { total } = {} } = {},
+    error,
+    itemIdsInTable,
+  } = useExampleDataQuery({
+    endpoint: '/api',
+    useTableState: true,
+    params: {
+      total: totalItems,
+    },
+  });
+
+  const itemsWithOnlyItemId = useMemo(
+    () =>
+      data?.map(({ id, ...rest }) => ({
+        ...rest,
+        itemId: id,
+      })),
+    [data],
+  );
+
+  const {
+    current: { resetSelection, setSelection },
+  } = useStateCallbacks();
+  const fullTableState = useFullTableState() || {};
+
+  const onSelect = useCallback((selection) => {
+    console.log('Current Selection with itemId', selection);
+  }, []);
+
+  return (
+    <>
+      <Card>
+        <CardBody>
+          <Slider
+            value={totalItems}
+            max={2048}
+            onChange={(_event, value) => setTotal(value)}
+          />
+        </CardBody>
+      </Card>
+      <Card>
+        <CardBody>
+          <Button
+            variant="primary"
+            ouiaId="Primary"
+            onClick={() => resetSelection()}
+          >
+            Reset Selection
+          </Button>
+          <Button
+            variant="primary"
+            ouiaId="Primary"
+            onClick={() =>
+              setSelection(itemsWithOnlyItemId?.map(({ itemId }) => itemId))
+            }
+          >
+            Select only page
+          </Button>
+          <Label>
+            Selected items in context:{' '}
+            {fullTableState?.tableState?.selected?.length}
+          </Label>
+        </CardBody>
+      </Card>
+      <br />
+      <TableToolsTable
+        loading={loading}
+        items={itemsWithOnlyItemId}
+        total={total}
+        error={error}
+        columns={columns}
+        options={{
+          ...defaultOptions,
+          debug: true,
+          onSelect,
+          itemIdsInTable,
+          identifier: 'itemId',
+        }}
+      />
+    </>
+  );
+};
+
+export const BulkSelectWithItemIdStory = {
+  decorators: [
+    (Story) => (
+      <QueryClientProvider client={queryClient}>
+        <TableStateProvider>
+          <Story />
+        </TableStateProvider>
+      </QueryClientProvider>
+    ),
+  ],
+  render: (args) => <BulkSelectWithItemIdExample {...args} />,
+};
+
 const AllEmptyExample = () => {
   const { loading } = useExampleDataQuery({
     endpoint: '/api',
