@@ -84,6 +84,7 @@ const useTableTools = (
     total: items?.length || 0,
   });
 
+  const identifier = options.identifier || 'itemId';
   const {
     toolbarProps: bulkSelectToolbarProps,
     tableProps: bulkSelectTableProps,
@@ -91,7 +92,7 @@ const useTableTools = (
   } = useBulkSelect({
     ...options,
     total,
-    itemIdsOnPage: items?.map(({ id }) => id),
+    itemIdsOnPage: items?.map((item) => item[identifier]),
   });
 
   const {
