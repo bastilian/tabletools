@@ -15,6 +15,7 @@ import PrimaryToolbar from '@redhat-cloud-services/frontend-components/PrimaryTo
 import TableToolbar from '@redhat-cloud-services/frontend-components/TableToolbar';
 
 import useTableTools from '~/hooks/useTableTools';
+import useTableSearchParams from '~/hooks/useTableSearchParams';
 import { TableStateProvider, FilterModal, TableViewToggle } from '~/components';
 
 const TableToolsTable = ({
@@ -34,6 +35,7 @@ const TableToolsTable = ({
   paginationProps,
   ...tablePropsRest
 }) => {
+  const searchParamsState = useTableSearchParams(options);
   const {
     view,
     loading,
@@ -49,10 +51,34 @@ const TableToolsTable = ({
     externalTotal,
     {
       treeTable,
-      filters,
+      filters: {
+        ...(filters || {}),
+        activeFilters: {
+          ...filters?.activeFilters,
+          ...(searchParamsState?.filters || {}),
+        },
+      },
       columns,
       toolbarProps: toolbarPropsProp,
       tableProps: tablePropsRest,
+      ...(searchParamsState
+        ? {
+            ...(searchParamsState.page
+              ? { page: parseInt(searchParamsState.page) }
+              : {}),
+            ...(searchParamsState.perPage
+              ? { perPage: parseInt(searchParamsState.perPage) }
+              : {}),
+            ...(searchParamsState.sort
+              ? {
+                  sortBy: {
+                    ...searchParamsState.sort,
+                    index: parseInt(searchParamsState.sort.index),
+                  },
+                }
+              : {}),
+          }
+        : {}),
       ...options,
     },
   );

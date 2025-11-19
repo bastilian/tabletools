@@ -1,4 +1,4 @@
-import { useCallback } from 'react';
+import { useCallback, useMemo } from 'react';
 import { useDeepCompareMemo } from 'use-deep-compare';
 
 import useTableState, { useRawTableState } from '~/hooks/useTableState';
@@ -41,7 +41,14 @@ const useTableSort = (columns, options = {}) => {
     serialisers: { sort: serialiser } = {},
     onSort: onSortOption,
   } = options;
-
+  const defaultState = useMemo(
+    () =>
+      initialSortBy || {
+        index: 0,
+        direction: 'asc',
+      },
+    [initialSortBy],
+  );
   const { tableView } = useRawTableState() || {};
   const offset = columnOffset({ ...options, tableView });
 
@@ -57,10 +64,7 @@ const useTableSort = (columns, options = {}) => {
   );
   const [sortBy, setSortBy] = useTableState(
     TABLE_STATE_NAMESPACE,
-    initialSortBy || {
-      index: 0,
-      direction: 'asc',
-    },
+    defaultState,
     stateOptions,
   );
 

@@ -81,6 +81,8 @@ const useFilterConfig = (options) => {
       : {},
   );
 
+  // TODO with URL params it can (for some reason) happen that initial values get debounced
+  // and the first request won't include filters.
   const debouncedSetState = useDebouncedCallback(setTableState, { wait: 500 });
 
   useEffect(() => {
