@@ -27,6 +27,7 @@ const useColumnManager = (options = {}) => {
     columns,
     manageColumns: enableColumnManager,
     manageColumnLabel = 'Manage columns',
+    enableDragDrop,
   } = options;
 
   const [selectedColumns, setSelectedColumns] = useState(
@@ -77,6 +78,7 @@ const useColumnManager = (options = {}) => {
           isOpen: isManagerOpen,
           onClose,
           applyColumns: applyColumns,
+          enableDragDrop,
         },
       }
     : { columns };
