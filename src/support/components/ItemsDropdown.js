@@ -1,7 +1,7 @@
 import React from 'react';
 import propTypes from 'prop-types';
 
-import { FormSelect, FormSelectOption } from '@patternfly/react-core';
+import { Select, SelectOption } from '@patternfly/react-core';
 
 const ItemsDropdown = ({ items, selected, onSelect: onSelectProp }) => {
   const onSelect = (_event, value) => {
@@ -9,16 +9,16 @@ const ItemsDropdown = ({ items, selected, onSelect: onSelectProp }) => {
   };
 
   return (
-    <FormSelect
+    <Select
       value={selected}
       onChange={onSelect}
-      aria-label="FormSelect Input"
-      ouiaId="BasicFormSelect"
+      aria-label="Select Input"
+      ouiaId="BasicSelect"
     >
       {items.map(({ label, value }, index) => (
-        <FormSelectOption key={index} value={value} label={label} />
+        <SelectOption key={index} value={value} label={label} />
       ))}
-    </FormSelect>
+    </Select>
   );
 };
 

@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect } from 'react';
 import propTypes from 'prop-types';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { useDarkMode } from 'storybook-dark-mode';
 
 import defaultStoryMeta from '~/support/defaultStoryMeta';
 import columns from '~/support/factories/columns';
@@ -125,6 +126,8 @@ const CommonExample = ({
   enablePreselection,
   enableSimpleBulkSelect,
 }) => {
+  const enableDarkMode = useDarkMode();
+
   const {
     loading,
     result: { data, meta: { total } = {} } = {},
@@ -141,6 +144,16 @@ const CommonExample = ({
       },
     },
   });
+
+  useEffect(() => {
+    document
+      .getElementsByTagName('html')[0]
+      .setAttribute('class', enableDarkMode ? 'pf-v6-theme-dark' : '');
+
+    return () => {
+      document.getElementsByTagName('html')[0].setAttribute('class', '');
+    };
+  }, [enableDarkMode]);
 
   return (
     <TableToolsTable
