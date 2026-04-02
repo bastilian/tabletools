@@ -1,3 +1,4 @@
+import React from 'react';
 import { artist } from '~/support/factories/filters';
 
 import textType from './textType';
@@ -34,6 +35,17 @@ describe('textType', () => {
           chips: [{ name: testValue }],
         }),
       );
+    });
+
+    it('passes icon from filter config onto chips', () => {
+      const testValue = 'test value';
+      const icon = React.createElement('span', { 'data-testid': 'chip-icon' });
+      expect(
+        textType.filterChips({ ...artist, icon: icon }, [testValue]),
+      ).toEqual({
+        category: artist.label,
+        chips: [{ name: testValue, icon }],
+      });
     });
   });
 
