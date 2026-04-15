@@ -1,6 +1,12 @@
 import React from 'react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { Button, Card, CardBody, Content } from '@patternfly/react-core';
+import { Button, Card, CardBody, Content, Icon } from '@patternfly/react-core';
+import {
+  CheckCircleIcon,
+  ExclamationTriangleIcon,
+  QuestionCircleIcon,
+} from '@patternfly/react-icons';
+import { conditionalFilterType } from '@redhat-cloud-services/frontend-components/ConditionalFilter';
 
 import defaultStoryMeta from '~/support/defaultStoryMeta';
 import columns from '~/support/factories/columns';
@@ -9,6 +15,7 @@ import filters, {
   customNumberFilterType,
   customGenresFilter,
   customGenresFilterType,
+  title as titleFilter,
 } from '~/support/factories/filters';
 
 import paginationSerialiser from '~/components/StaticTableToolsTable/helpers/serialisers/pagination';
@@ -20,6 +27,41 @@ import { TableToolsTable, TableStateProvider } from '~/components';
 import { useStateCallbacks } from '~/hooks';
 
 const queryClient = new QueryClient();
+
+const statusFilterWithChipIcons = {
+  type: conditionalFilterType.checkbox,
+  label: 'Raiting',
+  filterAttribute: 'raiting',
+  items: [
+    {
+      label: 'Cool',
+      value: 'cool',
+      icon: (
+        <Icon status="success" isInline>
+          <CheckCircleIcon />
+        </Icon>
+      ),
+    },
+    {
+      label: 'Not-cool',
+      value: 'not-cool',
+      icon: (
+        <Icon status="danger" isInline>
+          <ExclamationTriangleIcon />
+        </Icon>
+      ),
+    },
+    {
+      label: 'Not-sure',
+      value: 'not-sure',
+      icon: (
+        <Icon status="info" isInline>
+          <QuestionCircleIcon />
+        </Icon>
+      ),
+    },
+  ],
+};
 
 const defaultOptions = {
   debug: true,
@@ -181,6 +223,56 @@ export const SetFilterStory = {
     ),
   ],
   render: (args) => <SetFilterExample {...args} />,
+};
+
+const FilterChipsWithIconsExample = () => {
+  const {
+    loading,
+    result: { data, meta: { total } = {} } = {},
+    error,
+  } = useExampleDataQuery({
+    endpoint: '/api',
+    useTableState: true,
+  });
+
+  return (
+    <>
+      <Content>
+        <p>This story is to test the `filterChips` with `icon`</p>
+      </Content>
+      <TableToolsTable
+        loading={loading}
+        items={data}
+        total={total}
+        error={error}
+        columns={columns}
+        filters={{
+          filterConfig: [titleFilter, statusFilterWithChipIcons],
+          activeFilters: {
+            raiting: ['cool', 'not-sure'],
+          },
+        }}
+        options={{
+          ...defaultOptions,
+          debug: true,
+        }}
+      />
+    </>
+  );
+};
+
+export const FilterChipsWithIconsStory = {
+  name: 'Filter chips with PatternFly icons',
+  decorators: [
+    (Story) => (
+      <QueryClientProvider client={queryClient}>
+        <TableStateProvider>
+          <Story />
+        </TableStateProvider>
+      </QueryClientProvider>
+    ),
+  ],
+  render: (args) => <FilterChipsWithIconsExample {...args} />,
 };
 
 export default meta;

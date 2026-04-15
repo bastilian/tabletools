@@ -20,9 +20,13 @@ const checkboxType = {
   }),
   filterChips: (configItem, value) => ({
     category: configItem.label,
-    chips: value.map((chipValue) => ({
-      name: configItem.items.find((item) => item.value === chipValue).label,
-    })),
+    chips: value.map((chipValue) => {
+      const item = configItem.items.find((i) => i.value === chipValue);
+      return {
+        name: item.label,
+        ...(item.icon && { icon: item.icon }),
+      };
+    }),
   }),
   toSelectValue: (configItem, selectedValues) => [
     selectedValues,

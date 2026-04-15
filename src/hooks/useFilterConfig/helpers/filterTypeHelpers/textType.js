@@ -9,7 +9,12 @@ const textType = {
   // Returns (all/a) filter chip for a given filter active value(s)
   filterChips: (configItem, value) => ({
     category: configItem.label,
-    chips: [{ name: value[0] }],
+    chips: [
+      {
+        name: value[0],
+        ...(configItem.icon && { icon: configItem.icon }),
+      },
+    ],
   }),
   // Returns "select" arguments for the selection manager from a selected value
   // The returning of selectedValue/selectedValues is inconsistent.
