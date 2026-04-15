@@ -89,6 +89,7 @@ export default defineConfig([
             '(useDeepCompareEffect|useDeepCompareCallback|useDeepCompareMemo|useDeepCompareImperativeHandle|useDeepCompareLayoutEffect)',
         },
       ],
+      '@tanstack/query/exhaustive-deps': 'warn',
     },
   },
 ]);

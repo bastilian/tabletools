@@ -1,7 +1,7 @@
 import React from 'react';
 import propTypes from 'prop-types';
 
-import { FormSelect, FormSelectOption } from '@patternfly/react-core';
+import { Select, SelectOption } from '@patternfly/react-core';
 
 import { genres } from '../factories/items';
 
@@ -12,16 +12,16 @@ const GenresDropdown = ({ selected, onSelect: onSelectProp }) => {
   };
 
   return (
-    <FormSelect
+    <Select
       value={selected}
       onChange={onSelect}
       aria-label="FormSelect Input"
       ouiaId="BasicFormSelect"
     >
       {genres.map((genre, index) => (
-        <FormSelectOption key={index} value={genre} label={genre} />
+        <SelectOption key={index} value={genre} label={genre} />
       ))}
-    </FormSelect>
+    </Select>
   );
 };
 
