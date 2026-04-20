@@ -75,6 +75,7 @@ const useTableTools = (
     useFilterConfig(options);
 
   const {
+    expandable,
     tableProps: expandableTableProps,
     tableView: expandableTableViewOptions,
   } = useExpandable(options);
@@ -86,6 +87,7 @@ const useTableTools = (
 
   const identifier = options.identifier || 'itemId';
   const {
+    bulkSelect,
     toolbarProps: bulkSelectToolbarProps,
     tableProps: bulkSelectTableProps,
     tableView: bulkSelectTableViewOptions,
@@ -211,6 +213,9 @@ const useTableTools = (
   return {
     view,
     loading,
+    total,
+    bulkSelect,
+    expandable,
     toolbarProps,
     tableProps,
     columnManagerModalProps,
