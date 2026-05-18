@@ -11,6 +11,7 @@ const useFilterOptions = (options) => {
     filterConfig: staticFilterConfig = [],
     activeFilters: initialActiveFilters,
     customFilterTypes,
+    useReset,
   } = filters || {};
   const filterConfig = useResolvedProps(staticFilterConfig, [
     'items',
@@ -31,6 +32,7 @@ const useFilterOptions = (options) => {
       },
       initialActiveFilters,
       serialisers,
+      useReset,
     }),
     [
       enableFilters,
@@ -39,6 +41,7 @@ const useFilterOptions = (options) => {
       customFilterTypes,
       initialActiveFilters,
       serialisers,
+      useReset,
     ],
   );
 

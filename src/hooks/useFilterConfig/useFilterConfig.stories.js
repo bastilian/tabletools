@@ -251,6 +251,7 @@ const FilterChipsWithIconsExample = () => {
           activeFilters: {
             raiting: ['cool', 'not-sure'],
           },
+          useReset: true,
         }}
         options={{
           ...defaultOptions,

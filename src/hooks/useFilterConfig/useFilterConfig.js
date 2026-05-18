@@ -41,18 +41,21 @@ const useFilterConfig = (options) => {
     serialisers,
     enableFilters,
     filterTypes,
+    useReset,
   } = useFilterOptions(options);
 
-  const { selection: activeFilters, ...selectionActions } = useSelectionManager(
-    initialActiveFilters,
-    { withGroups: true },
-  );
+  const {
+    selection: activeFilters,
+    isInitialSelection,
+    ...selectionActions
+  } = useSelectionManager(initialActiveFilters, { withGroups: true });
   const { onFilterUpdate, onFilterDelete } = useEventHandlers({
     ...options,
     filterConfig,
     activeFilters,
     selectionActions,
     filterTypes,
+    useReset,
   });
 
   const { isFilterModalOpen, openFilterModal, filterModalProps } =
@@ -94,6 +97,7 @@ const useFilterConfig = (options) => {
     [selectionActions],
   );
 
+  useCallbacksCallback('resetFilters', selectionActions.rest);
   useCallbacksCallback('clearFilters', selectionActions.clear);
   useCallbacksCallback('setFilter', setFilter);
 
@@ -102,6 +106,12 @@ const useFilterConfig = (options) => {
         toolbarProps: {
           filterConfig: builtFilterConfig,
           activeFiltersConfig: {
+            ...(useReset
+              ? {
+                  deleteTitle: 'Reset filters',
+                  showDeleteButton: isInitialSelection ? false : true,
+                }
+              : {}),
             filters: toFilterChips(filterConfig, filterTypes, activeFilters),
             onDelete: onFilterDelete,
           },

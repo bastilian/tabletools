@@ -13,7 +13,8 @@ describe('useSelectionManager', () => {
   });
 
   describe('withGroups: false', () => {
-    const defaultArguments = [[1, 2, 3, 4]];
+    const selection = [1, 2, 3, 4];
+    const defaultArguments = [selection];
 
     it('returns an object with function to manage selections wihtout groups', () => {
       const { result } = renderHook(() =>
@@ -80,10 +81,8 @@ describe('useSelectionManager', () => {
   });
 
   describe('withGroups true', () => {
-    const defaultArguments = [
-      { group1: [1, 2, 3, 4], group2: [12, 23, 34, 45] },
-      { withGroups: true },
-    ];
+    const initialSelection = { group1: [1, 2, 3, 4], group2: [12, 23, 34, 45] };
+    const defaultArguments = [initialSelection, { withGroups: true }];
 
     it('returns an object with function to manage selections with groups', () => {
       const { result } = renderHook(() =>
@@ -105,10 +104,10 @@ describe('useSelectionManager', () => {
         result.current.select(42, 'group2');
       });
 
-      expect(result.current.selection.group2).toEqual([
-        42,
-        ...defaultArguments[0].group2,
-      ]);
+      expect(result.current.selection).toEqual({
+        ...initialSelection,
+        group2: [42, ...initialSelection.group2],
+      });
     });
 
     it('removes an item from the selection when calling deselect', () => {
@@ -120,31 +119,73 @@ describe('useSelectionManager', () => {
         result.current.deselect(2, 'group1');
       });
 
-      expect(result.current.selection.group1).toEqual([1, 3, 4]);
+      expect(result.current.selection).toEqual({
+        ...initialSelection,
+        group1: [1, 3, 4],
+      });
     });
 
     it('sets items for a selection when calling set', () => {
       const { result } = renderHook(() =>
         useSelectionManager(...defaultArguments),
       );
+      const newSelection = [0, 9, 8, 45, 3];
 
       act(() => {
-        result.current.set([0, 9, 8, 45, 3], 'group1');
+        result.current.set(newSelection, 'group1');
       });
 
-      expect(result.current.selection.group1).toEqual([0, 9, 8, 45, 3]);
+      expect(result.current.selection).toEqual({
+        ...initialSelection,
+        group1: newSelection,
+      });
     });
 
     it('resets selection to initially passed in selected on reset', () => {
       const { result } = renderHook(() =>
         useSelectionManager(...defaultArguments),
       );
+      const newSelection = [1, 2, 3];
 
       act(() => {
-        result.current.set([0, 9, 8, 45, 3], 'group1');
+        result.current.set(newSelection, 'group1');
       });
 
-      expect(result.current.selection.group1).toEqual([0, 9, 8, 45, 3]);
+      expect(result.current.selection).toEqual({
+        ...initialSelection,
+        group1: newSelection,
+      });
+
+      act(() => {
+        result.current.reset('group1');
+      });
+
+      expect(result.current.selection).toEqual(initialSelection);
+    });
+
+    it('resets selection of all groups if no specific group is set', () => {
+      const { result } = renderHook(() =>
+        useSelectionManager(...defaultArguments),
+      );
+      const newSelection = [1, 2, 3];
+
+      act(() => {
+        result.current.set(newSelection, 'group1');
+        result.current.set(newSelection, 'group2');
+        result.current.set(newSelection, 'group3');
+      });
+
+      expect(result.current.selection).toEqual({
+        group1: newSelection,
+        group2: newSelection,
+        group3: newSelection,
+      });
+
+      act(() => {
+        result.current.reset();
+      });
+
+      expect(result.current.selection).toEqual(initialSelection);
     });
   });
 });

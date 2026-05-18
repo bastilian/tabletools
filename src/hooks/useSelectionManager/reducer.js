@@ -1,5 +1,6 @@
 import isObject from 'lodash/isObject';
 import uniq from 'lodash/uniq';
+// TODO this reducer should be refactored at some point
 
 const DEFAULT_GROUP_KEY = 'default';
 const selectionGroup = (action) => action.group || DEFAULT_GROUP_KEY;
@@ -72,8 +73,23 @@ const toggle = (state, action) => {
     : select(state, action);
 };
 
-const reset = (state, action) =>
-  init(!state.hasOwnProperty(DEFAULT_GROUP_KEY))(action?.preselected); // eslint-disable-line
+const reset = (state, action) => {
+  if (action.withGroups) {
+    return {
+      ...(action.group
+        ? {
+            ...state,
+            [action.group]: action.initialSelection,
+          }
+        : action.initialSelection || {}),
+    };
+  } else {
+    return {
+      default: action.initialSelection,
+    };
+  }
+};
+
 const clear = (state) => init(!state.hasOwnProperty(DEFAULT_GROUP_KEY))(); // eslint-disable-line
 
 export default (state, action) =>

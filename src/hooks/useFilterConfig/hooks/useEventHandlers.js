@@ -8,7 +8,7 @@ const useEventHandlers = ({
   activeFilters,
   onFilterUpdate: onFilterUpdateCallback,
   onDeleteFilter,
-  resetOnClear,
+  useReset,
   filterTypes,
   selectionActions: { select, deselect, reset, clear },
 }) => {
@@ -36,7 +36,7 @@ const useEventHandlers = ({
   const onFilterDelete = useCallback(
     async (_event, chips, clearAll = false) => {
       if (clearAll) {
-        if (resetOnClear) {
+        if (useReset) {
           reset();
         } else {
           clear();
@@ -60,7 +60,7 @@ const useEventHandlers = ({
       reset,
       clear,
       deselect,
-      resetOnClear,
+      useReset,
       filterTypes,
     ],
   );

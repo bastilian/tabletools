@@ -1,4 +1,5 @@
 import { useCallback, useReducer, useRef } from 'react';
+import { useDeepCompareMemo } from 'use-deep-compare';
 
 import reducer, { init as initReducer } from './reducer';
 
@@ -19,6 +20,11 @@ const useSelectionManager = (selected, { withGroups = false } = {}) => {
     reducer,
     selected,
     initReducer(withGroups),
+  );
+  const isInitialSelection = useDeepCompareMemo(
+    () =>
+      JSON.stringify(initialSelection.current) === JSON.stringify(selection),
+    [initialSelection, selection],
   );
 
   const set = useCallback(
@@ -45,9 +51,15 @@ const useSelectionManager = (selected, { withGroups = false } = {}) => {
 
   const reset = useCallback(
     (group) => {
-      set(initialSelection.current, group);
+      dispatch({
+        type: 'reset',
+        withGroups,
+        ...(group
+          ? { group, initialSelection: initialSelection.current[group] }
+          : { initialSelection: initialSelection.current }),
+      });
     },
-    [set, initialSelection],
+    [initialSelection, withGroups],
   );
 
   const clear = useCallback((group) => set(undefined, group), [set]);
@@ -60,6 +72,7 @@ const useSelectionManager = (selected, { withGroups = false } = {}) => {
     reset,
     clear,
     selection: withGroups ? selection : selection.default,
+    isInitialSelection,
   };
 };
 
