@@ -18,6 +18,7 @@ import { itemDetailsRow, addExpandProp } from './helpers';
  *
  *  @param   {object}              [options]                  AsyncTableTools options
  *  @param   {object}              [options.detailsComponent] A component that should be rendered as a details row
+ *  @param   {object}              [options.detailsProps]     Props spread onto each details row
  *
  *  @returns {useExpandableReturn}                            An object of props meant to be used in the {@link TableToolsTable}
  *

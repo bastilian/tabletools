@@ -1,7 +1,29 @@
 import React from 'react';
 
-const detailsRowForRule = (item, DetailsComponent, colSpan, runningIndex) => ({
+const detailsRowColSpan = (options = {}) => {
+  const baseColumns = options.columns?.length || 0;
+
+  const hasExpandableControlColumn =
+    !!options.detailsComponent || !!options.treeTable;
+  const hasSelectableControlColumn =
+    !!options.onRadioSelect || !!options.onSelect;
+
+  return (
+    baseColumns +
+    (hasExpandableControlColumn ? 1 : 0) +
+    (hasSelectableControlColumn ? 1 : 0)
+  );
+};
+
+const detailsRowForRule = (
+  item,
+  DetailsComponent,
+  colSpan,
+  runningIndex,
+  detailsProps = {},
+) => ({
   parent: runningIndex() - 1,
+  ...detailsProps,
   props: {
     ...item.props,
     'aria-setsize': 0,
@@ -23,8 +45,9 @@ export const itemDetailsRow = (item, options, runningIndex) =>
   detailsRowForRule(
     item,
     options.detailsComponent,
-    options.columns?.length,
+    detailsRowColSpan(options),
     runningIndex,
+    options?.detailsProps || {},
   );
 
 const expandTreeTableRow = (firstRow, isOpen) => ({

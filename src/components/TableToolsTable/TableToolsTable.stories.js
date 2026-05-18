@@ -202,6 +202,7 @@ const CommonExample = ({
             }
           : {}),
         ...(enableSimpleBulkSelect ? { onSelect: true } : {}),
+        detailsProps: { fullWidth: true },
       }}
     />
   );

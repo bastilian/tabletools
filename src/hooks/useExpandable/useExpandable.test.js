@@ -67,6 +67,7 @@ describe('useExpandable', () => {
             title: expect.anything(), //non-rendered ExampleDetailsRow
             props: {
               className: 'compliance-rule-details',
+              colSpan: 1,
             },
           },
         ],
@@ -101,5 +102,85 @@ describe('useExpandable', () => {
     });
 
     expect(result.current.tableView.isItemOpen('test-id')).toBe(false);
+  });
+
+  it('includes control columns in details row colSpan', () => {
+    const { result } = renderHook(
+      () =>
+        useExpandable({
+          detailsComponent: ExampleDetailsRow,
+          columns: [{ title: 'Name' }, { title: 'OS version' }],
+          onRadioSelect: jest.fn(),
+        }),
+      DEFAULT_RENDER_OPTIONS,
+    );
+
+    act(() => {
+      result.current.tableProps.onCollapse(null, 0, true, {
+        item: { itemId: 'test-id' },
+      });
+    });
+
+    const openedRow = result.current.tableView.expandRow(
+      row,
+      [],
+      () => 1,
+      false,
+    );
+
+    expect(openedRow[1].cells[0].props.colSpan).toEqual(4);
+  });
+
+  it('marks details rows as fullWidth when configured', () => {
+    const { result } = renderHook(
+      () =>
+        useExpandable({
+          detailsComponent: ExampleDetailsRow,
+          columns: [{ title: 'Name' }, { title: 'OS version' }],
+          detailsProps: { fullWidth: true },
+        }),
+      DEFAULT_RENDER_OPTIONS,
+    );
+
+    act(() => {
+      result.current.tableProps.onCollapse(null, 0, true, {
+        item: { itemId: 'test-id' },
+      });
+    });
+
+    const openedRow = result.current.tableView.expandRow(
+      row,
+      [],
+      () => 1,
+      false,
+    );
+
+    expect(openedRow[1].fullWidth).toBe(true);
+  });
+
+  it('does not mark details rows as fullWidth by default', () => {
+    const { result } = renderHook(
+      () =>
+        useExpandable({
+          detailsComponent: ExampleDetailsRow,
+          columns: [{ title: 'Name' }, { title: 'OS version' }],
+        }),
+      DEFAULT_RENDER_OPTIONS,
+    );
+
+    act(() => {
+      result.current.tableProps.onCollapse(null, 0, true, {
+        item: { itemId: 'test-id' },
+      });
+    });
+
+    const openedRow = result.current.tableView.expandRow(
+      row,
+      [],
+      () => 1,
+      false,
+    );
+
+    expect(openedRow[1].fullWidth).toBeUndefined();
   });
 });
