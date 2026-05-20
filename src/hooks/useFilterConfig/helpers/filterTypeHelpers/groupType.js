@@ -29,44 +29,34 @@ const groupType = {
       : {}),
     ...defaultOnChange(handler, stringToId(label)),
   }),
-  filterChips: (configItem, value) => ({
-    category: configItem.label,
-    chips: Object.entries(value).flatMap((groupItem) =>
-      Object.keys(groupItem[1]).map((itemValue) => ({
-        name: itemForValueInGroups(configItem, itemValue).label,
-      })),
-    ),
-  }),
-  toSelectValue: (configItem, selectedValues) => {
-    const cleanedUpFilter = Object.fromEntries(
-      Object.entries(selectedValues)
-        .map(([group, groupItems]) => {
-          const filteredItems = Object.entries(groupItems).filter(
-            ([, value]) => value,
-          );
-          return filteredItems.length
-            ? [
-                group,
-                Object.fromEntries(
-                  Object.entries(groupItems).filter(([, value]) => value),
-                ),
-              ]
-            : undefined;
+  filterChips: (configItem, value) => {
+    const chips = Object.entries(value).flatMap(([groupKey, groupItem]) =>
+      Object.entries(groupItem)
+        .filter(([itemKey, value]) => {
+          return itemKey !== groupKey && value === true;
         })
-        .filter((v) => !!v),
+        .map(([key]) => ({
+          name: itemForValueInGroups(configItem, key).label,
+        })),
     );
 
-    return [
-      Object.keys(cleanedUpFilter).length ? cleanedUpFilter : undefined,
-      stringToId(configItem.label),
-      true,
-    ];
+    return chips.length
+      ? {
+          category: configItem.label,
+          chips,
+        }
+      : undefined;
   },
+  toSelectValue: (configItem, selectedValues) => [
+    selectedValues,
+    stringToId(configItem.label),
+    true,
+  ],
   toDeselectValue: (configItem, chip, activeFilters) => {
     const filter = stringToId(configItem.label);
     const activeValues = activeFilters[filter];
     const item = itemForLabelInGroups(configItem, chip.chips[0].name);
-    console.log('iii', { activeValues, item, configItem, chip, activeFilters });
+
     if (item.parent?.value) {
       delete activeValues[item.parent.value][item.value];
     } else {

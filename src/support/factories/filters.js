@@ -82,6 +82,7 @@ export const artistByGenre = {
   groups: Object.entries(artistsGroupedByGenre).map(([genre, artists]) => ({
     label: genre,
     value: genre,
+    groupSelectable: true,
     items: artists.slice(0, 10).map(({ artist }) => ({
       label: artist,
       value: artist,
@@ -109,12 +110,13 @@ export const yearsByDecade = {
       [],
     );
 
-    return `.releaseYear in [${allYears.join(', ')}]`;
+    return `.releaseYear in [${allYears.map((year) => `"${year}"`).join(', ')}]`;
   },
   groups: [
     {
       label: '80s',
       value: '80s',
+      groupSelectable: true,
       items: [...new Array(10)].map((_, idx) => ({
         label: `198${idx}`,
         value: `198${idx}`,
@@ -123,6 +125,7 @@ export const yearsByDecade = {
     {
       label: '90s',
       value: '90s',
+      groupSelectable: true,
       items: [...new Array(10)].map((_, idx) => ({
         label: `199${idx}`,
         value: `199${idx}`,
@@ -131,6 +134,7 @@ export const yearsByDecade = {
     {
       label: '00s',
       value: '00s',
+      groupSelectable: true,
       items: [...new Array(10)].map((_, idx) => ({
         label: `200${idx}`,
         value: `200${idx}`,
@@ -139,6 +143,7 @@ export const yearsByDecade = {
     {
       label: '10s',
       value: '10s',
+      groupSelectable: true,
       items: [...new Array(10)].map((_, idx) => ({
         label: `201${idx}`,
         value: `201${idx}`,
@@ -147,6 +152,7 @@ export const yearsByDecade = {
     {
       label: '20s',
       value: '20s',
+      groupSelectable: true,
       items: [...new Array(5)].map((_, idx) => ({
         label: `201${idx}`,
         value: `201${idx}`,
