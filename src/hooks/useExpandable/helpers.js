@@ -2,10 +2,14 @@ import React from 'react';
 
 const detailsRowForRule = (item, DetailsComponent, colSpan, runningIndex) => ({
   parent: runningIndex() - 1,
-  props: {
-    ...item.props,
-    'aria-setsize': 0,
-  },
+  props: (() => {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { 'aria-level': _ariaLevel, ...detailsRowProps } = item.props || {};
+    return {
+      ...detailsRowProps,
+      'aria-setsize': 0,
+    };
+  })(),
   cells: [
     {
       title: <DetailsComponent item={item} key={'item-' + item.rowId} />,
