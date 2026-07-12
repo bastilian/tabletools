@@ -14,6 +14,7 @@ Genre.propTypes = {
 };
 
 export const title = {
+  key: 'title',
   title: 'Title',
   Component: Title,
   renderExport: ({ title }) => title,

@@ -16,7 +16,7 @@ const TableToolsTable = ({
   total: externalTotal,
   columns,
   filters,
-  options: { treeTable, ...options } = {},
+  options: { treeTable, variantProps, ...options } = {},
   // TODO I'm not sure if we need this level of customisation.
   // It might actually hurt in the long run. Consider removing until we really have the case where we need this
   toolbarProps: toolbarPropsProp,
@@ -47,6 +47,7 @@ const TableToolsTable = ({
     <>
       <TableComponent
         {...tableToolsProps}
+        variantProps={variantProps}
         treeTable={treeTable}
         tableHeaderProps={tableHeaderProps}
         tableBodyProps={tableBodyProps}
