@@ -26,6 +26,7 @@ describe('useExpandable', () => {
 
     expect(result.current).toEqual({
       tableProps: {
+        canCollapseAll: true,
         onCollapse: expect.any(Function),
       },
       tableView: {
@@ -45,7 +46,7 @@ describe('useExpandable', () => {
     );
 
     act(() => {
-      result.current.tableProps.onCollapse(undefined, undefined, undefined, {
+      result.current.tableProps.onCollapse(null, 0, true, {
         item: { itemId },
       });
     });
@@ -102,6 +103,50 @@ describe('useExpandable', () => {
     });
 
     expect(result.current.tableView.isItemOpen('test-id')).toBe(false);
+  });
+
+  it('should expand all rows', () => {
+    const items = [
+      { itemId: 'item-1' },
+      { itemId: 'item-2' },
+      { itemId: 'item-3' },
+    ];
+    const { result } = renderHook(
+      () => useExpandable({ ...defaultOptions, items }),
+      DEFAULT_RENDER_OPTIONS,
+    );
+
+    act(() => {
+      result.current.tableProps.onCollapse(null, undefined, true);
+    });
+
+    expect(result.current.tableView.isItemOpen('item-1')).toBe(true);
+    expect(result.current.tableView.isItemOpen('item-2')).toBe(true);
+    expect(result.current.tableView.isItemOpen('item-3')).toBe(true);
+  });
+
+  it('should collapse all rows', () => {
+    const items = [{ itemId: 'item-1' }, { itemId: 'item-2' }];
+    const { result } = renderHook(
+      () => useExpandable({ ...defaultOptions, items }),
+      DEFAULT_RENDER_OPTIONS,
+    );
+
+    // expand all first
+    act(() => {
+      result.current.tableProps.onCollapse(null, undefined, true);
+    });
+
+    expect(result.current.tableView.isItemOpen('item-1')).toBe(true);
+    expect(result.current.tableView.isItemOpen('item-2')).toBe(true);
+
+    // collapse all
+    act(() => {
+      result.current.tableProps.onCollapse(null, undefined, false);
+    });
+
+    expect(result.current.tableView.isItemOpen('item-1')).toBe(false);
+    expect(result.current.tableView.isItemOpen('item-2')).toBe(false);
   });
 
   it('includes control columns in details row colSpan', () => {

@@ -19,6 +19,7 @@ import { itemDetailsRow, addExpandProp } from './helpers';
  *  @param   {object}              [options]                  AsyncTableTools options
  *  @param   {object}              [options.detailsComponent] A component that should be rendered as a details row
  *  @param   {object}              [options.detailsProps]     Props spread onto each details row
+ *  @param   {Array}               [options.items]            Items currently rendered in the table (used for expand/collapse all)
  *
  *  @returns {useExpandableReturn}                            An object of props meant to be used in the {@link TableToolsTable}
  *
@@ -27,12 +28,24 @@ import { itemDetailsRow, addExpandProp } from './helpers';
  */
 const useExpandable = (options) => {
   const enableExpandingRow = !!options?.detailsComponent || !!options.treeTable;
-  const { selection: openItems, toggle } = useSelectionManager([]);
+  const { selection: openItems, toggle, set, clear } = useSelectionManager([]);
   // TODO If the selection manager is based on `useTableState`, observes can be used to reset open items
   const [, setOpenItemsState] = useTableState('open-items');
 
-  const onCollapse = (_event, _index, _isOpen, { item: { itemId } }) =>
-    toggle(itemId);
+  const onCollapse = useCallback(
+    (_event, rowIndex, isOpen, rowData) => {
+      if (rowIndex === undefined) {
+        if (isOpen) {
+          set(options.items?.map((item) => item.itemId));
+        } else {
+          clear();
+        }
+      } else {
+        toggle(rowData?.item?.itemId);
+      }
+    },
+    [options.items, toggle, set, clear],
+  );
 
   const isItemOpen = useCallback(
     (itemId) => (openItems || []).includes(itemId),
@@ -71,6 +84,7 @@ const useExpandable = (options) => {
     ...(enableExpandingRow
       ? {
           tableProps: {
+            canCollapseAll: true,
             onCollapse,
           },
         }
