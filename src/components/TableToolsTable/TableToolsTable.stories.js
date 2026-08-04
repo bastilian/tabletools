@@ -54,6 +54,7 @@ const argProps = {
   customEmptyState: propTypes.bool,
   enableExport: propTypes.bool,
   enableDetails: propTypes.bool,
+  enableExpandAll: propTypes.bool,
   enableBulkSelect: propTypes.bool,
   enablePreselection: propTypes.bool,
   enableSimpleBulkSelect: propTypes.bool,
@@ -84,6 +85,7 @@ const meta = {
     customEmptyState: true,
     enableExport: true,
     enableDetails: true,
+    enableExpandAll: true,
     enableBulkSelect: true,
     enablePreselection: false,
     enableSimpleBulkSelect: false,
@@ -122,6 +124,7 @@ const CommonExample = ({
   customEmptyState,
   enableExport,
   enableDetails,
+  enableExpandAll,
   enableBulkSelect,
   enablePreselection,
   enableSimpleBulkSelect,
@@ -193,6 +196,7 @@ const CommonExample = ({
         ...(customEmptyState ? { EmptyState: CustomEmptyState } : {}),
         ...(enableExport ? { exporter } : {}),
         ...(enableDetails ? { detailsComponent: DetailsRow } : {}),
+        canCollapseAll: enableExpandAll,
         ...(enableBulkSelect
           ? {
               ...(enablePreselection ? { selected: selectedItemIds } : {}),

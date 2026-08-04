@@ -20,6 +20,7 @@ import { itemDetailsRow, addExpandProp } from './helpers';
  *  @param   {object}              [options.detailsComponent] A component that should be rendered as a details row
  *  @param   {object}              [options.detailsProps]     Props spread onto each details row
  *  @param   {Array}               [options.items]            Items currently rendered in the table (used for expand/collapse all)
+ *  @param   {boolean}             [options.canCollapseAll]   Whether to enable the expand/collapse all toggle in the table header (defaults to true)
  *
  *  @returns {useExpandableReturn}                            An object of props meant to be used in the {@link TableToolsTable}
  *
@@ -84,7 +85,7 @@ const useExpandable = (options) => {
     ...(enableExpandingRow
       ? {
           tableProps: {
-            canCollapseAll: true,
+            canCollapseAll: options.canCollapseAll !== false,
             onCollapse,
           },
         }
