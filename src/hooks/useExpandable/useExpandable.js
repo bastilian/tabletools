@@ -85,7 +85,9 @@ const useExpandable = (options) => {
     ...(enableExpandingRow
       ? {
           tableProps: {
-            canCollapseAll: options.canCollapseAll !== false,
+            ...(!options.treeTable
+              ? { canCollapseAll: options.canCollapseAll !== false }
+              : {}),
             onCollapse,
           },
         }
