@@ -1,9 +1,9 @@
 import { faker } from '@faker-js/faker';
 
-import { genre } from '~/support/factories/filters';
+import { genre, genreWithModal } from '~/support/factories/filters';
 import { genres } from '~/support/factories/items';
 
-import checkboxType from './checkboxType';
+import checkboxType, { DEFAULT_MODAL_VISIBLE_ITEM_COUNT } from './checkboxType';
 import { stringToId } from '../helpers';
 
 describe('checkboxType', () => {
@@ -16,6 +16,36 @@ describe('checkboxType', () => {
           onChange: expect.any(Function),
           value: testValue,
         }),
+      );
+    });
+
+    it('should limit dropdown items when modal is enabled', () => {
+      const { items } = checkboxType.filterValues(
+        genreWithModal,
+        () => {},
+        [],
+        jest.fn(),
+      );
+
+      expect(items).toHaveLength(DEFAULT_MODAL_VISIBLE_ITEM_COUNT + 1);
+      expect(items.slice(0, -1)).toEqual(
+        genreWithModal.items.slice(0, DEFAULT_MODAL_VISIBLE_ITEM_COUNT),
+      );
+      expect(items[items.length - 1].label).toBe('Show more');
+    });
+
+    it('should allow overriding the visible item count via modal.visibleItemCount', () => {
+      const visibleItemCount = 3;
+      const { items } = checkboxType.filterValues(
+        { ...genreWithModal, modal: { visibleItemCount } },
+        () => {},
+        [],
+        jest.fn(),
+      );
+
+      expect(items).toHaveLength(visibleItemCount + 1);
+      expect(items.slice(0, -1)).toEqual(
+        genreWithModal.items.slice(0, visibleItemCount),
       );
     });
   });
