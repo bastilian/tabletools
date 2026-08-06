@@ -10,6 +10,8 @@ const checkboxType = {
               // TODO The checkbox filter in frontend-components does not really support "Show more", like the group filter.
               label: 'Show more',
               value: 'modal',
+              hasCheckbox: false,
+              isLoadButton: true,
               onClick: () => openFilterModal?.(stringToId(label)),
             },
           ]
