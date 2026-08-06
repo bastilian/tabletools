@@ -1,5 +1,5 @@
 import { useCallback, useState, useMemo } from 'react';
-import { getColumnsForModal } from './helper';
+import { getColumnsForModal, getColumnsToShow } from './helper';
 
 /**
  *  @typedef {object} useColumnManagerReturn
@@ -16,6 +16,7 @@ import { getColumnsForModal } from './helper';
  *  @param   {object}                 [options]                         AsyncTableTools options
  *  @param   {string}                 [options.columnManagerSelectProp] Property to use for the selection manager to identify columns
  *  @param   {string}                 [options.manageColumnLabel]       Label for the action item to show
+ *  @param   {boolean}                [options.enableDragDrop]          Enable drag and drop reordering in the column manager modal
  *
  *  @returns {useColumnManagerReturn}                                   Props and function to integrate the column manager
  *
@@ -27,10 +28,16 @@ const useColumnManager = (options = {}) => {
     columns,
     manageColumns: enableColumnManager,
     manageColumnLabel = 'Manage columns',
+    enableDragDrop = false,
   } = options;
 
-  const [selectedColumns, setSelectedColumns] = useState(
-    columns.filter(({ isShown = true }) => isShown).map(({ title }) => title),
+  const [columnState, setColumnState] = useState(() =>
+    getColumnsForModal(columns, undefined, { enableDragDrop }).map(
+      ({ key, isShown }) => ({
+        key,
+        isShown,
+      }),
+    ),
   );
   const [isManagerOpen, setIsManagerOpen] = useState(false);
 
@@ -42,10 +49,8 @@ const useColumnManager = (options = {}) => {
 
   const applyColumns = useCallback(
     (columnsToApply) => {
-      setSelectedColumns(
-        columnsToApply
-          .filter(({ isShown }) => isShown)
-          .map(({ title }) => title),
+      setColumnState(
+        columnsToApply.map(({ key, isShown }) => ({ key, isShown })),
       );
       onClose();
     },
@@ -53,16 +58,13 @@ const useColumnManager = (options = {}) => {
   );
 
   const columnsToShow = useMemo(
-    () =>
-      selectedColumns.map((selectedTitle) =>
-        columns.find(({ title }) => title === selectedTitle),
-      ),
-    [selectedColumns, columns],
+    () => getColumnsToShow(columns, columnState),
+    [columnState, columns],
   );
 
   const appliedColumns = useMemo(
-    () => getColumnsForModal(columns, selectedColumns),
-    [columns, selectedColumns],
+    () => getColumnsForModal(columns, columnState, { enableDragDrop }),
+    [columns, columnState, enableDragDrop],
   );
 
   return enableColumnManager
@@ -76,7 +78,8 @@ const useColumnManager = (options = {}) => {
           appliedColumns,
           isOpen: isManagerOpen,
           onClose,
-          applyColumns: applyColumns,
+          applyColumns,
+          enableDragDrop,
         },
       }
     : { columns };
