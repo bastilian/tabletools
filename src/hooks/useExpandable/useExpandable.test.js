@@ -149,6 +149,20 @@ describe('useExpandable', () => {
     expect(result.current.tableView.isItemOpen('item-2')).toBe(false);
   });
 
+  it('should not pass canCollapseAll when enableTreeView is set', () => {
+    const { result } = renderHook(
+      () =>
+        useExpandable({
+          ...defaultOptions,
+          enableTreeView: true,
+        }),
+      DEFAULT_RENDER_OPTIONS,
+    );
+
+    expect(result.current.tableProps).not.toHaveProperty('canCollapseAll');
+    expect(result.current.tableProps).toHaveProperty('onCollapse');
+  });
+
   it('includes control columns in details row colSpan', () => {
     const { result } = renderHook(
       () =>
