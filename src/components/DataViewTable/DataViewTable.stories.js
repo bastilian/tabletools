@@ -5,6 +5,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { TableStateProvider } from '~/components';
 import useExampleDataQuery from '~/support/hooks/useExampleDataQuery';
 import paginationSerialiser from '~/components/StaticTableToolsTable/helpers/serialisers/pagination';
+import sortSerialiser from '~/components/StaticTableToolsTable/helpers/serialisers/sort';
 
 import DataViewTable from './DataViewTable';
 
@@ -21,6 +22,7 @@ const queryClient = new QueryClient();
 const defaultOptions = {
   serialisers: {
     pagination: paginationSerialiser,
+    sort: sortSerialiser,
   },
 };
 

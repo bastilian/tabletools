@@ -8,19 +8,31 @@
  *  @returns {{ columns: Array, rows: Array }}            DataView-compatible props
  */
 export const toDataViewProps = (tableProps = {}) => {
-  const columns = (tableProps.cells || []).map((column) =>
-    typeof column.title === 'string' || column.title == null
-      ? column.title
-      : { cell: column.title },
-  );
+  const addSortIfSortable = (column, index) => {
+    if (column.sortable) {
+      return {
+        sort: {
+          sortBy: tableProps.sortBy,
+          onSort: tableProps.onSort,
+          columnIndex: index,
+        },
+      };
+    }
+    return {};
+  };
+
+  const columns = (tableProps.cells || []).map((column, index) => {
+    return {
+      cell: column.title,
+      props: { ...addSortIfSortable(column, index) },
+    };
+  });
 
   const rows = (tableProps.rows || [])
     .filter((row) => row.item != null)
     .map((row, index) => ({
       id: String(row.item.itemId ?? row.item.id ?? index),
-      row: (row.cells || []).map((cell) =>
-        typeof cell?.title === 'function' ? cell.title() : cell?.title,
-      ),
+      row: (row.cells || []).map((cell) => cell?.title),
     }));
 
   return { columns, rows };
