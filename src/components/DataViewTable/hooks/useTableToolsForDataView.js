@@ -2,7 +2,11 @@ import { useMemo } from 'react';
 
 import useTableTools from '~/hooks/useTableTools';
 
-import { toDataViewProps, getDataViewStateProps } from '../helpers';
+import {
+  toDataViewProps,
+  getDataViewStateProps,
+  toDataViewActions,
+} from '../helpers';
 
 /**
  * Adapter around useTableTools that reshapes its return value for Data View.
@@ -39,6 +43,10 @@ const useTableToolsForDataView = ({
       ...options,
     },
   );
+  const actions = useMemo(
+    () => toDataViewActions(toolbarProps.actionsConfig?.actions),
+    [toolbarProps.actionsConfig?.actions],
+  );
 
   const { columns: dataViewColumns, rows: dataViewRows } = useMemo(
     () => toDataViewProps(tableProps),
@@ -69,7 +77,10 @@ const useTableToolsForDataView = ({
     activeState,
     headStates,
     bodyStates,
-    pagination: toolbarProps.pagination,
+    toolbarProps: {
+      pagination: toolbarProps.pagination,
+      actions,
+    },
   };
 };
 

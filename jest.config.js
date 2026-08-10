@@ -15,7 +15,9 @@ module.exports = {
     '!src/support/**/*.{js,jsx}',
   ],
   roots: ['<rootDir>/src/'],
-  transformIgnorePatterns: ['/node_modules/(?!(@faker-js)/)'],
+  transformIgnorePatterns: [
+    '/node_modules/(?!(@faker-js|@patternfly/react-tokens|@patternfly/react-data-view)/)',
+  ],
 
   moduleNameMapper: {
     '\\.(css|scss|svg)$': 'identity-obj-proxy',

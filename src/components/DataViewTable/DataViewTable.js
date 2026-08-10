@@ -42,7 +42,7 @@ const DataViewTable = ({
     activeState,
     headStates,
     bodyStates,
-    pagination,
+    toolbarProps: { pagination, actions } = {},
   } = useTableToolsForDataView({
     loading,
     items,
@@ -57,6 +57,7 @@ const DataViewTable = ({
     <DataView activeState={activeState}>
       <DataViewToolbar
         pagination={pagination && <Pagination isCompact {...pagination} />}
+        actions={actions}
       />
       <PatternFlyDataViewTable
         aria-label="Table"

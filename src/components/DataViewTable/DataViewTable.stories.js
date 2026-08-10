@@ -6,6 +6,7 @@ import { TableStateProvider } from '~/components';
 import useExampleDataQuery from '~/support/hooks/useExampleDataQuery';
 import paginationSerialiser from '~/components/StaticTableToolsTable/helpers/serialisers/pagination';
 import sortSerialiser from '~/components/StaticTableToolsTable/helpers/serialisers/sort';
+import { actions } from '~/support/constants';
 
 import DataViewTable from './DataViewTable';
 
@@ -45,6 +46,7 @@ const CommonExample = () => {
       loading={loading}
       options={{
         ...defaultOptions,
+        actions,
       }}
     />
   );
