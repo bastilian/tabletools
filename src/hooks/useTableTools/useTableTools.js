@@ -77,7 +77,7 @@ const useTableTools = (
   const {
     tableProps: expandableTableProps,
     tableView: expandableTableViewOptions,
-  } = useExpandable(options);
+  } = useExpandable({ ...options, items });
 
   const { tableProps: radioSelectTableProps } = useRadioSelect({
     ...options,
