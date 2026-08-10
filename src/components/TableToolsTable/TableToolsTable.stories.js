@@ -38,6 +38,7 @@ const defaultOptions = {
 
 const argProps = {
   debug: propTypes.bool,
+  composable: propTypes.bool,
   columns: propTypes.array,
   filters: propTypes.array,
   filtered: propTypes.bool,
@@ -65,6 +66,7 @@ const meta = {
   title: 'TableToolsTable',
   args: {
     debug: true,
+    composable: false,
     columns,
     filters,
     filtered: true,
@@ -110,6 +112,7 @@ const emptyRows = (_kind, colSpan) => [
 
 const CommonExample = ({
   debug,
+  composable,
   columns,
   filters,
   filtered,
@@ -163,6 +166,11 @@ const CommonExample = ({
 
   return (
     <TableToolsTable
+      {...(composable
+        ? {
+            tableToolsTableVariant: 'composable',
+          }
+        : {})}
       loading={loading}
       items={data}
       total={total}
