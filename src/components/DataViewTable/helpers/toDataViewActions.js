@@ -3,7 +3,6 @@ import { Button } from '@patternfly/react-core';
 
 export const toDataViewActions = (actions) =>
   (actions || []).filter(Boolean).map((action, i) => {
-    console.log('DEBUG: action', action);
     if (React.isValidElement(action)) {
       return <React.Fragment key={i}>{action}</React.Fragment>;
     }

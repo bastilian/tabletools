@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import React, { useMemo } from 'react';
 
 import useTableTools from '~/hooks/useTableTools';
 
@@ -6,6 +6,7 @@ import {
   toDataViewProps,
   getDataViewStateProps,
   toDataViewActions,
+  toDataViewExport,
 } from '../helpers';
 
 /**
@@ -43,10 +44,22 @@ const useTableToolsForDataView = ({
       ...options,
     },
   );
-  const actions = useMemo(
-    () => toDataViewActions(toolbarProps.actionsConfig?.actions),
-    [toolbarProps.actionsConfig?.actions],
-  );
+
+  const actions = useMemo(() => {
+    const actionNodes = toDataViewActions(toolbarProps.actionsConfig?.actions);
+    const exportNode = toDataViewExport(toolbarProps.exportConfig);
+
+    if (!actionNodes.length && !exportNode) {
+      return undefined;
+    }
+
+    return (
+      <>
+        {actionNodes}
+        {exportNode}
+      </>
+    );
+  }, [toolbarProps.actionsConfig?.actions, toolbarProps.exportConfig]);
 
   const { columns: dataViewColumns, rows: dataViewRows } = useMemo(
     () => toDataViewProps(tableProps),

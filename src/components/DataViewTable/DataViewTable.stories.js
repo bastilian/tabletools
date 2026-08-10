@@ -32,6 +32,7 @@ const CommonExample = () => {
     loading,
     result: { data, meta: { total } = {} } = {},
     error,
+    exporter,
   } = useExampleDataQuery({
     endpoint: '/api',
     useTableState: true,
@@ -47,6 +48,7 @@ const CommonExample = () => {
       options={{
         ...defaultOptions,
         actions,
+        exporter,
       }}
     />
   );

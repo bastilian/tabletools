@@ -58,6 +58,7 @@ const DataViewTable = ({
       <DataViewToolbar
         pagination={pagination && <Pagination isCompact {...pagination} />}
         actions={actions}
+        ouiaId="data-view-table-toolbar"
       />
       <PatternFlyDataViewTable
         aria-label="Table"
