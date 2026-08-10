@@ -50,6 +50,7 @@ const argProps = {
   enableActions: propTypes.bool,
   dedicatedAction: propTypes.bool,
   manageColumns: propTypes.bool,
+  enableDragDrop: propTypes.bool,
   customEmptyRows: propTypes.bool,
   customEmptyState: propTypes.bool,
   enableExport: propTypes.bool,
@@ -78,6 +79,7 @@ const meta = {
       direction: 'asc',
     },
     manageColumns: true,
+    enableDragDrop: false,
     enableRowActions: true,
     enableActions: true,
     dedicatedAction: true,
@@ -117,6 +119,7 @@ const CommonExample = ({
   initialSort,
   enableInitialSort,
   manageColumns,
+  enableDragDrop,
   enableRowActions,
   enableActions,
   dedicatedAction,
@@ -184,6 +187,7 @@ const CommonExample = ({
         ...defaultOptions,
         debug,
         manageColumns,
+        enableDragDrop,
         ...(enableInitialSort ? { sortBy: initialSort } : {}),
         ...(enableRowActions
           ? {
@@ -540,6 +544,31 @@ export const WithErrorPassed = {
     ),
   ],
   render: (args) => <WithErrorPassedExample {...args} />,
+};
+
+export const WithColumnDragDrop = {
+  args: {
+    manageColumns: true,
+    enableDragDrop: true,
+    enableRowActions: false,
+    enableActions: false,
+    dedicatedAction: false,
+    customEmptyRows: false,
+    customEmptyState: false,
+    enableExport: false,
+    enableDetails: false,
+    enableBulkSelect: false,
+  },
+  decorators: [
+    (Story) => (
+      <QueryClientProvider client={queryClient}>
+        <TableStateProvider>
+          <Story />
+        </TableStateProvider>
+      </QueryClientProvider>
+    ),
+  ],
+  render: (args) => <CommonExample {...args} />,
 };
 
 export default meta;

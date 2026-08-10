@@ -31,6 +31,7 @@ const argProps = {
   enableActions: propTypes.bool,
   dedicatedAction: propTypes.bool,
   manageColumns: propTypes.bool,
+  enableDragDrop: propTypes.bool,
   customEmptyRows: propTypes.bool,
   customEmptyState: propTypes.bool,
   enableExport: propTypes.bool,
@@ -63,6 +64,7 @@ const meta = {
     enableActions: true,
     dedicatedAction: true,
     manageColumns: true,
+    enableDragDrop: false,
     customEmptyRows: true,
     customEmptyState: true,
     enableExport: true,
@@ -79,6 +81,7 @@ const StaticTableExample = ({
   filtered,
   sortable,
   manageColumns,
+  enableDragDrop,
   enableRowActions,
   enableActions,
   dedicatedAction,
@@ -109,6 +112,7 @@ const StaticTableExample = ({
       options={{
         debug,
         manageColumns,
+        enableDragDrop,
         enableExport,
         ...(enableRowActions
           ? {

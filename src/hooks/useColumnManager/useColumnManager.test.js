@@ -16,26 +16,70 @@ describe('useColumnManager', () => {
   it('returns a columnManagerModalProps if enabled', () => {
     const { result } = renderHook(() => useColumnManager(...defaultArguments));
     expect(result.current.columnManagerModalProps).toBeDefined();
+    expect(result.current.columnManagerModalProps.enableDragDrop).toBe(false);
   });
 
-  it('applies columns', () => {
-    const { result } = renderHook(() => useColumnManager(...defaultArguments));
-    const columnsToSelect = result.current.columns.filter(
-      ({ key }) => key === 'desc',
+  it('passes enableDragDrop to the modal props when set', () => {
+    const { result } = renderHook(() =>
+      useColumnManager({ columns, manageColumns: true, enableDragDrop: true }),
     );
 
-    // Unmanageable columns are always visible in the table
-    const unManageableColumns = columns
-      .filter((col) => !col.manageable)
-      .map((col) => col.id);
+    expect(result.current.columnManagerModalProps.enableDragDrop).toBe(true);
+    expect(
+      result.current.columnManagerModalProps.appliedColumns.map(
+        ({ key }) => key,
+      ),
+    ).toEqual(['Title', 'Artist', 'column-2', 'Genre', 'Rating']);
+  });
+
+  it('applies columns and preserves order', () => {
+    const { result } = renderHook(() => useColumnManager(...defaultArguments));
+    const reorderedColumns = [
+      {
+        title: 'Genre',
+        key: 'Genre',
+        isShown: true,
+        isShownByDefault: true,
+      },
+      {
+        title: 'Title',
+        key: 'Title',
+        isShown: true,
+        isShownByDefault: true,
+      },
+      {
+        title: 'Artist',
+        key: 'Artist',
+        isShown: false,
+        isShownByDefault: true,
+      },
+      {
+        title: columns[2].title,
+        key: 'column-2',
+        isShown: true,
+        isShownByDefault: true,
+      },
+    ];
 
     act(() => {
-      result.current.columnManagerModalProps.applyColumns(columnsToSelect);
+      result.current.columnManagerModalProps.applyColumns(reorderedColumns);
     });
 
-    const appliedIds = columnsToSelect.map((col) => col.id);
-    const resultIds = result.current.columns.map((col) => col.id);
-
-    expect(resultIds).toEqual([...appliedIds, ...unManageableColumns]);
+    expect(result.current.columns.map(({ title }) => title)).toEqual([
+      'Genre',
+      'Title',
+      columns[2].title,
+      'Rating',
+    ]);
+    expect(
+      result.current.columnManagerModalProps.appliedColumns.map(
+        ({ key, isShown }) => ({ key, isShown }),
+      ),
+    ).toEqual([
+      { key: 'Genre', isShown: true },
+      { key: 'Title', isShown: true },
+      { key: 'Artist', isShown: false },
+      { key: 'column-2', isShown: true },
+    ]);
   });
 });
