@@ -1,7 +1,5 @@
 import React, { useMemo } from 'react';
 
-import useTableTools from '~/hooks/useTableTools';
-
 import {
   toDataViewProps,
   getDataViewStateProps,
@@ -10,41 +8,23 @@ import {
 } from '../helpers';
 
 /**
- * Adapter around useTableTools that reshapes its return value for Data View.
+ * Adapter: reshape useTableTools output for PatternFly Data View.
  *
- *  @param   {object}         props
- *  @param   {boolean}        [props.loading]
- *  @param   {Array|Function} props.items
- *  @param   {object}         [props.error]
- *  @param   {number}         [props.total]
- *  @param   {Array}          props.columns
- *  @param   {object}         [props.toolbarProps]
- *  @param   {object}         [props.options]
- *  @returns {object}                              Props ready for DataView / DataViewTable / DataViewToolbar
+ *  @param   {object}  tableToolsProps                Output from useTableTools (plus extras from parent)
+ *  @param   {boolean} [tableToolsProps.loading]      Loading state
+ *  @param   {object}  [tableToolsProps.error]        Error state
+ *  @param   {object}  [tableToolsProps.tableProps]   PatternFly table props from useTableTools
+ *  @param   {object}  [tableToolsProps.toolbarProps] Toolbar props from useTableTools
+ *  @returns {object}                                 Props ready for DataView / DataViewTable / DataViewToolbar
  *
  *  @group Hooks
  */
 const useTableToolsForDataView = ({
-  loading: externalLoading,
-  items: externalItems,
-  error: externalError,
-  total: externalTotal,
-  columns,
-  toolbarProps: toolbarPropsProp,
-  options = {},
+  loading,
+  error,
+  tableProps,
+  toolbarProps = {},
 }) => {
-  const { loading, tableProps, toolbarProps } = useTableTools(
-    externalLoading,
-    externalItems,
-    externalError,
-    externalTotal,
-    {
-      columns,
-      toolbarProps: toolbarPropsProp,
-      ...options,
-    },
-  );
-
   const actions = useMemo(() => {
     const actionNodes = toDataViewActions(toolbarProps.actionsConfig?.actions);
     const exportNode = toDataViewExport(toolbarProps.exportConfig);
@@ -70,31 +50,42 @@ const useTableToolsForDataView = ({
     () =>
       getDataViewStateProps({
         loading,
-        error: externalError,
+        error,
         rows: dataViewRows,
         columns: dataViewColumns,
         perPage: toolbarProps.pagination?.perPage,
       }),
     [
       loading,
-      externalError,
+      error,
       dataViewRows,
       dataViewColumns,
       toolbarProps.pagination?.perPage,
     ],
   );
 
-  return {
-    columns: dataViewColumns,
-    rows: dataViewRows,
-    activeState,
-    headStates,
-    bodyStates,
-    toolbarProps: {
-      pagination: toolbarProps.pagination,
+  return useMemo(
+    () => ({
+      columns: dataViewColumns,
+      rows: dataViewRows,
+      activeState,
+      headStates,
+      bodyStates,
+      toolbarProps: {
+        pagination: toolbarProps.pagination,
+        actions,
+      },
+    }),
+    [
+      dataViewColumns,
+      dataViewRows,
+      activeState,
+      headStates,
+      bodyStates,
+      toolbarProps.pagination,
       actions,
-    },
-  };
+    ],
+  );
 };
 
 export default useTableToolsForDataView;

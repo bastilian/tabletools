@@ -5,3 +5,4 @@ export { default as NoResultsTable } from './NoResultsTable';
 export { default as FilterModal } from './FilterModal';
 export { default as TableViewToggle } from './TableViewToggle';
 export { default as DataViewTable } from './DataViewTable';
+export { default as DeprecatedTable } from './DeprecatedTable';

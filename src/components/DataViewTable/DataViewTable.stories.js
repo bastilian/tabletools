@@ -2,17 +2,15 @@ import React from 'react';
 import defaultStoryMeta from '~/support/defaultStoryMeta';
 import columns from '~/support/factories/columns';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { TableStateProvider } from '~/components';
+import { TableStateProvider, TableToolsTable } from '~/components';
 import useExampleDataQuery from '~/support/hooks/useExampleDataQuery';
 import paginationSerialiser from '~/components/StaticTableToolsTable/helpers/serialisers/pagination';
 import sortSerialiser from '~/components/StaticTableToolsTable/helpers/serialisers/sort';
 import { actions } from '~/support/constants';
 
-import DataViewTable from './DataViewTable';
-
 const meta = {
   title: 'DataViewTable',
-  component: DataViewTable,
+  component: TableToolsTable,
   ...defaultStoryMeta,
 };
 
@@ -39,7 +37,8 @@ const CommonExample = () => {
   });
 
   return (
-    <DataViewTable
+    <TableToolsTable
+      tableToolsTableVariant="dataViewTable"
       items={data}
       columns={columns}
       total={total}
@@ -74,7 +73,8 @@ const WithErrorPassedExample = () => {
     error,
   } = useExampleDataQuery({ endpoint: '/api/error' });
   return (
-    <DataViewTable
+    <TableToolsTable
+      tableToolsTableVariant="dataViewTable"
       items={data}
       columns={columns}
       total={total}
@@ -108,7 +108,8 @@ const EmptyExample = () => {
   });
 
   return (
-    <DataViewTable
+    <TableToolsTable
+      tableToolsTableVariant="dataViewTable"
       items={data}
       columns={columns}
       total={total}

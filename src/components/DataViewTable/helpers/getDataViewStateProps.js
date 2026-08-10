@@ -9,18 +9,6 @@ import { getDefaultEmptyBodyState, getErrorBodyState } from './bodyStates';
 
 const DEFAULT_SKELETON_ROWS = 10;
 
-/**
- * Builds DataView activeState + head/body state content.
- *
- *  @param   {object}                                                                    params
- *  @param   {boolean}                                                                   params.loading
- *  @param   {object}                                                                    [params.error]
- *  @param   {Array}                                                                     params.rows         DataView rows (from toDataViewProps)
- *  @param   {Array}                                                                     params.columns      DataView columns (from toDataViewProps)
- *  @param   {React.ReactNode}                                                           [params.emptyState] Optional custom empty body
- *  @param   {number}                                                                    [params.perPage]    Skeleton row count hint
- *  @returns {{ activeState: string|undefined, headStates: object, bodyStates: object }}
- */
 export const getDataViewStateProps = ({
   loading,
   error,

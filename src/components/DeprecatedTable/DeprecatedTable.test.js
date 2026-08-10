@@ -4,9 +4,9 @@ import { render, screen, waitFor } from '@testing-library/react';
 import items from '~/support/factories/items';
 
 import TableStateProvider from '../TableStateProvider';
-import TableToolsTable from './TableToolsTable';
+import TableToolsTable from '../TableToolsTable';
 
-describe('TableToolsTable', () => {
+describe('TableToolsTable (deprecated table variant)', () => {
   const exampleItems = items(100).sort((item) => item.name);
   const itemsFunc = jest.fn(async () => {
     return [exampleItems.slice(0, 10), exampleItems.length];
@@ -36,6 +36,4 @@ describe('TableToolsTable', () => {
     expect(screen.getByLabelText(ariaLabel)).toBeInTheDocument();
     expect(await screen.findByText(exampleItems[1].title)).toBeInTheDocument();
   });
-
-  // TODO Extend with more tests for basic filtering, paginating, sorting etc.
 });

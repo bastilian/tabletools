@@ -1,23 +1,15 @@
 import React from 'react';
 import propTypes from 'prop-types';
-import { Pagination, PaginationVariant } from '@patternfly/react-core';
-import {
-  Table,
-  TableBody,
-  TableHeader,
-} from '@patternfly/react-table/deprecated';
-import {
-  SkeletonTable,
-  ColumnManagementModal,
-} from '@patternfly/react-component-groups';
-
-import PrimaryToolbar from '@redhat-cloud-services/frontend-components/PrimaryToolbar';
-import TableToolbar from '@redhat-cloud-services/frontend-components/TableToolbar';
+import { ColumnManagementModal } from '@patternfly/react-component-groups';
 
 import useTableTools from '~/hooks/useTableTools';
-import { TableStateProvider, FilterModal, TableViewToggle } from '~/components';
+
+import TableStateProvider from './TableStateProvider';
+import FilterModal from './FilterModal';
+import { variants } from './constants';
 
 const TableToolsTable = ({
+  tableToolsTableVariant = 'table',
   loading: externalLoading,
   items: externalItems,
   error: externalError,
@@ -34,14 +26,12 @@ const TableToolsTable = ({
   paginationProps,
   ...tablePropsRest
 }) => {
+  const TableComponent = variants[tableToolsTableVariant];
   const {
-    view,
-    loading,
     toolbarProps,
-    tableProps,
     filterModalProps,
     columnManagerModalProps,
-    tableViewToggleProps,
+    ...tableToolsProps
   } = useTableTools(
     externalLoading,
     externalItems,
@@ -59,37 +49,17 @@ const TableToolsTable = ({
 
   return (
     <>
-      <PrimaryToolbar aria-label="Table toolbar" {...toolbarProps}>
-        {toolbarProps?.children}
-        {tableViewToggleProps && <TableViewToggle {...tableViewToggleProps} />}
-      </PrimaryToolbar>
-
-      {
-        // TODO This is a bit hackish. We should rather have an indicator if data necessary for the current view is loading.
-        (view === 'rows' || (view === 'tree' && !treeTable)) && loading ? (
-          <SkeletonTable
-            rowsCount={toolbarProps?.pagination?.perPage || 10}
-            // TODO use Th when migrating to PF composable tables
-            columns={columns.map(({ title }) => title)}
-          />
-        ) : (
-          <Table aria-label="Table" {...tableProps}>
-            <TableHeader {...tableHeaderProps} />
-            <TableBody {...tableBodyProps} />
-          </Table>
-        )
-      }
-
-      <TableToolbar isFooter {...tableToolbarProps}>
-        {toolbarProps.pagination && (
-          <Pagination
-            aria-label="Pagination-ToolBar"
-            variant={PaginationVariant.bottom}
-            {...toolbarProps.pagination}
-            {...paginationProps}
-          />
-        )}
-      </TableToolbar>
+      <TableComponent
+        {...tableToolsProps}
+        toolbarProps={toolbarProps}
+        columns={columns}
+        treeTable={treeTable}
+        tableHeaderProps={tableHeaderProps}
+        tableBodyProps={tableBodyProps}
+        tableToolbarProps={tableToolbarProps}
+        paginationProps={paginationProps}
+        error={externalError}
+      />
 
       {columnManagerModalProps && (
         <ColumnManagementModal {...columnManagerModalProps} />
@@ -101,6 +71,7 @@ const TableToolsTable = ({
 };
 
 TableToolsTable.propTypes = {
+  tableToolsTableVariant: propTypes.string,
   items: propTypes.oneOfType([propTypes.array, propTypes.func]).isRequired,
   columns: propTypes.arrayOf(
     propTypes.shape({
@@ -142,7 +113,7 @@ TableToolsTable.propTypes = {
  *  @param   {object}             [props.paginationProps]   Props to be passed on the Pagination component
  *  @returns {React.ReactElement}                           Returns a `PrimaryToolbar` component, a Patternfly (v4) `Table` component and a `TableToolbarComponent` wrapped together
  *
- *  @document ../../docs/using-table-tools.md
+ *  @document ../docs/using-table-tools.md
  *
  *  @group Components
  *

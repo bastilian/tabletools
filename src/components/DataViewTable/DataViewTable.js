@@ -7,35 +7,21 @@ import {
 } from '@patternfly/react-data-view';
 import { Pagination, PaginationVariant } from '@patternfly/react-core';
 
-import { TableStateProvider } from '~/components';
-
 import useTableToolsForDataView from './hooks/useTableToolsForDataView';
 
 /**
- * DataView-based variant of TableToolsTable.
- * Reuses useTableTools (via useTableToolsForDataView) and renders PatternFly Data View.
+ * Data View presentation variant.
  *
- *  @param   {object}             props           Component props
- *  @param   {Array|Function}     props.items     Items array or async fetch function
- *  @param   {Array}              props.columns   TableTools column definitions
- *  @param   {boolean}            [props.loading] External loading flag
- *  @param   {object}             [props.error]   External error
- *  @param   {number}             [props.total]   External total count
- *  @param   {object}             [props.options] Options passed to useTableTools
- *  @returns {React.ReactElement}                 DataView table
+ *  @param   {object}             props                Component props (useTableTools output)
+ *  @param   {boolean}            [props.loading]      Loading state
+ *  @param   {object}             [props.error]        Error state
+ *  @param   {object}             [props.tableProps]   PatternFly table props from useTableTools
+ *  @param   {object}             [props.toolbarProps] Toolbar props from useTableTools
  *
  *  @group Components
+ *  @returns {React.ReactElement}                      DataView table
  */
-const DataViewTable = ({
-  loading,
-  items,
-  error,
-  total,
-  columns,
-  toolbarProps,
-  options,
-  ...rest
-}) => {
+const DataViewTable = (props) => {
   const {
     columns: dataViewColumns,
     rows: dataViewRows,
@@ -43,15 +29,7 @@ const DataViewTable = ({
     headStates,
     bodyStates,
     toolbarProps: { pagination, actions } = {},
-  } = useTableToolsForDataView({
-    loading,
-    items,
-    error,
-    total,
-    columns,
-    toolbarProps,
-    options,
-  });
+  } = useTableToolsForDataView(props);
 
   return (
     <DataView activeState={activeState}>
@@ -61,12 +39,11 @@ const DataViewTable = ({
         ouiaId="data-view-table-toolbar"
       />
       <PatternFlyDataViewTable
-        aria-label="Table"
+        aria-label="DataViewTable"
         columns={dataViewColumns}
         rows={dataViewRows}
         headStates={headStates}
         bodyStates={bodyStates}
-        {...rest}
       />
       <DataViewToolbar
         pagination={
@@ -80,19 +57,10 @@ const DataViewTable = ({
 };
 
 DataViewTable.propTypes = {
-  items: propTypes.oneOfType([propTypes.array, propTypes.func]).isRequired,
-  columns: propTypes.array.isRequired,
   loading: propTypes.bool,
   error: propTypes.object,
-  total: propTypes.number,
+  tableProps: propTypes.object,
   toolbarProps: propTypes.object,
-  options: propTypes.object,
 };
 
-const DataViewTableWithProvider = (props) => (
-  <TableStateProvider>
-    <DataViewTable {...props} />
-  </TableStateProvider>
-);
-
-export default DataViewTableWithProvider;
+export default DataViewTable;
