@@ -1,6 +1,13 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import propTypes from 'prop-types';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { fn } from 'storybook/test';
 import {
   Card,
   CardBody,
@@ -17,13 +24,21 @@ import {
 import defaultStoryMeta from '~/support/defaultStoryMeta';
 import columns from '~/support/factories/columns';
 import filters, { title, genre } from '~/support/factories/filters';
+import itemsFactory from '~/support/factories/items';
+
 import paginationSerialiser from '~/components/StaticTableToolsTable/helpers/serialisers/pagination';
 import sortSerialiser from '~/components/StaticTableToolsTable/helpers/serialisers/sort';
 import filtersSerialiser from '~/components/StaticTableToolsTable/helpers/serialisers/filters';
 import useExampleDataQuery from '~/support/hooks/useExampleDataQuery';
 
 import { TableToolsTable, TableStateProvider } from '~/components';
-import { useFullTableState, useStateCallbacks, useItemsData } from '~/hooks';
+import {
+  useFullTableState,
+  useStateCallbacks,
+  useItemsData,
+  usePagination,
+  useRawTableState,
+} from '~/hooks';
 
 const queryClient = new QueryClient();
 
@@ -635,6 +650,163 @@ export const AccessItemsStory = {
     ),
   ],
   render: (args) => <AccessItemsExample {...args} />,
+};
+
+const LAST_PAGE_DELETION_PAGE_SIZE = 10;
+const LAST_PAGE_DELETION_INITIAL_ITEMS = itemsFactory(21).map(
+  (item, index) => ({
+    ...item,
+    title: `Item ${index + 1}`,
+    artist: `Collection ${Math.floor(index / LAST_PAGE_DELETION_PAGE_SIZE) + 1}`,
+  }),
+);
+
+const getLastPage = (total, perPage) => Math.max(1, Math.ceil(total / perPage));
+
+const fetchLastPageDeletionItems = async (
+  items,
+  { offset = 0, limit = LAST_PAGE_DELETION_PAGE_SIZE } = {},
+) => {
+  // Replicate the error that would be thrown if the offset is out of range
+  if (items.length > 0 && offset >= items.length) {
+    throw new Error('INVALID_OFFSET');
+  }
+
+  // Slice items and mock the response
+  return {
+    data: items.slice(offset, offset + limit),
+    meta: {
+      total: items.length,
+    },
+  };
+};
+
+const LastPageDeletionExample = ({ applyFix = false, onFetch }) => {
+  const callbacks = useStateCallbacks();
+  const tableState = useRawTableState();
+  const { toolbarProps: { pagination } = {} } = usePagination({
+    total: LAST_PAGE_DELETION_INITIAL_ITEMS.length,
+    perPage: LAST_PAGE_DELETION_PAGE_SIZE,
+  });
+  const selected = tableState?.selected;
+  const currentPage = tableState?.pagination?.state?.page || 1;
+  const perPage =
+    tableState?.pagination?.state?.perPage || LAST_PAGE_DELETION_PAGE_SIZE;
+  const itemsRef = useRef(LAST_PAGE_DELETION_INITIAL_ITEMS);
+
+  const fetchItems = useCallback(
+    async ({ pagination } = {}) => {
+      const { offset = 0, limit = LAST_PAGE_DELETION_PAGE_SIZE } =
+        pagination || {};
+
+      // Log fetch parameters
+      onFetch?.({
+        offset,
+        limit,
+        itemsLength: itemsRef.current.length,
+        outOfRange:
+          itemsRef.current.length > 0 && offset >= itemsRef.current.length,
+      });
+
+      const {
+        data,
+        meta: { total },
+      } = await fetchLastPageDeletionItems(itemsRef.current, pagination);
+
+      return [data, total];
+    },
+    [onFetch],
+  );
+
+  const handleDelete = useCallback(async () => {
+    // Filter out the selected items from the itemsRef.current
+    itemsRef.current = itemsRef.current.filter(
+      ({ id, itemId }) => !selected.includes(id) && !selected.includes(itemId),
+    );
+    // Reset the selection
+    callbacks.current.resetSelection?.();
+
+    if (applyFix) {
+      // If we're off the range, update the last page
+      const nextLastPage = getLastPage(itemsRef.current.length, perPage);
+      if (currentPage > nextLastPage) {
+        pagination?.onSetPage?.(undefined, nextLastPage);
+        return;
+      }
+    }
+
+    // Reload the table
+    await callbacks.current.reload?.();
+  }, [applyFix, callbacks, currentPage, pagination, perPage, selected]);
+
+  return (
+    <>
+      <Card style={{ marginBottom: '1rem' }}>
+        <CardBody>
+          <strong>
+            {applyFix
+              ? 'Fixed version: page is updated before reload'
+              : 'Broken version: stale offset after last-page deletion'}
+          </strong>
+          <p>
+            This story demonstrates what happens when deleting the only
+            remaining item on the last page makes the current pagination offset
+            invalid.
+          </p>
+          <ol>
+            <li>Start on the last page (page 3).</li>
+            <li>Select the only row on that page.</li>
+            <li>Click `Delete selected` and watch the Actions panel below.</li>
+          </ol>
+          <p>
+            {applyFix
+              ? 'Expected result: the table moves back to page 2 instead of fetching with an invalid offset.'
+              : 'Expected result: the table tries to fetch with an out-of-range offset.'}
+          </p>
+        </CardBody>
+      </Card>
+      <TableToolsTable
+        items={fetchItems}
+        columns={columns.slice(0, 3)}
+        options={{
+          ...defaultOptions,
+          perPage: LAST_PAGE_DELETION_PAGE_SIZE,
+          onSelect: true,
+          dedicatedAction: () => (
+            <Button
+              isDisabled={!selected?.length}
+              variant="primary"
+              onClick={handleDelete}
+            >
+              Delete selected
+            </Button>
+          ),
+        }}
+      />
+    </>
+  );
+};
+
+LastPageDeletionExample.propTypes = {
+  applyFix: propTypes.bool,
+  onFetch: propTypes.func,
+};
+
+export const LastPageDeletionRefetchStory = {
+  decorators: [
+    (Story) => (
+      <QueryClientProvider client={queryClient}>
+        <TableStateProvider>
+          <Story />
+        </TableStateProvider>
+      </QueryClientProvider>
+    ),
+  ],
+  render: (args) => <LastPageDeletionExample {...args} />,
+  args: {
+    applyFix: false,
+    onFetch: fn(),
+  },
 };
 
 export default meta;
