@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from 'react';
+import { useEffect } from 'react';
 
 import useDebug from '~/hooks/useDebug';
 import usePagination from '~/hooks/usePagination';
@@ -16,18 +16,38 @@ import useToolbarActions from '~/hooks/useToolbarActions';
 /**
  *  @typedef {object} useTableToolsReturn
  *
- *  @property {object} toolbarProps Object containing PrimaryToolbar props
- *  @property {object} tableProps   Object containing Patternfly (deprecated) Table props
+ *  @property {string}           [view]                    Current table view
+ *  @property {boolean}          loading                   Loading state
+ *  @property {Array}            columns                   Managed column definitions
+ *  @property {object}           [tableViewToggleProps]    Props for TableViewToggle
+ *  @property {object}           [filterModalProps]        Props for FilterModal
+ *  @property {object}           [columnManagerModalProps] Props for ColumnManagementModal
+ *  @property {object}           [toolbarPropsOption]      Consumer toolbar props from options
+ *  @property {object}           [tablePropsOption]        Consumer table props from options
+ *  @property {Function|boolean} [actionResolver]          Row action resolver when enabled
+ *  @property {object}           [toolbarActionsProps]     Toolbar actions slice
+ *  @property {object}           [paginationToolbarProps]  Pagination toolbar slice
+ *  @property {object}           [conditionalFilterProps]  Filter toolbar slice
+ *  @property {object}           [bulkSelectToolbarProps]  Bulk-select toolbar slice
+ *  @property {object}           [bulkSelectTableProps]    Bulk-select table slice
+ *  @property {object}           [expandableTableProps]    Expandable table slice
+ *  @property {object}           [radioSelectTableProps]   Radio-select table slice
+ *  @property {object}           [sortableTableProps]      Sort table slice
+ *  @property {object}           [tableViewToolbarProps]   Table-view toolbar slice
+ *  @property {object}           [tableViewTableProps]     Table-view table slice
+ *  @property {object}           [exportToolbarProps]      Export toolbar slice
  */
 
 /**
- * This hook combines several "Table hooks" and returns props for Patternfly (v4) Table components and the FEC PrimaryToolbar
+ * Combines table feature hooks and returns building-block props.
  *
- *  @param   {Array | Function}    items     An array or (async) function that returns an array of items to render or an async function to call with the tableState and serialised table state
- *  @param   {object}              columns   An array of columns to render the items/rows with
- *  @param   {object}              [options] AsyncTableTools options
+ *  @param   {boolean}             externalLoading External loading flag
+ *  @param   {Array | Function}    externalItems   Items array or async fetch function
+ *  @param   {object}              externalError   External error
+ *  @param   {number}              externalTotal   External total count
+ *  @param   {object}              [options]       AsyncTableTools options
  *
- *  @returns {useTableToolsReturn}           An object of props meant to be used in the {@link TableToolsTable}
+ *  @returns {useTableToolsReturn}                 Building blocks for variant adapters
  *
  *  @group Hooks
  *
@@ -120,54 +140,6 @@ const useTableTools = (
     ...options,
   });
 
-  const toolbarProps = useMemo(
-    () => ({
-      ...toolbarActionsProps,
-      ...paginationToolbarProps,
-      ...conditionalFilterProps,
-      ...bulkSelectToolbarProps,
-      ...exportConfig.toolbarProps,
-      ...toolbarPropsOption,
-      ...tableViewToolbarProps,
-    }),
-    [
-      toolbarActionsProps,
-      paginationToolbarProps,
-      conditionalFilterProps,
-      bulkSelectToolbarProps,
-      exportConfig?.toolbarProps,
-      tableViewToolbarProps,
-      toolbarPropsOption,
-    ],
-  );
-
-  const tableProps = useMemo(
-    () => ({
-      // TODO we should have a hook that maintains columns.
-      // at least the columns manager and table sort hook "act" on columns, currently without a good interface
-      cells: columns,
-      ...sortableTableProps,
-      ...bulkSelectTableProps,
-      ...expandableTableProps,
-      ...tablePropsOption,
-      onSelect: bulkSelectTableProps?.onSelect || tablePropsOption?.onSelect,
-      ...radioSelectTableProps,
-      actionResolver: actionResolverEnabled && actionResolver,
-      ...tableViewTableProps,
-    }),
-    [
-      columns,
-      sortableTableProps,
-      bulkSelectTableProps,
-      tablePropsOption,
-      expandableTableProps,
-      radioSelectTableProps,
-      tableViewTableProps,
-      actionResolver,
-      actionResolverEnabled,
-    ],
-  );
-
   useEffect(() => {
     if (debug) {
       console.group('TableTools props');
@@ -189,16 +161,6 @@ const useTableTools = (
 
   useEffect(() => {
     if (debug) {
-      console.group('TableTools return props');
-      console.log('view', view);
-      console.log('tableProps', tableProps);
-      console.log('toolbarProps', toolbarProps);
-      console.groupEnd();
-    }
-  }, [tableProps, toolbarProps, debug, view]);
-
-  useEffect(() => {
-    if (debug) {
       console.group('TableTools data states');
       console.log('loading', loading);
       console.log('items', items);
@@ -211,11 +173,24 @@ const useTableTools = (
   return {
     view,
     loading,
-    toolbarProps,
-    tableProps,
-    columnManagerModalProps,
+    columns,
     tableViewToggleProps,
     filterModalProps,
+    columnManagerModalProps,
+    toolbarPropsOption,
+    tablePropsOption,
+    actionResolver: actionResolverEnabled && actionResolver,
+    toolbarActionsProps,
+    paginationToolbarProps,
+    conditionalFilterProps,
+    bulkSelectToolbarProps,
+    bulkSelectTableProps,
+    expandableTableProps,
+    radioSelectTableProps,
+    sortableTableProps,
+    tableViewToolbarProps,
+    tableViewTableProps,
+    exportToolbarProps: exportConfig?.toolbarProps,
   };
 };
 

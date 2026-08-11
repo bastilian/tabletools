@@ -17,27 +17,34 @@ describe('useTableTools', () => {
     { columns },
   ];
 
-  it('returns a object with tableProps and toolbarProps even with no items, columns or options passed', async () => {
+  it('returns building-block props even with no items', async () => {
     const { result } = renderHook(
       () => useTableTools(false, [], undefined, 0, { columns }),
       DEFAULT_RENDER_OPTIONS,
     );
 
-    await waitFor(() => expect(result.current.tableProps).toBeDefined());
-    await waitFor(() => expect(result.current.toolbarProps).toBeDefined());
+    await waitFor(() => expect(result.current.columns).toBeDefined());
+    await waitFor(() =>
+      expect(result.current.paginationToolbarProps).toBeDefined(),
+    );
+    expect(result.current.tableProps).toBeUndefined();
+    expect(result.current.toolbarProps).toBeUndefined();
   });
 
-  it('returns a object with tableProps and toolbarProps with items array', async () => {
+  it('returns building-block props with items array', async () => {
     const { result } = renderHook(
       () => useTableTools(...defaultArguments),
       DEFAULT_RENDER_OPTIONS,
     );
 
-    await waitFor(() => expect(result.current.tableProps).toBeDefined());
-    await waitFor(() => expect(result.current.toolbarProps).toBeDefined());
+    await waitFor(() => expect(result.current.columns).toBeDefined());
+    await waitFor(() =>
+      expect(result.current.sortableTableProps).toBeDefined(),
+    );
+    expect(result.current.loading).toBe(false);
   });
 
-  it('returns a object with tableProps and toolbarProps while fetching items async', async () => {
+  it('returns building-block props while fetching items async', async () => {
     const asyncFunction = jest.fn(async () => [
       exampleItems,
       exampleItems.length,
