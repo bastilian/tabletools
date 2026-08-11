@@ -4,7 +4,7 @@ import { render, screen, waitFor } from '@testing-library/react';
 import items from '~/support/factories/items';
 
 import TableStateProvider from '../TableStateProvider';
-import TableToolsTable from './TableToolsTable';
+import TableToolsTable from '../TableToolsTable';
 
 describe('TableToolsTable', () => {
   const exampleItems = items(100).sort((item) => item.name);
