@@ -25,7 +25,8 @@ import useToolbarActions from '~/hooks/useToolbarActions';
  *  @property {object}           [toolbarPropsOption]      Consumer toolbar props from options
  *  @property {object}           [tablePropsOption]        Consumer table props from options
  *  @property {Function|boolean} [actionResolver]          Row action resolver when enabled
- *  @property {object}           [toolbarActionsProps]     Toolbar actions slice
+ *  @property {object}           [dedicatedAction]         Primary/dedicated toolbar action
+ *  @property {Array}            [toolbarActions]          Toolbar actions (domain)
  *  @property {object}           [paginationToolbarProps]  Pagination toolbar slice
  *  @property {object}           [conditionalFilterProps]  Filter toolbar slice
  *  @property {object}           [bulkSelectToolbarProps]  Bulk-select toolbar slice
@@ -42,7 +43,7 @@ import useToolbarActions from '~/hooks/useToolbarActions';
  * Combines table feature hooks and returns building-block props.
  *
  *  @param   {boolean}             externalLoading External loading flag
- *  @param   {Array | Function}    externalItems   Items array or async fetch function
+ *  @param   {Function}            externalItems   Items array or async fetch function
  *  @param   {object}              externalError   External error
  *  @param   {number}              externalTotal   External total count
  *  @param   {object}              [options]       AsyncTableTools options
@@ -81,7 +82,7 @@ const useTableTools = (
   const { columns, columnManagerAction, columnManagerModalProps } =
     useColumnManager(options);
 
-  const { toolbarProps: toolbarActionsProps } = useToolbarActions(
+  const { dedicatedAction, actions: toolbarActions } = useToolbarActions(
     options,
     columnManagerAction,
   );
@@ -180,7 +181,8 @@ const useTableTools = (
     toolbarPropsOption,
     tablePropsOption,
     actionResolver: actionResolverEnabled && actionResolver,
-    toolbarActionsProps,
+    dedicatedAction,
+    toolbarActions,
     paginationToolbarProps,
     conditionalFilterProps,
     bulkSelectToolbarProps,

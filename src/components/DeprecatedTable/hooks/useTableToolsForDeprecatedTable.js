@@ -1,5 +1,7 @@
 import { useMemo } from 'react';
 
+import { toToolbarActions } from '../../PrimaryToolbar/helpers/toToolbarActions';
+
 /**
  * Adapter: assemble useTableTools building blocks into deprecated PatternFly
  * Table + FEC PrimaryToolbar props.
@@ -15,7 +17,8 @@ import { useMemo } from 'react';
  *  @param   {object}           [tableToolsProps.toolbarPropsOption]     Consumer toolbar props
  *  @param   {object}           [tableToolsProps.tablePropsOption]       Consumer table props
  *  @param   {Function|boolean} [tableToolsProps.actionResolver]         Row action resolver
- *  @param   {object}           [tableToolsProps.toolbarActionsProps]    Toolbar actions slice
+ *  @param   {object}           [tableToolsProps.dedicatedAction]        Primary/dedicated toolbar action
+ *  @param   {Array}            [tableToolsProps.toolbarActions]         Toolbar actions (domain)
  *  @param   {object}           [tableToolsProps.paginationToolbarProps] Pagination toolbar slice
  *  @param   {object}           [tableToolsProps.conditionalFilterProps] Filter toolbar slice
  *  @param   {object}           [tableToolsProps.bulkSelectToolbarProps] Bulk-select toolbar slice
@@ -41,7 +44,8 @@ const useTableToolsForDeprecatedTable = ({
   toolbarPropsOption,
   tablePropsOption,
   actionResolver,
-  toolbarActionsProps,
+  dedicatedAction,
+  toolbarActions,
   paginationToolbarProps,
   conditionalFilterProps,
   bulkSelectToolbarProps,
@@ -53,6 +57,15 @@ const useTableToolsForDeprecatedTable = ({
   tableViewTableProps,
   exportToolbarProps,
 }) => {
+  const toolbarActionsProps = useMemo(
+    () =>
+      toToolbarActions({
+        firstAction: dedicatedAction,
+        actions: toolbarActions,
+      }).toolbarProps,
+    [dedicatedAction, toolbarActions],
+  );
+
   const toolbarProps = useMemo(
     () => ({
       ...toolbarActionsProps,

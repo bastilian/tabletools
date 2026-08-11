@@ -1,6 +1,4 @@
-import React from 'react';
-
-import { toToolbarActions } from './helpers';
+import { toToolbarActions } from './toToolbarActions';
 
 describe('toToolbarActions', () => {
   it('returns nothing if no actions are given', () => {
@@ -10,17 +8,17 @@ describe('toToolbarActions', () => {
   it('prepends an empty/undefined "firstAction"', () => {
     expect(
       toToolbarActions({
-        actions: ['exaple-bogus-action'],
+        actions: ['exaple-action'],
       }).toolbarProps.actionsConfig.actions[0],
     ).toBeUndefined();
   });
 
   it('it uses the firstAction if set in options', () => {
-    const firstAction = () => <>bogus-first-action</>;
+    const firstAction = () => 'first-action';
 
     expect(
       toToolbarActions({
-        actions: ['example-bogus-action'],
+        actions: ['example-action'],
         firstAction,
       }).toolbarProps.actionsConfig.actions[0],
     ).toBeDefined();
