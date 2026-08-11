@@ -26,7 +26,7 @@ import useToolbarActions from '~/hooks/useToolbarActions';
  *  @property {object}           [tablePropsOption]        Consumer table props from options
  *  @property {Function|boolean} [actionResolver]          Row action resolver when enabled
  *  @property {object}           [dedicatedAction]         Primary/dedicated toolbar action
- *  @property {Array}            [toolbarActions]          Toolbar actions (domain)
+ *  @property {Array}            [toolbarActions]          Toolbar actions
  *  @property {object}           [paginationToolbarProps]  Pagination toolbar slice
  *  @property {object}           [conditionalFilterProps]  Filter toolbar slice
  *  @property {object}           [bulkSelectToolbarProps]  Bulk-select toolbar slice
@@ -36,14 +36,15 @@ import useToolbarActions from '~/hooks/useToolbarActions';
  *  @property {object}           [sortableTableProps]      Sort table slice
  *  @property {object}           [tableViewToolbarProps]   Table-view toolbar slice
  *  @property {object}           [tableViewTableProps]     Table-view table slice
- *  @property {object}           [exportToolbarProps]      Export toolbar slice
+ *  @property {boolean}          [exportIsDisabled]        Whether export is disabled
+ *  @property {Function}         [exportWithFormat]        Export runner
  */
 
 /**
  * Combines table feature hooks and returns building-block props.
  *
  *  @param   {boolean}             externalLoading External loading flag
- *  @param   {Function}            externalItems   Items array or async fetch function
+ *  @param   {Array|Function}      externalItems   Items array or async fetch function
  *  @param   {object}              externalError   External error
  *  @param   {number}              externalTotal   External total count
  *  @param   {object}              [options]       AsyncTableTools options
@@ -136,7 +137,7 @@ const useTableTools = (
       tablePropsOption?.onSelect,
   });
 
-  const exportConfig = useExport({
+  const { isDisabled: exportIsDisabled, exportWithFormat } = useExport({
     columns,
     ...options,
   });
@@ -192,7 +193,8 @@ const useTableTools = (
     sortableTableProps,
     tableViewToolbarProps,
     tableViewTableProps,
-    exportToolbarProps: exportConfig?.toolbarProps,
+    exportIsDisabled,
+    exportWithFormat,
   };
 };
 

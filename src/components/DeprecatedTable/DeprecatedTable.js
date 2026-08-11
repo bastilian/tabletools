@@ -101,7 +101,8 @@ DeprecatedTable.propTypes = {
   sortableTableProps: propTypes.object,
   tableViewToolbarProps: propTypes.object,
   tableViewTableProps: propTypes.object,
-  exportToolbarProps: propTypes.object,
+  exportIsDisabled: propTypes.bool,
+  exportWithFormat: propTypes.func,
 };
 
 export default DeprecatedTable;

@@ -1,10 +1,10 @@
 import { useMemo } from 'react';
 
 import { toToolbarActions } from '../../PrimaryToolbar/helpers/toToolbarActions';
+import { toExportConfig } from '../../PrimaryToolbar/helpers/toExportConfig';
 
 /**
- * Adapter: assemble useTableTools building blocks into deprecated PatternFly
- * Table + FEC PrimaryToolbar props.
+ * Adapter: assemble useTableTools building blocks into deprecated PatternFly table props.
  *
  *  @param   {object}           tableToolsProps                          Output from useTableTools (plus presentation extras)
  *  @param   {string}           [tableToolsProps.view]                   Current table view
@@ -18,7 +18,7 @@ import { toToolbarActions } from '../../PrimaryToolbar/helpers/toToolbarActions'
  *  @param   {object}           [tableToolsProps.tablePropsOption]       Consumer table props
  *  @param   {Function|boolean} [tableToolsProps.actionResolver]         Row action resolver
  *  @param   {object}           [tableToolsProps.dedicatedAction]        Primary/dedicated toolbar action
- *  @param   {Array}            [tableToolsProps.toolbarActions]         Toolbar actions (domain)
+ *  @param   {Array}            [tableToolsProps.toolbarActions]         Toolbar actions
  *  @param   {object}           [tableToolsProps.paginationToolbarProps] Pagination toolbar slice
  *  @param   {object}           [tableToolsProps.conditionalFilterProps] Filter toolbar slice
  *  @param   {object}           [tableToolsProps.bulkSelectToolbarProps] Bulk-select toolbar slice
@@ -28,7 +28,8 @@ import { toToolbarActions } from '../../PrimaryToolbar/helpers/toToolbarActions'
  *  @param   {object}           [tableToolsProps.sortableTableProps]     Sort table slice
  *  @param   {object}           [tableToolsProps.tableViewToolbarProps]  Table-view toolbar slice
  *  @param   {object}           [tableToolsProps.tableViewTableProps]    Table-view table slice
- *  @param   {object}           [tableToolsProps.exportToolbarProps]     Export toolbar slice
+ *  @param   {boolean}          [tableToolsProps.exportIsDisabled]       Whether export is disabled
+ *  @param   {Function}         [tableToolsProps.exportWithFormat]       Export runner
  *  @returns {object}                                                    Props ready for DeprecatedTable presentation
  *
  *  @group Hooks
@@ -55,7 +56,8 @@ const useTableToolsForDeprecatedTable = ({
   sortableTableProps,
   tableViewToolbarProps,
   tableViewTableProps,
-  exportToolbarProps,
+  exportIsDisabled,
+  exportWithFormat,
 }) => {
   const toolbarActionsProps = useMemo(
     () =>
@@ -64,6 +66,15 @@ const useTableToolsForDeprecatedTable = ({
         actions: toolbarActions,
       }).toolbarProps,
     [dedicatedAction, toolbarActions],
+  );
+
+  const exportToolbarProps = useMemo(
+    () =>
+      toExportConfig({
+        isDisabled: exportIsDisabled,
+        exportWithFormat,
+      }).toolbarProps,
+    [exportIsDisabled, exportWithFormat],
   );
 
   const toolbarProps = useMemo(
