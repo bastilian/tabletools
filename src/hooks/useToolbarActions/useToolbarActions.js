@@ -1,28 +1,31 @@
 import { useMemo } from 'react';
-import { toToolbarActions } from '../useTableTools/helpers';
 
 /**
- * Hook for managing toolbar actions including dedicated actions and column manager actions
- *  @param   {object} options             - Configuration options
- *  @param   {*}      columnManagerAction - Column manager action if available
- *  @returns {object}                     Object containing toolbarProps for actions
+ * Collects toolbar actions
+ *
+ *  @param   {object} options                   Table tools options
+ *  @param   {object} [options.dedicatedAction] Primary/dedicated action component
+ *  @param   {Array}  [options.actions]         Additional toolbar actions
+ *  @param   {object} [columnManagerAction]     Column manager toolbar action
+ *  @returns {object}                           `{ dedicatedAction, actions }`
+ *
+ *  @group Hooks
  */
 const useToolbarActions = (options, columnManagerAction) => {
-  const { dedicatedAction } = options;
-  const { toolbarProps: toolbarActionsProps } = useMemo(
-    () =>
-      toToolbarActions({
-        ...options,
-        firstAction: dedicatedAction,
-        actions: [
-          ...(options?.actions || []),
-          ...((columnManagerAction && [columnManagerAction]) || []),
-        ],
-      }),
-    [columnManagerAction, options, dedicatedAction],
+  const { dedicatedAction, actions: actionsOption } = options;
+
+  const actions = useMemo(
+    () => [
+      ...(actionsOption || []),
+      ...((columnManagerAction && [columnManagerAction]) || []),
+    ],
+    [actionsOption, columnManagerAction],
   );
 
-  return { toolbarProps: toolbarActionsProps };
+  return {
+    dedicatedAction,
+    actions,
+  };
 };
 
 export default useToolbarActions;

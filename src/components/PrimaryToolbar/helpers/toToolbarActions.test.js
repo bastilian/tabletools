@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { toToolbarActions } from './helpers';
+import { toToolbarActions } from './toToolbarActions';
 
 describe('toToolbarActions', () => {
   it('returns nothing if no actions are given', () => {

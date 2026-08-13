@@ -13,42 +13,42 @@ describe('useExport', () => {
     columns,
   };
 
-  it('returns an export config toolbar config', () => {
+  it('returns export props when exporter is set', () => {
     const { result } = renderHook(() => useExport(defaultOptions));
-    expect(result.current.toolbarProps.exportConfig).toBeDefined();
     expect(result.current).toEqual({
-      toolbarProps: {
-        exportConfig: {
-          isDisabled: false,
-          onSelect: expect.any(Function),
-        },
-      },
+      isDisabled: false,
+      exportWithFormat: expect.any(Function),
     });
   });
 
-  it('returns an export config toolbar config with disabled true', () => {
+  it('returns isDisabled true when configured', () => {
     const { result } = renderHook(() =>
       useExport({
         ...defaultOptions,
         isDisabled: true,
       }),
     );
-    expect(result.current.toolbarProps.exportConfig.isDisabled).toBe(true);
+    expect(result.current.isDisabled).toBe(true);
   });
 
-  it('calls the exporter via onSelect', () => {
+  it('calls the exporter via exportWithFormat', () => {
     const { result } = renderHook(() => useExport(defaultOptions));
 
     act(() => {
-      result.current.toolbarProps.exportConfig.onSelect(null, 'csv');
+      result.current.exportWithFormat('csv');
     });
 
     expect(exporter).toHaveBeenCalled();
 
     act(() => {
-      result.current.toolbarProps.exportConfig.onSelect(null, 'json');
+      result.current.exportWithFormat('json');
     });
 
     expect(exporter).toHaveBeenCalled();
+  });
+
+  it('returns an empty object when exporter is not set', () => {
+    const { result } = renderHook(() => useExport({ columns }));
+    expect(result.current).toEqual({});
   });
 });

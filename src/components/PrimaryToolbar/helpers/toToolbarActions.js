@@ -1,7 +1,13 @@
 import React from 'react';
 
-// TODO rethink when and how this should build actions and how to integrate actions
-// consider a "useTableActions" hook, which should handle table and row actions, etc.
+/**
+ * Maps toolbar actions to FEC PrimaryToolbar `actionsConfig` props.
+ *
+ *  @param   {object} params               Action inputs
+ *  @param   {Array}  [params.actions]     Toolbar action items
+ *  @param   {object} [params.firstAction] Dedicated primary action component
+ *  @returns {object}                      `{ toolbarProps }` or `{}`
+ */
 export const toToolbarActions = ({
   actions: actionsOption = [],
   firstAction: PrimaryAction = undefined,

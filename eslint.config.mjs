@@ -49,6 +49,7 @@ export default defineConfig([
 
       'jsdoc/tag-lines': 0,
       'jsdoc/require-jsdoc': 1,
+      'jsdoc/reject-function-type': 'off',
 
       'jsdoc/check-tag-names': [
         1,

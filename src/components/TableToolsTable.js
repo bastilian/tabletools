@@ -27,32 +27,26 @@ const TableToolsTable = ({
   ...tablePropsRest
 }) => {
   const TableComponent = variants[tableToolsTableVariant];
-  const {
-    toolbarProps,
-    filterModalProps,
-    columnManagerModalProps,
-    ...tableToolsProps
-  } = useTableTools(
-    externalLoading,
-    externalItems,
-    externalError,
-    externalTotal,
-    {
-      treeTable,
-      filters,
-      columns,
-      toolbarProps: toolbarPropsProp,
-      tableProps: tablePropsRest,
-      ...options,
-    },
-  );
+  const { filterModalProps, columnManagerModalProps, ...tableToolsProps } =
+    useTableTools(
+      externalLoading,
+      externalItems,
+      externalError,
+      externalTotal,
+      {
+        treeTable,
+        filters,
+        columns,
+        toolbarProps: toolbarPropsProp,
+        tableProps: tablePropsRest,
+        ...options,
+      },
+    );
 
   return (
     <>
       <TableComponent
         {...tableToolsProps}
-        toolbarProps={toolbarProps}
-        columns={columns}
         treeTable={treeTable}
         tableHeaderProps={tableHeaderProps}
         tableBodyProps={tableBodyProps}

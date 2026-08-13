@@ -7,12 +7,12 @@ import { downloadItems, exportableColumns } from './helpers';
 /**
  *  @typedef {object} useExportReturn
  *
- *  @property {object} toolbarProps              Object containing PrimaryToolbar props
- *  @property {object} toolbarProps.exportConfig Object containing the exportConfig prop for the PrimaryToolbar
+ *  @property {boolean}  [isDisabled]       Whether export is disabled
+ *  @property {Function} [exportWithFormat] Runs export for a given format
  */
 
 /**
- * Provides an `exportConfig` prop for a (Primary)Toolbar action
+ * Provides export props for table tools.
  *
  *  @param   {object}          [options]            AsyncTableTools options
  *  @param   {Function}        [options.exporter]   Function to return an array of items to be exported
@@ -22,7 +22,7 @@ import { downloadItems, exportableColumns } from './helpers';
  *  @param   {Function}        [options.onComplete] Function to call when the export succeeded
  *  @param   {Function}        [options.onError]    Function to call when there was an error exporting
  *
- *  @returns {useExportReturn}                      Props for PrimaryToolbar component
+ *  @returns {useExportReturn}                      Export props, or `{}` when disabled
  *
  *  @group Hooks
  *
@@ -66,12 +66,8 @@ const useExport = ({
 
   return enableExport
     ? {
-        toolbarProps: {
-          exportConfig: {
-            isDisabled,
-            onSelect: (_, format) => exportWithFormat(format),
-          },
-        },
+        isDisabled,
+        exportWithFormat,
       }
     : {};
 };

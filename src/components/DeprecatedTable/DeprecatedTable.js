@@ -16,19 +16,10 @@ import PrimaryToolbar from '../PrimaryToolbar/PrimaryToolbar';
  * Deprecated PatternFly Table presentation variant.
  * Owns PrimaryToolbar + table + footer TableToolbar.
  *
- *  @param   {object}             props                        Component props (useTableTools output)
- *  @param   {string}             [props.view]                 Current table view
- *  @param   {boolean}            [props.loading]              Loading state
- *  @param   {object}             [props.treeTable]            Tree table config
- *  @param   {Array}              [props.columns]              Column definitions
- *  @param   {object}             [props.toolbarProps]         Toolbar props from useTableTools
- *  @param   {object}             [props.tableProps]           PatternFly table props from useTableTools
- *  @param   {object}             [props.tableHeaderProps]     Props for TableHeader
- *  @param   {object}             [props.tableBodyProps]       Props for TableBody
- *  @param   {object}             [props.tableViewToggleProps] Props for TableViewToggle
- *  @param   {object}             [props.tableToolbarProps]    Props for footer TableToolbar
- *  @param   {object}             [props.paginationProps]      Props for bottom Pagination
- *  @returns {React.ReactElement}                              Deprecated table with toolbars
+ *  @param   {object}             props                     Building blocks from useTableTools plus presentation extras
+ *  @param   {object}             [props.tableToolbarProps] Props for footer TableToolbar
+ *  @param   {object}             [props.paginationProps]   Props for bottom Pagination
+ *  @returns {React.ReactElement}                           Deprecated table with toolbars
  *
  *  @group Components
  */
@@ -91,13 +82,27 @@ DeprecatedTable.propTypes = {
   loading: propTypes.bool,
   treeTable: propTypes.object,
   columns: propTypes.array,
-  toolbarProps: propTypes.object,
-  tableProps: propTypes.object,
   tableHeaderProps: propTypes.object,
   tableBodyProps: propTypes.object,
   tableViewToggleProps: propTypes.object,
   tableToolbarProps: propTypes.object,
   paginationProps: propTypes.object,
+  toolbarPropsOption: propTypes.object,
+  tablePropsOption: propTypes.object,
+  actionResolver: propTypes.oneOfType([propTypes.func, propTypes.bool]),
+  dedicatedAction: propTypes.elementType,
+  toolbarActions: propTypes.array,
+  paginationToolbarProps: propTypes.object,
+  conditionalFilterProps: propTypes.object,
+  bulkSelectToolbarProps: propTypes.object,
+  bulkSelectTableProps: propTypes.object,
+  expandableTableProps: propTypes.object,
+  radioSelectTableProps: propTypes.object,
+  sortableTableProps: propTypes.object,
+  tableViewToolbarProps: propTypes.object,
+  tableViewTableProps: propTypes.object,
+  exportIsDisabled: propTypes.bool,
+  exportWithFormat: propTypes.func,
 };
 
 export default DeprecatedTable;
