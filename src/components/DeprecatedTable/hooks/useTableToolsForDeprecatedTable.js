@@ -9,6 +9,9 @@ import { toRadioSelectTableProps } from '../helpers/toRadioSelectTableProps';
 import { toSortTableProps } from '../helpers/toSortTableProps';
 import { toExpandableTableProps } from '../helpers/toExpandableTableProps';
 import { toBulkSelectTableProps } from '../helpers/toBulkSelectTableProps';
+import { toTableViewTableProps } from '../helpers/toTableViewTableProps';
+import { toTableViewToolbarProps } from '../helpers/toTableViewToolbarProps';
+import { toTableViewToggleProps } from '../../PrimaryToolbar/helpers/toTableViewToggleProps';
 
 /**
  * Adapter: assemble useTableTools building blocks into deprecated PatternFly table props.
@@ -47,7 +50,6 @@ const useTableToolsForDeprecatedTable = ({
   treeTable,
   tableHeaderProps,
   tableBodyProps,
-  tableViewToggleProps,
   toolbarPropsOption,
   tablePropsOption,
   actionResolver,
@@ -59,8 +61,7 @@ const useTableToolsForDeprecatedTable = ({
   expandable,
   radioSelect,
   tableSort,
-  tableViewToolbarProps,
-  tableViewTableProps,
+  tableView,
   exportIsDisabled,
   exportWithFormat,
 }) => {
@@ -115,6 +116,21 @@ const useTableToolsForDeprecatedTable = ({
   const bulkSelectTableProps = useMemo(
     () => toBulkSelectTableProps(bulkSelect),
     [bulkSelect],
+  );
+
+  const tableViewTableProps = useMemo(
+    () => toTableViewTableProps(tableView),
+    [tableView],
+  );
+
+  const tableViewToolbarProps = useMemo(
+    () => toTableViewToolbarProps(tableView).toolbarProps,
+    [tableView],
+  );
+
+  const tableViewToggleProps = useMemo(
+    () => toTableViewToggleProps(tableView),
+    [tableView],
   );
 
   const toolbarProps = useMemo(

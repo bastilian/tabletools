@@ -19,8 +19,7 @@ import useToolbarActions from '~/hooks/useToolbarActions';
  *  @property {string}           [view]                    Current table view
  *  @property {boolean}          loading                   Loading state
  *  @property {Array}            columns                   Managed column definitions
- *  @property {object}           [tableViewToggleProps]    Props for TableViewToggle
- *  @property {object}           [filterModalProps]        Props for FilterModal
+ *  @property {object}           [tableView]               Table view props
  *  @property {object}           [columnManagerModalProps] Props for ColumnManagementModal
  *  @property {object}           [toolbarPropsOption]      Consumer toolbar props from options
  *  @property {object}           [tablePropsOption]        Consumer table props from options
@@ -33,8 +32,7 @@ import useToolbarActions from '~/hooks/useToolbarActions';
  *  @property {object}           [expandable]              Expandable props
  *  @property {object}           [radioSelect]             Radio-select props
  *  @property {object}           [tableSort]               Sort props
- *  @property {object}           [tableViewToolbarProps]   Table-view toolbar slice
- *  @property {object}           [tableViewTableProps]     Table-view table slice
+ *  @property {object}           [filterModalProps]        Props for FilterModal
  *  @property {boolean}          [exportIsDisabled]        Whether export is disabled
  *  @property {Function}         [exportWithFormat]        Export runner
  */
@@ -108,12 +106,7 @@ const useTableTools = (
     itemIdsOnPage: items?.map((item) => item[identifier]),
   });
 
-  const {
-    view,
-    toolbarProps: tableViewToolbarProps,
-    tableProps: tableViewTableProps,
-    tableViewToggleProps,
-  } = useTableView(loading, items, error, total, {
+  const tableView = useTableView(loading, items, error, total, {
     ...options,
     columns,
     expandable,
@@ -164,10 +157,9 @@ const useTableTools = (
   }, [debug, loading, items, error, total]);
 
   return {
-    view,
+    view: tableView.view,
     loading,
     columns,
-    tableViewToggleProps,
     filterModalProps,
     columnManagerModalProps,
     toolbarPropsOption,
@@ -181,8 +173,7 @@ const useTableTools = (
     expandable,
     radioSelect,
     tableSort,
-    tableViewToolbarProps,
-    tableViewTableProps,
+    tableView,
     exportIsDisabled,
     exportWithFormat,
   };
