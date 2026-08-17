@@ -29,8 +29,7 @@ import useToolbarActions from '~/hooks/useToolbarActions';
  *  @property {Array}            [toolbarActions]          Toolbar actions
  *  @property {object}           [pagination]              Pagination props
  *  @property {object}           [conditionalFilterProps]  Filter toolbar slice
- *  @property {object}           [bulkSelectToolbarProps]  Bulk-select toolbar slice
- *  @property {object}           [bulkSelectTableProps]    Bulk-select table slice
+ *  @property {object}           [bulkSelect]              Bulk select props
  *  @property {object}           [expandable]              Expandable props
  *  @property {object}           [radioSelect]             Radio-select props
  *  @property {object}           [tableSort]               Sort props
@@ -104,11 +103,7 @@ const useTableTools = (
   });
 
   const identifier = options.identifier || 'itemId';
-  const {
-    toolbarProps: bulkSelectToolbarProps,
-    tableProps: bulkSelectTableProps,
-    tableView: bulkSelectTableViewOptions,
-  } = useBulkSelect({
+  const bulkSelect = useBulkSelect({
     ...options,
     total,
     itemIdsOnPage: items?.map((item) => item[identifier]),
@@ -123,13 +118,13 @@ const useTableTools = (
     ...options,
     columns,
     expandable,
-    bulkSelect: bulkSelectTableViewOptions,
+    bulkSelect,
   });
 
   const tableSort = useTableSort(columns, {
     ...options,
     onSelect:
-      bulkSelectTableProps?.onSelect ||
+      bulkSelect?.selectOne ||
       radioSelect?.onRadioSelect ||
       tablePropsOption?.onSelect,
   });
@@ -183,8 +178,7 @@ const useTableTools = (
     toolbarActions,
     pagination,
     conditionalFilterProps,
-    bulkSelectToolbarProps,
-    bulkSelectTableProps,
+    bulkSelect,
     expandable,
     radioSelect,
     tableSort,

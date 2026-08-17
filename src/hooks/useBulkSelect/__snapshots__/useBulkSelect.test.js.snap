@@ -1,49 +1,6 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
-exports[`useBulkSelect returns a bulk select configuration 1`] = `
-{
-  "current": {
-    "tableProps": {
-      "canSelectAll": false,
-      "onSelect": undefined,
-    },
-    "tableView": {
-      "deselect": [Function],
-      "enableBulkSelect": true,
-      "isItemSelected": [Function],
-      "markRowSelected": [Function],
-      "select": [Function],
-    },
-    "toolbarProps": {
-      "bulkSelect": {
-        "checked": false,
-        "count": 0,
-        "isDisabled": true,
-        "items": [
-          {
-            "onClick": [Function],
-            "props": {
-              "isDisabled": true,
-            },
-            "title": "Select none",
-          },
-          {
-            "onClick": [Function],
-            "title": "Select page (0 items)",
-          },
-          {
-            "onClick": [Function],
-            "title": "Unselect all (0 items)",
-          },
-        ],
-        "onSelect": undefined,
-      },
-    },
-  },
-}
-`;
-
-exports[`useBulkSelect returns a bulk select configuration with select all 1`] = `
+exports[`useBulkSelect returns bulk select items with select all 1`] = `
 [
   {
     "onClick": [Function],
@@ -63,7 +20,7 @@ exports[`useBulkSelect returns a bulk select configuration with select all 1`] =
 ]
 `;
 
-exports[`useBulkSelect returns a bulk select configuration without select all 1`] = `
+exports[`useBulkSelect returns bulk select items without select all 1`] = `
 [
   {
     "onClick": [Function],
