@@ -32,7 +32,7 @@ import useToolbarActions from '~/hooks/useToolbarActions';
  *  @property {object}           [bulkSelectToolbarProps]  Bulk-select toolbar slice
  *  @property {object}           [bulkSelectTableProps]    Bulk-select table slice
  *  @property {object}           [expandableTableProps]    Expandable table slice
- *  @property {object}           [radioSelectTableProps]   Radio-select table slice
+ *  @property {object}           [radioSelect]             Radio-select props
  *  @property {object}           [sortableTableProps]      Sort table slice
  *  @property {object}           [tableViewToolbarProps]   Table-view toolbar slice
  *  @property {object}           [tableViewTableProps]     Table-view table slice
@@ -101,7 +101,7 @@ const useTableTools = (
     tableView: expandableTableViewOptions,
   } = useExpandable({ ...options, items });
 
-  const { tableProps: radioSelectTableProps } = useRadioSelect({
+  const radioSelect = useRadioSelect({
     ...options,
     total: items?.length || 0,
   });
@@ -133,7 +133,7 @@ const useTableTools = (
     ...options,
     onSelect:
       bulkSelectTableProps?.onSelect ||
-      radioSelectTableProps?.onSelect ||
+      radioSelect?.onRadioSelect ||
       tablePropsOption?.onSelect,
   });
 
@@ -189,7 +189,7 @@ const useTableTools = (
     bulkSelectToolbarProps,
     bulkSelectTableProps,
     expandableTableProps,
-    radioSelectTableProps,
+    radioSelect,
     sortableTableProps,
     tableViewToolbarProps,
     tableViewTableProps,
