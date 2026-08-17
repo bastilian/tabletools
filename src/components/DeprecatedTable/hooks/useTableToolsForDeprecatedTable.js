@@ -5,6 +5,7 @@ import { toExportConfig } from '../../PrimaryToolbar/helpers/toExportConfig';
 import { toPaginationConfig } from '../../PrimaryToolbar/helpers/toPaginationConfig';
 import { toRadioSelectTableProps } from '../helpers/toRadioSelectTableProps';
 import { toSortTableProps } from '../helpers/toSortTableProps';
+import { toExpandableTableProps } from '../helpers/toExpandableTableProps';
 
 /**
  * Adapter: assemble useTableTools building blocks into deprecated PatternFly table props.
@@ -26,7 +27,7 @@ import { toSortTableProps } from '../helpers/toSortTableProps';
  *  @param   {object}           [tableToolsProps.conditionalFilterProps] Filter toolbar slice
  *  @param   {object}           [tableToolsProps.bulkSelectToolbarProps] Bulk-select toolbar slice
  *  @param   {object}           [tableToolsProps.bulkSelectTableProps]   Bulk-select table slice
- *  @param   {object}           [tableToolsProps.expandableTableProps]   Expandable table slice
+ *  @param   {object}           [tableToolsProps.expandable]             Expandable props
  *  @param   {object}           [tableToolsProps.radioSelect]            Radio-select props
  *  @param   {object}           [tableToolsProps.tableSort]              Sort props
  *  @param   {object}           [tableToolsProps.tableViewToolbarProps]  Table-view toolbar slice
@@ -54,7 +55,7 @@ const useTableToolsForDeprecatedTable = ({
   conditionalFilterProps,
   bulkSelectToolbarProps,
   bulkSelectTableProps,
-  expandableTableProps,
+  expandable,
   radioSelect,
   tableSort,
   tableViewToolbarProps,
@@ -93,6 +94,11 @@ const useTableToolsForDeprecatedTable = ({
   const sortableTableProps = useMemo(
     () => toSortTableProps(tableSort),
     [tableSort],
+  );
+
+  const expandableTableProps = useMemo(
+    () => toExpandableTableProps(expandable),
+    [expandable],
   );
 
   const toolbarProps = useMemo(
