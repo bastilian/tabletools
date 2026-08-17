@@ -2,6 +2,7 @@ import { renderHook, act, waitFor } from '@testing-library/react';
 
 import { DEFAULT_RENDER_OPTIONS } from '~/support/testHelpers';
 import filterConfig from '~/support/factories/filters';
+import { toFilterToolbarConfig } from '~/components/PrimaryToolbar/helpers/toFilterToolbarConfig';
 
 import useFilterConfig from './useFilterConfig';
 
@@ -10,7 +11,7 @@ describe('useFilterConfig', () => {
     fetch.mockResponseOnce(JSON.stringify({ data: [] }));
   });
 
-  it('returns a toolbar configuration', async () => {
+  it('returns filter building blocks', async () => {
     const { result } = renderHook(
       () =>
         useFilterConfig({
@@ -21,16 +22,19 @@ describe('useFilterConfig', () => {
       DEFAULT_RENDER_OPTIONS,
     );
 
-    await waitFor(() => expect(result.current.toolbarProps).toBeDefined());
+    await waitFor(() => expect(result.current.enableFilters).toBe(true));
+    expect(result.current.filterConfig).toHaveLength(filterConfig.length);
+    expect(result.current.onFilterUpdate).toEqual(expect.any(Function));
+    expect(result.current.onFilterDelete).toEqual(expect.any(Function));
   });
 
-  it('returns no toolbar configuration if no filters are provided', async () => {
+  it('returns disabled state if no filters are provided', async () => {
     const { result } = renderHook(
       () => useFilterConfig(),
       DEFAULT_RENDER_OPTIONS,
     );
 
-    await waitFor(() => expect(result.current.toolbarProps).not.toBeDefined());
+    await waitFor(() => expect(result.current.enableFilters).toBe(false));
   });
 
   it('can add and delete filters and clears activeFilters', async () => {
@@ -44,22 +48,26 @@ describe('useFilterConfig', () => {
       DEFAULT_RENDER_OPTIONS,
     );
 
-    await waitFor(
-      () => result.current.toolbarProps.filterConfig.items[0].filterValues,
-    );
+    await waitFor(() => expect(result.current.enableFilters).toBe(true));
+
+    const { toolbarProps } = toFilterToolbarConfig(result.current);
+
+    await waitFor(() => toolbarProps.filterConfig.items[0].filterValues);
 
     await act(() =>
-      result.current.toolbarProps.filterConfig.items[0].filterValues.onChange(
-        'title',
-        'asd',
-      ),
+      toolbarProps.filterConfig.items[0].filterValues.onChange('title', 'asd'),
     );
-    expect(result.current.toolbarProps.activeFiltersConfig.filters).toEqual([
+
+    const { toolbarProps: updatedToolbarProps } = toFilterToolbarConfig(
+      result.current,
+    );
+
+    expect(updatedToolbarProps.activeFiltersConfig.filters).toEqual([
       { category: 'Title', chips: [{ name: 'asd' }] },
     ]);
 
     await act(() =>
-      result.current.toolbarProps.activeFiltersConfig.onDelete(undefined, [
+      updatedToolbarProps.activeFiltersConfig.onDelete(undefined, [
         {
           category: 'title',
           chips: [
@@ -71,6 +79,6 @@ describe('useFilterConfig', () => {
       ]),
     );
 
-    expect(result.current.activeFilters).toEqual(undefined);
+    expect(result.current.activeFilters).toEqual({});
   });
 });

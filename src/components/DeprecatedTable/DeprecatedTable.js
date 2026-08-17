@@ -97,7 +97,7 @@ DeprecatedTable.propTypes = {
   dedicatedAction: propTypes.elementType,
   toolbarActions: propTypes.array,
   pagination: propTypes.object,
-  conditionalFilterProps: propTypes.object,
+  filters: propTypes.object,
   bulkSelect: propTypes.object,
   expandable: propTypes.object,
   radioSelect: propTypes.object,
