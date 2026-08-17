@@ -1,16 +1,26 @@
-import { useCallback } from 'react';
+import { useCallback, useMemo } from 'react';
 
 import usePaginationState from './hooks/usePaginationState';
 
 /**
- * Provides `pagination` props and functionality for a (Primary)Toolbar
+ *  @typedef {object} usePaginationReturn
  *
- *  @param   {object}   [options]                        AsyncTableTools options
- *  @param   {number}   options.total                    The total number of items (required).
- *  @param   {number}   [options.perPage]                A number that will dictate the amount of items shown per page.
- *  @param   {Function} [options.serialisers.pagination] A function to provide a serialiser for the table state
+ *  @property {number}   page       Current page
+ *  @property {number}   perPage    Items per page
+ *  @property {number}   itemCount  Total number of items
+ *  @property {Function} setPage    Sets the current page
+ *  @property {Function} setPerPage Sets items per page and resets to page 1
+ */
+
+/**
+ * Provides pagination props for table tools.
  *
- *  @returns {object}                                    An object of props meant to be used in the {@link TableToolsTable}
+ *  @param   {object}              [options]                        AsyncTableTools options
+ *  @param   {number}              options.total                    The total number of items (required).
+ *  @param   {number}              [options.perPage]                A number that will dictate the amount of items shown per page.
+ *  @param   {Function}            [options.serialisers.pagination] A function to provide a serialiser for the table state
+ *
+ *  @returns {usePaginationReturn}                                  Pagination props, or `{}` when disabled
  *
  *  @group Hooks
  *
@@ -47,19 +57,24 @@ const usePagination = (options = {}) => {
     [setPaginationState],
   );
 
-  return pagination && !(paginationState || {}).isDisabled
-    ? {
-        toolbarProps: {
-          pagination: {
-            ...(paginationState?.state || {}),
+  const setPerPage = useCallback(
+    (perPage) => setPagination({ page: 1, perPage }),
+    [setPagination],
+  );
+
+  return useMemo(
+    () =>
+      pagination && !(paginationState || {}).isDisabled
+        ? {
+            page: paginationState?.state?.page,
+            perPage: paginationState?.state?.perPage,
             itemCount: total,
-            onSetPage: (_, page) => setPage(page),
-            onPerPageSelect: (_, perPage) =>
-              setPagination({ page: 1, perPage }),
-          },
-        },
-      }
-    : {};
+            setPage,
+            setPerPage,
+          }
+        : {},
+    [pagination, paginationState, total, setPage, setPerPage],
+  );
 };
 
 export default usePagination;

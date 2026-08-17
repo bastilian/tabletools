@@ -92,7 +92,7 @@ DeprecatedTable.propTypes = {
   actionResolver: propTypes.oneOfType([propTypes.func, propTypes.bool]),
   dedicatedAction: propTypes.elementType,
   toolbarActions: propTypes.array,
-  paginationToolbarProps: propTypes.object,
+  pagination: propTypes.object,
   conditionalFilterProps: propTypes.object,
   bulkSelectToolbarProps: propTypes.object,
   bulkSelectTableProps: propTypes.object,
