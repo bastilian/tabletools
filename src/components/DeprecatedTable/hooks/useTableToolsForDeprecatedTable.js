@@ -2,6 +2,7 @@ import { useMemo } from 'react';
 
 import { toToolbarActions } from '../../PrimaryToolbar/helpers/toToolbarActions';
 import { toExportConfig } from '../../PrimaryToolbar/helpers/toExportConfig';
+import { toPaginationConfig } from '../../PrimaryToolbar/helpers/toPaginationConfig';
 
 /**
  * Adapter: assemble useTableTools building blocks into deprecated PatternFly table props.
@@ -19,7 +20,7 @@ import { toExportConfig } from '../../PrimaryToolbar/helpers/toExportConfig';
  *  @param   {Function|boolean} [tableToolsProps.actionResolver]         Row action resolver
  *  @param   {object}           [tableToolsProps.dedicatedAction]        Primary/dedicated toolbar action
  *  @param   {Array}            [tableToolsProps.toolbarActions]         Toolbar actions
- *  @param   {object}           [tableToolsProps.paginationToolbarProps] Pagination toolbar slice
+ *  @param   {object}           [tableToolsProps.pagination]             Pagination props
  *  @param   {object}           [tableToolsProps.conditionalFilterProps] Filter toolbar slice
  *  @param   {object}           [tableToolsProps.bulkSelectToolbarProps] Bulk-select toolbar slice
  *  @param   {object}           [tableToolsProps.bulkSelectTableProps]   Bulk-select table slice
@@ -47,7 +48,7 @@ const useTableToolsForDeprecatedTable = ({
   actionResolver,
   dedicatedAction,
   toolbarActions,
-  paginationToolbarProps,
+  pagination,
   conditionalFilterProps,
   bulkSelectToolbarProps,
   bulkSelectTableProps,
@@ -75,6 +76,11 @@ const useTableToolsForDeprecatedTable = ({
         exportWithFormat,
       }).toolbarProps,
     [exportIsDisabled, exportWithFormat],
+  );
+
+  const paginationToolbarProps = useMemo(
+    () => toPaginationConfig(pagination).toolbarProps,
+    [pagination],
   );
 
   const toolbarProps = useMemo(

@@ -28,10 +28,10 @@ describe('usePagination', () => {
     );
 
     act(() => {
-      result.current.toolbarProps.pagination.onSetPage(undefined, 2);
+      result.current.setPage(2);
     });
 
-    expect(result.current.toolbarProps.pagination.page).toBe(2);
+    expect(result.current.page).toBe(2);
   });
 
   it('resets to page 1 if a negative page is passed', () => {
@@ -41,23 +41,23 @@ describe('usePagination', () => {
     );
 
     act(() => {
-      result.current.toolbarProps.pagination.onSetPage(undefined, -2);
+      result.current.setPage(-2);
     });
 
-    expect(result.current.toolbarProps.pagination.page).toBe(1);
+    expect(result.current.page).toBe(1);
   });
 
-  it('changes the perPage when setPage is called', () => {
+  it('changes the perPage when setPerPage is called', () => {
     const { result } = renderHook(
       () => usePagination(defaultOptions),
       DEFAULT_RENDER_OPTIONS,
     );
 
     act(() => {
-      result.current.toolbarProps.pagination.onPerPageSelect(undefined, 100);
+      result.current.setPerPage(100);
     });
 
-    expect(result.current.toolbarProps.pagination.perPage).toBe(100);
+    expect(result.current.perPage).toBe(100);
   });
 
   it('allows providing a serialiser', () => {
@@ -85,10 +85,10 @@ describe('usePagination', () => {
     );
 
     act(() => {
-      result.current.pagination.toolbarProps.pagination.onSetPage(undefined, 2);
+      result.current.pagination.setPage(2);
     });
 
-    expect(result.current.pagination.toolbarProps.pagination.page).toBe(2);
+    expect(result.current.pagination.page).toBe(2);
     expect(result.current.serialised.pagination).toEqual('page=2&perPage=10');
   });
 });

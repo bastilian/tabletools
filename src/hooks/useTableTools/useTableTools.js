@@ -27,7 +27,7 @@ import useToolbarActions from '~/hooks/useToolbarActions';
  *  @property {Function|boolean} [actionResolver]          Row action resolver when enabled
  *  @property {object}           [dedicatedAction]         Primary/dedicated toolbar action
  *  @property {Array}            [toolbarActions]          Toolbar actions
- *  @property {object}           [paginationToolbarProps]  Pagination toolbar slice
+ *  @property {object}           [pagination]              Pagination props
  *  @property {object}           [conditionalFilterProps]  Filter toolbar slice
  *  @property {object}           [bulkSelectToolbarProps]  Bulk-select toolbar slice
  *  @property {object}           [bulkSelectTableProps]    Bulk-select table slice
@@ -88,7 +88,7 @@ const useTableTools = (
     columnManagerAction,
   );
 
-  const { toolbarProps: paginationToolbarProps } = usePagination({
+  const pagination = usePagination({
     ...options,
     total,
   });
@@ -184,7 +184,7 @@ const useTableTools = (
     actionResolver: actionResolverEnabled && actionResolver,
     dedicatedAction,
     toolbarActions,
-    paginationToolbarProps,
+    pagination,
     conditionalFilterProps,
     bulkSelectToolbarProps,
     bulkSelectTableProps,

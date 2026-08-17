@@ -24,9 +24,7 @@ describe('useTableTools', () => {
     );
 
     await waitFor(() => expect(result.current.columns).toBeDefined());
-    await waitFor(() =>
-      expect(result.current.paginationToolbarProps).toBeDefined(),
-    );
+    await waitFor(() => expect(result.current.pagination).toBeDefined());
     expect(result.current.tableProps).toBeUndefined();
     expect(result.current.toolbarProps).toBeUndefined();
   });
