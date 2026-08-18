@@ -15,13 +15,14 @@ const detailsRowColSpan = (options = {}) => {
   );
 };
 
-const detailsRowForRule = (
-  item,
-  DetailsComponent,
-  colSpan,
+const detailsRowForRule = ({
   runningIndex,
+  item,
   detailsProps = {},
-) => ({
+  DetailsComponent,
+  detailsComponentProps = {},
+  colSpan,
+}) => ({
   parent: runningIndex() - 1,
   ...detailsProps,
   props: {
@@ -30,7 +31,13 @@ const detailsRowForRule = (
   },
   cells: [
     {
-      title: <DetailsComponent item={item} key={'item-' + item.rowId} />,
+      title: (
+        <DetailsComponent
+          {...detailsComponentProps}
+          item={item}
+          key={'item-' + item.rowId}
+        />
+      ),
       props: {
         ...(colSpan ? { colSpan } : {}),
         // TODO This removes the checkbox, however this should maybe be fixed differently
@@ -40,21 +47,22 @@ const detailsRowForRule = (
   ],
 });
 
-export const itemDetailsRow = (item, options, runningIndex) =>
-  typeof options?.detailsComponent !== 'undefined' &&
-  detailsRowForRule(
-    item,
-    options.detailsComponent,
-    detailsRowColSpan(options),
+export const itemDetailsRow = (item, options = {}, runningIndex) =>
+  typeof options.detailsComponent !== 'undefined' &&
+  detailsRowForRule({
     runningIndex,
-    options?.detailsProps || {},
-  );
+    item,
+    detailsProps: options.detailsProps,
+    DetailsComponent: options.detailsComponent,
+    detailsComponentProps: options.detailsComponentProps,
+    colSpan: detailsRowColSpan(options),
+  });
 
-const expandTreeTableRow = (firstRow, isOpen) => ({
+const expandTreeTableRow = (firstRow, isExpanded) => ({
   ...firstRow,
   props: {
     ...(firstRow.props || {}),
-    isExpanded: isOpen,
+    isExpanded,
   },
 });
 

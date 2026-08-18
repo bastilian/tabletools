@@ -4,3 +4,5 @@ export { default as StaticTableToolsTable } from './StaticTableToolsTable';
 export { default as NoResultsTable } from './NoResultsTable';
 export { default as FilterModal } from './FilterModal';
 export { default as TableViewToggle } from './TableViewToggle';
+export { default as BaseTableToolsTable } from './BaseTableToolsTable';
+export { default as QueryProviderWithUtilities } from './QueryProviderWithUtilities';

@@ -39,6 +39,7 @@
     "@redhat-cloud-services/frontend-components-utilities": ">= 6.1.0",
     "@tanstack/react-pacer": ">= 0.15.0",
     "@tanstack/react-query": ">= 5.83.0",
+    "deepmerge": ">= 4.3.1",
     "p-all": ">= 4.0.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",

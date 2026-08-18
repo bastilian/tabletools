@@ -1,10 +1,8 @@
 import React, { useContext, useState, useRef } from 'react';
 import propTypes from 'prop-types';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
+import { QueryProviderWithUtilities } from '~/components';
 import { TableContext } from '~/hooks/useTableContext/constants';
-
-const queryClient = new QueryClient();
 
 /**
  * This component provides a context for components/hooks that want to use async tables and access it's state to perform API requests
@@ -56,11 +54,11 @@ const TableStateProviderWrapper = ({ isNewContext = false, children }) => {
     tableContext && !isNewContext ? React.Fragment : TableStateProvider;
 
   return (
-    <QueryClientProvider client={queryClient}>
+    <QueryProviderWithUtilities>
       <Wrapper {...(isNewContext ? { parentContext: tableContext } : {})}>
         {children}
       </Wrapper>
-    </QueryClientProvider>
+    </QueryProviderWithUtilities>
   );
 };
 

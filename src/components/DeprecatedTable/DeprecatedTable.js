@@ -36,14 +36,18 @@ const DeprecatedTable = (props) => {
     tableViewToggleProps,
   } = useTableToolsForDeprecatedTable(props);
 
-  const { tableToolbarProps, paginationProps } = props;
+  // TODO We should find a better more organised way to pass props for specific components in a "variant"
+  const { tableToolbarProps, paginationProps, variantProps } = props;
+  const { enablePrimaryToolbar = true } = variantProps || {};
 
   return (
     <>
-      <PrimaryToolbar
-        toolbarProps={toolbarProps}
-        tableViewToggleProps={tableViewToggleProps}
-      />
+      {enablePrimaryToolbar && (
+        <PrimaryToolbar
+          toolbarProps={toolbarProps}
+          tableViewToggleProps={tableViewToggleProps}
+        />
+      )}
 
       {
         // TODO This is a bit hackish. We should rather have an indicator if data necessary for the current view is loading.
@@ -103,6 +107,7 @@ DeprecatedTable.propTypes = {
   tableViewTableProps: propTypes.object,
   exportIsDisabled: propTypes.bool,
   exportWithFormat: propTypes.func,
+  variantProps: propTypes.object,
 };
 
 export default DeprecatedTable;

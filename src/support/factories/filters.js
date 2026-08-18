@@ -6,6 +6,7 @@ import { stringToId } from '~/hooks/useFilterConfig/helpers';
 import { genres, items } from './items';
 
 export const title = {
+  key: 'title',
   type: 'text',
   label: 'Title',
   filterAttribute: 'title',
@@ -228,6 +229,7 @@ export const customNumberFilterType = {
 
 export const customNumberFilter = {
   type: 'number',
+  key: 'number-filter',
   label: 'Custom Number Filter',
   filterAttribute: 'rating',
 };
