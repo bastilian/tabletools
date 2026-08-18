@@ -97,7 +97,7 @@ DeprecatedTable.propTypes = {
   bulkSelectToolbarProps: propTypes.object,
   bulkSelectTableProps: propTypes.object,
   expandableTableProps: propTypes.object,
-  radioSelectTableProps: propTypes.object,
+  radioSelect: propTypes.object,
   sortableTableProps: propTypes.object,
   tableViewToolbarProps: propTypes.object,
   tableViewTableProps: propTypes.object,

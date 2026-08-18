@@ -3,6 +3,7 @@ import { useMemo } from 'react';
 import { toToolbarActions } from '../../PrimaryToolbar/helpers/toToolbarActions';
 import { toExportConfig } from '../../PrimaryToolbar/helpers/toExportConfig';
 import { toPaginationConfig } from '../../PrimaryToolbar/helpers/toPaginationConfig';
+import { toRadioSelectTableProps } from '../helpers/toRadioSelectTableProps';
 
 /**
  * Adapter: assemble useTableTools building blocks into deprecated PatternFly table props.
@@ -25,7 +26,7 @@ import { toPaginationConfig } from '../../PrimaryToolbar/helpers/toPaginationCon
  *  @param   {object}           [tableToolsProps.bulkSelectToolbarProps] Bulk-select toolbar slice
  *  @param   {object}           [tableToolsProps.bulkSelectTableProps]   Bulk-select table slice
  *  @param   {object}           [tableToolsProps.expandableTableProps]   Expandable table slice
- *  @param   {object}           [tableToolsProps.radioSelectTableProps]  Radio-select table slice
+ *  @param   {object}           [tableToolsProps.radioSelect]            Radio-select props
  *  @param   {object}           [tableToolsProps.sortableTableProps]     Sort table slice
  *  @param   {object}           [tableToolsProps.tableViewToolbarProps]  Table-view toolbar slice
  *  @param   {object}           [tableToolsProps.tableViewTableProps]    Table-view table slice
@@ -53,7 +54,7 @@ const useTableToolsForDeprecatedTable = ({
   bulkSelectToolbarProps,
   bulkSelectTableProps,
   expandableTableProps,
-  radioSelectTableProps,
+  radioSelect,
   sortableTableProps,
   tableViewToolbarProps,
   tableViewTableProps,
@@ -81,6 +82,11 @@ const useTableToolsForDeprecatedTable = ({
   const paginationToolbarProps = useMemo(
     () => toPaginationConfig(pagination).toolbarProps,
     [pagination],
+  );
+
+  const radioSelectTableProps = useMemo(
+    () => toRadioSelectTableProps(radioSelect),
+    [radioSelect],
   );
 
   const toolbarProps = useMemo(
