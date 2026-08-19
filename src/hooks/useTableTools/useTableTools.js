@@ -31,7 +31,7 @@ import useToolbarActions from '~/hooks/useToolbarActions';
  *  @property {object}           [conditionalFilterProps]  Filter toolbar slice
  *  @property {object}           [bulkSelectToolbarProps]  Bulk-select toolbar slice
  *  @property {object}           [bulkSelectTableProps]    Bulk-select table slice
- *  @property {object}           [expandableTableProps]    Expandable table slice
+ *  @property {object}           [expandable]              Expandable props
  *  @property {object}           [radioSelect]             Radio-select props
  *  @property {object}           [tableSort]               Sort props
  *  @property {object}           [tableViewToolbarProps]   Table-view toolbar slice
@@ -96,10 +96,7 @@ const useTableTools = (
   const { toolbarProps: conditionalFilterProps, filterModalProps } =
     useFilterConfig(options);
 
-  const {
-    tableProps: expandableTableProps,
-    tableView: expandableTableViewOptions,
-  } = useExpandable({ ...options, items });
+  const expandable = useExpandable({ ...options, items });
 
   const radioSelect = useRadioSelect({
     ...options,
@@ -125,7 +122,7 @@ const useTableTools = (
   } = useTableView(loading, items, error, total, {
     ...options,
     columns,
-    expandable: expandableTableViewOptions,
+    expandable,
     bulkSelect: bulkSelectTableViewOptions,
   });
 
@@ -188,7 +185,7 @@ const useTableTools = (
     conditionalFilterProps,
     bulkSelectToolbarProps,
     bulkSelectTableProps,
-    expandableTableProps,
+    expandable,
     radioSelect,
     tableSort,
     tableViewToolbarProps,

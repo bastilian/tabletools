@@ -1,4 +1,4 @@
-import { useCallback, useEffect } from 'react';
+import { useCallback, useEffect, useMemo } from 'react';
 
 import useSelectionManager from '~/hooks/useSelectionManager';
 import useTableState from '~/hooks/useTableState';
@@ -6,15 +6,18 @@ import useTableState from '~/hooks/useTableState';
 import { itemDetailsRow, addExpandProp } from './helpers';
 
 /**
- *  @typedef {object | undefined} useExpandableReturn
+ *  @typedef {object} useExpandableReturn
  *
- *  @property {Function} [openItem]   "Transformer" function to be passed to the {@link rowsBuilder}
- *  @property {object}   [tableProps] Object containing Patternfly (deprecated) Table props
- *
+ *  @property {boolean}  enableExpandingRow Whether expandable rows are enabled
+ *  @property {Function} onCollapse         Expand/collapse handler
+ *  @property {Function} isItemOpen         Whether an item is expanded
+ *  @property {Function} expandRow          Row transformer for expanded rows
+ *  @property {boolean}  canCollapseAll     Whether collapse-all is enabled
+ *  @property {boolean}  enableTreeView     Whether tree view mode is enabled
  */
 
 /**
- * Provides props for a Patternfly table to manage expandable items/rows.
+ * Provides expandable row props for table tools.
  *
  *  @param   {object}              [options]                  AsyncTableTools options
  *  @param   {object}              [options.detailsComponent] A component that should be rendered as a details row
@@ -22,7 +25,7 @@ import { itemDetailsRow, addExpandProp } from './helpers';
  *  @param   {Array}               [options.items]            Items currently rendered in the table (used for expand/collapse all)
  *  @param   {boolean}             [options.canCollapseAll]   Whether to enable the expand/collapse all toggle in the table header (defaults to true)
  *
- *  @returns {useExpandableReturn}                            An object of props meant to be used in the {@link TableToolsTable}
+ *  @returns {useExpandableReturn}                            Expandable props for variant adapters
  *
  *  @group Hooks
  *
@@ -75,24 +78,24 @@ const useExpandable = (options) => {
     setOpenItemsState(openItems);
   }, [openItems, setOpenItemsState]);
 
-  return {
-    tableView: {
+  return useMemo(
+    () => ({
       enableExpandingRow,
       onCollapse,
       isItemOpen,
       expandRow,
-    },
-    ...(enableExpandingRow
-      ? {
-          tableProps: {
-            ...(!options.enableTreeView
-              ? { canCollapseAll: options.canCollapseAll !== false }
-              : {}),
-            onCollapse,
-          },
-        }
-      : {}),
-  };
+      canCollapseAll: options?.canCollapseAll !== false,
+      enableTreeView: !!options?.enableTreeView,
+    }),
+    [
+      enableExpandingRow,
+      onCollapse,
+      isItemOpen,
+      expandRow,
+      options?.canCollapseAll,
+      options?.enableTreeView,
+    ],
+  );
 };
 
 export default useExpandable;
