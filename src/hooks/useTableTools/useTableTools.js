@@ -33,7 +33,7 @@ import useToolbarActions from '~/hooks/useToolbarActions';
  *  @property {object}           [bulkSelectTableProps]    Bulk-select table slice
  *  @property {object}           [expandableTableProps]    Expandable table slice
  *  @property {object}           [radioSelect]             Radio-select props
- *  @property {object}           [sortableTableProps]      Sort table slice
+ *  @property {object}           [tableSort]               Sort props
  *  @property {object}           [tableViewToolbarProps]   Table-view toolbar slice
  *  @property {object}           [tableViewTableProps]     Table-view table slice
  *  @property {boolean}          [exportIsDisabled]        Whether export is disabled
@@ -129,7 +129,7 @@ const useTableTools = (
     bulkSelect: bulkSelectTableViewOptions,
   });
 
-  const { tableProps: sortableTableProps } = useTableSort(columns, {
+  const tableSort = useTableSort(columns, {
     ...options,
     onSelect:
       bulkSelectTableProps?.onSelect ||
@@ -190,7 +190,7 @@ const useTableTools = (
     bulkSelectTableProps,
     expandableTableProps,
     radioSelect,
-    sortableTableProps,
+    tableSort,
     tableViewToolbarProps,
     tableViewTableProps,
     exportIsDisabled,

@@ -12,15 +12,16 @@ describe('useTableSort', () => {
     direction: 'asc',
   };
 
-  it('returns a table sort configuration', () => {
+  it('returns sort props', () => {
     const { result } = renderHook(
       () => useTableSort(columns),
       DEFAULT_RENDER_OPTIONS,
     );
-    expect(result.current.tableProps).toBeDefined();
+    expect(result.current.onSort).toBeDefined();
+    expect(result.current.sortableColumns).toBeDefined();
   });
 
-  it('returns a table sort configuration with an inital state', async () => {
+  it('returns sort props with an inital state', async () => {
     const { result } = renderHook(
       () =>
         useTableSort(columns, {
@@ -29,9 +30,7 @@ describe('useTableSort', () => {
       DEFAULT_RENDER_OPTIONS,
     );
 
-    await waitFor(() =>
-      expect(result.current.tableProps.sortBy).toEqual(exampleSortBy),
-    );
+    await waitFor(() => expect(result.current.sortBy).toEqual(exampleSortBy));
   });
 
   it('should allow changing the sort via onSort', async () => {
@@ -44,11 +43,11 @@ describe('useTableSort', () => {
     );
 
     act(() => {
-      result.current.tableProps.onSort(undefined, 1, 'desc');
+      result.current.onSort(undefined, 1, 'desc');
     });
 
     await waitFor(() =>
-      expect(result.current.tableProps.sortBy).toEqual({
+      expect(result.current.sortBy).toEqual({
         index: 1,
         direction: 'desc',
       }),
@@ -80,11 +79,11 @@ describe('useTableSort', () => {
     );
 
     act(() => {
-      result.current.sort.tableProps.onSort(undefined, 2, 'desc');
+      result.current.sort.onSort(undefined, 2, 'desc');
     });
 
     await waitFor(() =>
-      expect(result.current.sort.tableProps.sortBy).toEqual({
+      expect(result.current.sort.sortBy).toEqual({
         index: 2,
         direction: 'desc',
       }),

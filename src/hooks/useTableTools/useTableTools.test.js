@@ -36,9 +36,7 @@ describe('useTableTools', () => {
     );
 
     await waitFor(() => expect(result.current.columns).toBeDefined());
-    await waitFor(() =>
-      expect(result.current.sortableTableProps).toBeDefined(),
-    );
+    await waitFor(() => expect(result.current.tableSort).toBeDefined());
     expect(result.current.loading).toBe(false);
   });
 

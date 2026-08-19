@@ -1,4 +1,4 @@
-import { useCallback } from 'react';
+import { useCallback, useMemo } from 'react';
 import { useDeepCompareMemo } from 'use-deep-compare';
 
 import useTableState, { useRawTableState } from '~/hooks/useTableState';
@@ -9,15 +9,13 @@ import { TABLE_STATE_NAMESPACE } from './constants';
 /**
  *  @typedef {object} useTableSortReturn
  *
- *  @property {object}   [tableProps]         Props for a Patternfly table
- *  @property {Function} [tableProps.onSort]  Callback function for column headers in a Patternfly table
- *  @property {Array}    [tableProps.cells]   Array containing columns for a Patternfly table with the sortable transform applied
- *  @property {object}   [tableProps.sortBy ] Object containing the current sortBy state
- *
+ *  @property {object}   sortBy          Current sort state with column offset applied
+ *  @property {Function} onSort          Sort change handler
+ *  @property {Array}    sortableColumns Columns with sortable transforms applied
  */
 
 /**
- * Provides columns with the `sortable` transform mixed in for a Patternfly table.
+ * Provides sort props for table tools.
  *
  *  @param   {Array}              columns                    Columns for a table, with a "sortable" prop
  *  @param   {object}             [options]                  AsyncTableTools options
@@ -25,7 +23,7 @@ import { TABLE_STATE_NAMESPACE } from './constants';
  *  @param   {object}             [options.onSort]           A function to call after setting a new sort state.
  *  @param   {object}             [options.serialisers.sort] A function to provide a serialiser for the table state
  *
- *  @returns {useTableSortReturn}                            Props for a Patternfly table to integrate sorting
+ *  @returns {useTableSortReturn}                            Sort props for variant adapters
  *
  *  @example
  *
@@ -75,18 +73,28 @@ const useTableSort = (columns, options = {}) => {
     [onSortOption, setSortBy, offset],
   );
 
-  const sortByOffset = sortBy && {
-    ...sortBy,
-    index: sortBy?.index + offset,
-  };
+  const sortByOffset = useMemo(
+    () =>
+      sortBy && {
+        ...sortBy,
+        index: sortBy?.index + offset,
+      },
+    [sortBy, offset],
+  );
 
-  return {
-    tableProps: {
-      onSort,
+  const sortableColumns = useMemo(
+    () => addSortableTransform(columns),
+    [columns],
+  );
+
+  return useMemo(
+    () => ({
       sortBy: sortByOffset,
-      cells: addSortableTransform(columns),
-    },
-  };
+      onSort,
+      sortableColumns,
+    }),
+    [sortByOffset, onSort, sortableColumns],
+  );
 };
 
 export default useTableSort;
