@@ -3,9 +3,11 @@ import { useMemo } from 'react';
 import { toToolbarActions } from '../../PrimaryToolbar/helpers/toToolbarActions';
 import { toExportConfig } from '../../PrimaryToolbar/helpers/toExportConfig';
 import { toPaginationConfig } from '../../PrimaryToolbar/helpers/toPaginationConfig';
+import { toBulkSelectConfig } from '../../PrimaryToolbar/helpers/toBulkSelectConfig';
 import { toRadioSelectTableProps } from '../helpers/toRadioSelectTableProps';
 import { toSortTableProps } from '../helpers/toSortTableProps';
 import { toExpandableTableProps } from '../helpers/toExpandableTableProps';
+import { toBulkSelectTableProps } from '../helpers/toBulkSelectTableProps';
 
 /**
  * Adapter: assemble useTableTools building blocks into deprecated PatternFly table props.
@@ -25,8 +27,7 @@ import { toExpandableTableProps } from '../helpers/toExpandableTableProps';
  *  @param   {Array}            [tableToolsProps.toolbarActions]         Toolbar actions
  *  @param   {object}           [tableToolsProps.pagination]             Pagination props
  *  @param   {object}           [tableToolsProps.conditionalFilterProps] Filter toolbar slice
- *  @param   {object}           [tableToolsProps.bulkSelectToolbarProps] Bulk-select toolbar slice
- *  @param   {object}           [tableToolsProps.bulkSelectTableProps]   Bulk-select table slice
+ *  @param   {object}           [tableToolsProps.bulkSelect]             Bulk select props
  *  @param   {object}           [tableToolsProps.expandable]             Expandable props
  *  @param   {object}           [tableToolsProps.radioSelect]            Radio-select props
  *  @param   {object}           [tableToolsProps.tableSort]              Sort props
@@ -53,8 +54,7 @@ const useTableToolsForDeprecatedTable = ({
   toolbarActions,
   pagination,
   conditionalFilterProps,
-  bulkSelectToolbarProps,
-  bulkSelectTableProps,
+  bulkSelect,
   expandable,
   radioSelect,
   tableSort,
@@ -86,6 +86,11 @@ const useTableToolsForDeprecatedTable = ({
     [pagination],
   );
 
+  const bulkSelectToolbarProps = useMemo(
+    () => toBulkSelectConfig(bulkSelect).toolbarProps,
+    [bulkSelect],
+  );
+
   const radioSelectTableProps = useMemo(
     () => toRadioSelectTableProps(radioSelect),
     [radioSelect],
@@ -99,6 +104,11 @@ const useTableToolsForDeprecatedTable = ({
   const expandableTableProps = useMemo(
     () => toExpandableTableProps(expandable),
     [expandable],
+  );
+
+  const bulkSelectTableProps = useMemo(
+    () => toBulkSelectTableProps(bulkSelect),
+    [bulkSelect],
   );
 
   const toolbarProps = useMemo(

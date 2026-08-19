@@ -18,16 +18,32 @@ describe('useBulkSelect', () => {
     itemIdsOnPage: [],
   };
 
-  it('returns a bulk select configuration', () => {
+  it('returns bulk select building blocks', () => {
     const { result } = renderHook(
       () => useBulkSelect(defaultOptions),
       DEFAULT_RENDER_OPTIONS,
     );
 
-    expect(result).toMatchSnapshot();
+    expect(result.current).toEqual(
+      expect.objectContaining({
+        enableBulkSelect: true,
+        selectedIds: [],
+        selectedIdsTotal: 0,
+        isDisabled: true,
+        checked: false,
+        total: 0,
+        isItemSelected: expect.any(Function),
+        select: expect.any(Function),
+        deselect: expect.any(Function),
+        markRowSelected: expect.any(Function),
+        selectOne: expect.any(Function),
+        bulkSelectItems: expect.any(Array),
+        onToolbarSelect: expect.any(Function),
+      }),
+    );
   });
 
-  it('returns a bulk select configuration without select all', () => {
+  it('returns bulk select items without select all', () => {
     const { result } = renderHook(
       () =>
         useBulkSelect({
@@ -42,10 +58,11 @@ describe('useBulkSelect', () => {
       DEFAULT_RENDER_OPTIONS,
     );
 
-    expect(result.current.toolbarProps.bulkSelect.items).toMatchSnapshot();
+    expect(result.current.bulkSelectItems).toMatchSnapshot();
+    expect(result.current.selectedIdsTotal).toEqual(1);
   });
 
-  it('returns a bulk select configuration with select all', () => {
+  it('returns bulk select items with select all', () => {
     const { result } = renderHook(
       () =>
         useBulkSelect({
@@ -58,10 +75,10 @@ describe('useBulkSelect', () => {
       DEFAULT_RENDER_OPTIONS,
     );
 
-    expect(result.current.toolbarProps.bulkSelect.items).toMatchSnapshot();
+    expect(result.current.bulkSelectItems).toMatchSnapshot();
   });
 
-  it('returns a bulk select configuration with 1 selected item', () => {
+  it('tracks selected item count', () => {
     const { result } = renderHook(
       () =>
         useBulkSelect({
@@ -74,6 +91,19 @@ describe('useBulkSelect', () => {
       DEFAULT_RENDER_OPTIONS,
     );
 
-    expect(result.current.toolbarProps.bulkSelect.count).toEqual(1);
+    expect(result.current.selectedIdsTotal).toEqual(1);
+  });
+
+  it('disables bulk select when onSelect is not provided', () => {
+    const { result } = renderHook(
+      () =>
+        useBulkSelect({
+          total: 2,
+          itemIdsOnPage: ['ID'],
+        }),
+      DEFAULT_RENDER_OPTIONS,
+    );
+
+    expect(result.current.enableBulkSelect).toBe(false);
   });
 });
