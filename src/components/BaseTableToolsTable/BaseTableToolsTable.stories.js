@@ -14,7 +14,7 @@ import sortSerialiser from '~/components/StaticTableToolsTable/helpers/serialise
 import filtersSerialiser from '~/components/StaticTableToolsTable/helpers/serialisers/filters';
 
 const meta = {
-  title: 'BaseTableToolsTable',
+  title: 'Components/BaseTableToolsTable',
   args: {
     debug: true,
     columns,

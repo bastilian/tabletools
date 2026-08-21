@@ -53,7 +53,7 @@ const restApi = async (endpoint, { pagination, ...params }) => {
 };
 
 const meta = {
-  title: 'useQueryWithUtilities stories',
+  title: 'Utilities/Hooks/useQueryWithUtilities',
   ...defaultStoryMeta,
 };
 

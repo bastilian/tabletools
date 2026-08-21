@@ -1,9 +1,12 @@
-import React, { useCallback, useEffect } from 'react';
+import React, { useCallback } from 'react';
 import propTypes from 'prop-types';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { useDarkMode } from 'storybook-dark-mode';
+import { gql, request } from 'graphql-request';
 
 import defaultStoryMeta from '~/support/defaultStoryMeta';
+import mswGraphQlHandlers from '~/support/api/graphql';
+import mswRestHandlers from '~/support/api/rest';
+
 import columns from '~/support/factories/columns';
 import filters, {
   customNumberFilterType,
@@ -17,10 +20,11 @@ import CustomEmptyState from '~/support/components/CustomEmptyState';
 import DetailsRow from '~/support/components/DetailsRow';
 import DedicatedAction from '~/support/components/DedicatedAction';
 import { actions, rowActionResolver } from '~/support/constants';
-import { selectedItemIds } from '~/support/api';
-
+// TODO fix preselection
+// import { selectedItemIds } from '~/support/api';
+const selectedItemIds = [];
 import { TableToolsTable, TableStateProvider } from '~/components';
-import { useFullTableState, useStateCallbacks } from '~/hooks';
+import { useQueryWithUtilities } from '~/utilities';
 
 const queryClient = new QueryClient();
 
@@ -62,7 +66,7 @@ const argProps = {
 };
 
 const meta = {
-  title: 'TableToolsTable',
+  title: 'Components/TableToolsTable',
   args: {
     debug: true,
     columns,
@@ -132,8 +136,6 @@ const CommonExample = ({
   enablePreselection,
   enableSimpleBulkSelect,
 }) => {
-  const enableDarkMode = useDarkMode();
-
   const {
     loading,
     result: { data, meta: { total } = {} } = {},
@@ -150,16 +152,6 @@ const CommonExample = ({
       },
     },
   });
-
-  useEffect(() => {
-    document
-      .getElementsByTagName('html')[0]
-      .setAttribute('class', enableDarkMode ? 'pf-v6-theme-dark' : '');
-
-    return () => {
-      document.getElementsByTagName('html')[0].setAttribute('class', '');
-    };
-  }, [enableDarkMode]);
 
   return (
     <TableToolsTable
@@ -231,7 +223,7 @@ export const Common = {
   render: (args) => <CommonExample {...args} />,
 };
 
-const WithTableTreeExample = ({
+const GraphQLExample = ({
   debug,
   columns,
   filters,
@@ -241,58 +233,61 @@ const WithTableTreeExample = ({
   sortable,
   initialSort,
   enableInitialSort,
+  manageColumns,
+  enableRowActions,
   enableActions,
   dedicatedAction,
-  manageColumns,
   customEmptyRows,
   customEmptyState,
   enableExport,
   enableDetails,
   enableBulkSelect,
   enablePreselection,
+  enableSimpleBulkSelect,
 }) => {
-  const { tableState: { tableView, filters: filterState } = {} } =
-    useFullTableState() || {};
+  const fetchFn = useCallback(
+    async (params) =>
+      await request(
+        'http://local.com/graphql',
+        gql`
+          query GetTracks {
+            data
+          }
+        `,
+        params,
+      ),
+    [],
+  );
 
   const {
-    result: { data, meta: { total } = {} } = {},
     loading,
+    result: { data: { items: data } = {}, meta: { total } = {} } = {},
     error,
     exporter,
     itemIdsInTable,
     itemIdsOnPage,
-  } = useExampleDataQuery({
-    endpoint: '/api',
-    ...(tableView === 'tree'
-      ? { params: { limit: 'max', sort: 'id:asc' } }
-      : {}),
+  } = useQueryWithUtilities({
+    fetchFn,
     useTableState: true,
+    totalBatched: {
+      totalBatchedSelect: (results, totalForBatched) => ({
+        data: results?.reduce(
+          (acc, { data: { items } }) => [...acc, ...items],
+          [],
+        ),
+        meta: {
+          total: totalForBatched(results?.[0]),
+        },
+      }),
+    },
   });
-
-  const {
-    result: tableTree,
-    loading: treeLoading,
-    error: treeError,
-  } = useExampleDataQuery({
-    endpoint: '/api/tree',
-    useTableState: true,
-  });
-  const {
-    current: { setView },
-  } = useStateCallbacks();
-
-  useEffect(() => {
-    if (Object.keys(filterState || {}).length && tableView === 'tree') {
-      setView('rows');
-    }
-  }, [filterState, setView, tableView]);
 
   return (
     <TableToolsTable
-      loading={loading || treeLoading}
+      loading={loading}
       items={data}
       total={total}
-      error={error || treeError}
+      error={error}
       columns={
         sortable
           ? columns
@@ -313,10 +308,12 @@ const WithTableTreeExample = ({
         ...defaultOptions,
         debug,
         manageColumns,
-        tableTree,
-        enableTreeView: true,
-        defaultTableView: 'tree',
         ...(enableInitialSort ? { sortBy: initialSort } : {}),
+        ...(enableRowActions
+          ? {
+              actionResolver: rowActionResolver,
+            }
+          : {}),
         ...(enableActions ? { actions } : {}),
         ...(dedicatedAction ? { dedicatedAction: DedicatedAction } : {}),
         ...(customEmptyRows ? { emptyRows: emptyRows(columns?.length) } : {}),
@@ -331,14 +328,20 @@ const WithTableTreeExample = ({
               itemIdsOnPage,
             }
           : {}),
+        ...(enableSimpleBulkSelect ? { onSelect: true } : {}),
       }}
     />
   );
 };
 
-WithTableTreeExample.propTypes = argProps;
+GraphQLExample.propTypes = argProps;
 
-export const WithTableTree = {
+export const GraphQL = {
+  parameters: {
+    msw: {
+      handlers: [...mswGraphQlHandlers, ...mswRestHandlers],
+    },
+  },
   decorators: [
     (Story) => (
       <QueryClientProvider client={queryClient}>
@@ -348,10 +351,10 @@ export const WithTableTree = {
       </QueryClientProvider>
     ),
   ],
-  render: (args) => <WithTableTreeExample {...args} />,
+  render: (args) => <GraphQLExample {...args} />,
 };
 
-const WithAsyncFunctionExample = ({
+const AsyncFunctionExample = ({
   debug,
   columns,
   filters,
@@ -425,9 +428,9 @@ const WithAsyncFunctionExample = ({
   );
 };
 
-WithAsyncFunctionExample.propTypes = argProps;
+AsyncFunctionExample.propTypes = argProps;
 
-export const WithAsyncFunction = {
+export const AsyncFunction = {
   decorators: [
     (Story) => (
       <QueryClientProvider client={queryClient}>
@@ -435,10 +438,10 @@ export const WithAsyncFunction = {
       </QueryClientProvider>
     ),
   ],
-  render: (args) => <WithAsyncFunctionExample {...args} />,
+  render: (args) => <AsyncFunctionExample {...args} />,
 };
 
-const WithPlainAsyncFunctionExample = ({ debug }) => {
+const PlainAsyncFunctionExample = ({ debug }) => {
   const fetchItems = useCallback(
     async ({ pagination = {}, filters, sort } = {}) => {
       const query =
@@ -471,79 +474,10 @@ const WithPlainAsyncFunctionExample = ({ debug }) => {
   );
 };
 
-WithPlainAsyncFunctionExample.propTypes = argProps;
+PlainAsyncFunctionExample.propTypes = argProps;
 
-export const WithPlainAsyncFunction = {
-  render: (args) => <WithPlainAsyncFunctionExample {...args} />,
-};
-
-const WithErroringAsyncFunctionExample = ({ debug }) => {
-  const { items } = useExampleDataQuery({
-    endpoint: '/api/error',
-    enabled: false,
-  });
-
-  return (
-    <TableToolsTable
-      items={items}
-      columns={columns}
-      filters={{ filterConfig: filters }}
-      options={{
-        ...defaultOptions,
-        debug,
-        manageColumns: true,
-        kind: 'songs',
-      }}
-    />
-  );
-};
-
-WithErroringAsyncFunctionExample.propTypes = argProps;
-
-export const WithErroringAsyncFunction = {
-  decorators: [
-    (Story) => (
-      <QueryClientProvider client={queryClient}>
-        <Story />
-      </QueryClientProvider>
-    ),
-  ],
-  render: (args) => <WithErroringAsyncFunctionExample {...args} />,
-};
-
-const WithErrorPassedExample = ({ debug }) => {
-  const {
-    loading,
-    result: { data, meta: { total } = {} } = {},
-    error,
-  } = useExampleDataQuery({ endpoint: '/api/error' });
-
-  return (
-    <TableToolsTable
-      loading={loading}
-      items={data}
-      error={error}
-      total={total}
-      columns={columns}
-      filters={{ filterConfig: filters }}
-      options={{ ...defaultOptions, debug }}
-    />
-  );
-};
-
-WithErrorPassedExample.propTypes = argProps;
-
-export const WithErrorPassed = {
-  decorators: [
-    (Story) => (
-      <QueryClientProvider client={queryClient}>
-        <TableStateProvider>
-          <Story />
-        </TableStateProvider>
-      </QueryClientProvider>
-    ),
-  ],
-  render: (args) => <WithErrorPassedExample {...args} />,
+export const PlainAsyncFunction = {
+  render: (args) => <PlainAsyncFunctionExample {...args} />,
 };
 
 export const WithColumnDragDrop = {

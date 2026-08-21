@@ -1,4 +1,4 @@
-import { http, HttpResponse, delay } from 'msw';
+import { http, HttpResponse } from 'msw';
 
 import {
   apiHandler,
@@ -6,9 +6,8 @@ import {
   apiTreehandler,
   apiGenresHandler,
   apiSelectionHandler,
-} from './api';
-
-const DEFAULT_DELAY = 500;
+  apiErrorHandler,
+} from './mockBackend';
 
 const withAllParams = (fn) => {
   return async ({ params, request }) => {
@@ -17,7 +16,6 @@ const withAllParams = (fn) => {
       ...Object.fromEntries(new URL(request.url).searchParams),
     };
 
-    await delay(DEFAULT_DELAY);
     return HttpResponse.json(await fn(allParams));
   };
 };
@@ -27,14 +25,6 @@ export default [
   http.get('/api/item', withAllParams(apiItemHandler)),
   http.get('/api/tree', withAllParams(apiTreehandler)),
   http.get('/api/genres', withAllParams(apiGenresHandler)),
-  http.get('/api/error', async () => {
-    await delay(DEFAULT_DELAY);
-    return HttpResponse.json(
-      {
-        errorMessage: 'Missing session',
-      },
-      { status: 500 },
-    );
-  }),
+  http.get('/api/error', withAllParams(apiErrorHandler)),
   http.get('/api/selection', withAllParams(apiSelectionHandler)),
 ];

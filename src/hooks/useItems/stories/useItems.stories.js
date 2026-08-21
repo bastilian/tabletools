@@ -26,7 +26,7 @@ const defaultOptions = {
 };
 
 const meta = {
-  title: 'useItems stories',
+  title: 'Hooks/useItems',
   ...defaultStoryMeta,
 };
 

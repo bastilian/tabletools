@@ -12,7 +12,7 @@ const convertToOffsetAndLimit = paginationSerialiser;
 const queryClient = new QueryClient();
 
 const meta = {
-  title: '"Using TableToolsTable" tutorial examples',
+  title: 'Guides Examples/"Using TableToolsTable" tutorial examples',
   ...defaultStoryMeta,
 };
 
