@@ -1,35 +1,42 @@
-import { useCallback, useEffect, useMemo } from 'react';
+import { useCallback, useEffect } from 'react';
 import { useDebouncedCallback } from '@tanstack/react-pacer/debouncer';
 
 import useSelectionManager from '~/hooks/useSelectionManager';
 import useTableState from '~/hooks/useTableState';
 import useCallbacksCallback from '~/hooks/useTableState/hooks/useCallbacksCallback';
 
-import { toFilterConfig, toIdedFilters } from './helpers/filterConfigHelpers';
-import { toFilterChips } from './helpers/filterChipHelpers';
+import { toIdedFilters } from './helpers/filterConfigHelpers';
 import useEventHandlers from './hooks/useEventHandlers';
 import useFilterOptions from './hooks/useFilterOptions';
 import useFilterModal from './hooks/useFilterModal';
 import { TABLE_STATE_NAMESPACE } from './constants';
 
 /**
- *  @typedef {object} FilterConfig
+ *  @typedef {object} FilterConfigProps
  *
- *  @property {object} toolbarProps                     Object containing PrimaryToolbar props
- *  @property {object} toolbarProps.filterConfig        Object containing the filterConfig prop for the PrimaryToolbar
- *  @property {object} toolbarProps.activeFiltersConfig Object containing the activeFiltersConfigs prop for the PrimaryToolbar
+ *  @property {boolean}  enableFilters      Whether filters are enabled
+ *  @property {Array}    filterConfig       Consumer filter definitions
+ *  @property {object}   filterTypes        Filter type helpers
+ *  @property {object}   activeFilters      Current active filter state
+ *  @property {boolean}  isInitialSelection Whether the selection matches initial state
+ *  @property {boolean}  [useReset]         Whether to show reset instead of clear
+ *  @property {Function} onFilterUpdate     Handler for filter value changes
+ *  @property {Function} onFilterDelete     Handler for filter chip deletion
+ *  @property {Function} openFilterModal    Opens the filter modal for a filter
+ *  @property {Function} setFilter          Sets a filter value programmatically
+ *  @property {object}   [filterModalProps] Props for FilterModal when open
  */
 
 /**
- * Provides `PrimaryToolbar` props for the `ConditionalFilter` component filter configuration.
+ * Provides filter state and actions for table tools.
  *
- *  @param   {object}       [options]                       AsyncTableTools options
- *  @param   {object}       [options.filters.filterConfig]  An object containing filter definition
- *  @param   {object}       [options.filters.activeFilters] An object containing an initial active filters state
- *  @param   {object}       [options.serialisers.filters]   A function to serialise the filter table state
- *  @param   {object}       [options.customFilterTypes]     An object containing definitions for custom filter type
+ *  @param   {object}            [options]                       AsyncTableTools options
+ *  @param   {object}            [options.filters.filterConfig]  An object containing filter definition
+ *  @param   {object}            [options.filters.activeFilters] An object containing an initial active filters state
+ *  @param   {object}            [options.serialisers.filters]   A function to serialise the filter table state
+ *  @param   {object}            [options.customFilterTypes]     An object containing definitions for custom filter type
  *
- *  @returns {FilterConfig}                                 props for PrimaryToolbar/ConditionalFilter component
+ *  @returns {FilterConfigProps}                                 Filter props for variant adapters
  *
  *  @group Hooks
  *
@@ -61,18 +68,6 @@ const useFilterConfig = (options) => {
   const { isFilterModalOpen, openFilterModal, filterModalProps } =
     useFilterModal({ filterConfig, activeFilters, onFilterUpdate });
 
-  const builtFilterConfig = useMemo(
-    () =>
-      toFilterConfig(
-        filterConfig,
-        filterTypes,
-        activeFilters,
-        onFilterUpdate,
-        openFilterModal,
-      ),
-    [filterConfig, activeFilters, onFilterUpdate, filterTypes, openFilterModal],
-  );
-
   const [, setTableState] = useTableState(
     TABLE_STATE_NAMESPACE,
     initialActiveFilters,
@@ -101,24 +96,23 @@ const useFilterConfig = (options) => {
   useCallbacksCallback('clearFilters', selectionActions.clear);
   useCallbacksCallback('setFilter', setFilter);
 
-  return enableFilters
-    ? {
-        toolbarProps: {
-          filterConfig: builtFilterConfig,
-          activeFiltersConfig: {
-            ...(useReset
-              ? {
-                  deleteTitle: 'Reset filters',
-                  showDeleteButton: isInitialSelection ? false : true,
-                }
-              : {}),
-            filters: toFilterChips(filterConfig, filterTypes, activeFilters),
-            onDelete: onFilterDelete,
-          },
-        },
-        ...(isFilterModalOpen ? { filterModalProps } : {}),
-      }
-    : {};
+  if (!enableFilters) {
+    return { enableFilters: false };
+  }
+
+  return {
+    enableFilters,
+    filterConfig,
+    filterTypes,
+    activeFilters,
+    isInitialSelection,
+    useReset,
+    onFilterUpdate,
+    onFilterDelete,
+    openFilterModal,
+    setFilter,
+    ...(isFilterModalOpen ? { filterModalProps } : {}),
+  };
 };
 
 export default useFilterConfig;

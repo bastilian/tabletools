@@ -92,8 +92,7 @@ const useTableTools = (
     total,
   });
 
-  const { toolbarProps: conditionalFilterProps, filterModalProps } =
-    useFilterConfig(options);
+  const { filterModalProps, ...filters } = useFilterConfig(options);
 
   const expandable = useExpandable({ ...options, items });
 
@@ -177,7 +176,7 @@ const useTableTools = (
     dedicatedAction,
     toolbarActions,
     pagination,
-    conditionalFilterProps,
+    filters,
     bulkSelect,
     expandable,
     radioSelect,

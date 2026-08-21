@@ -17,7 +17,7 @@ const useFilterOptions = (options) => {
     'items',
     'groups',
   ]);
-  const enableFilters = !!filters && filterConfig?.length;
+  const enableFilters = !!(filters && filterConfig?.length);
 
   const config = useDeepCompareMemo(
     () => ({

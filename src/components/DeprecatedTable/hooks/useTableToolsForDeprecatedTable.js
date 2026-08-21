@@ -4,6 +4,7 @@ import { toToolbarActions } from '../../PrimaryToolbar/helpers/toToolbarActions'
 import { toExportConfig } from '../../PrimaryToolbar/helpers/toExportConfig';
 import { toPaginationConfig } from '../../PrimaryToolbar/helpers/toPaginationConfig';
 import { toBulkSelectConfig } from '../../PrimaryToolbar/helpers/toBulkSelectConfig';
+import { toFilterToolbarConfig } from '../../PrimaryToolbar/helpers/toFilterToolbarConfig';
 import { toRadioSelectTableProps } from '../helpers/toRadioSelectTableProps';
 import { toSortTableProps } from '../helpers/toSortTableProps';
 import { toExpandableTableProps } from '../helpers/toExpandableTableProps';
@@ -53,7 +54,7 @@ const useTableToolsForDeprecatedTable = ({
   dedicatedAction,
   toolbarActions,
   pagination,
-  conditionalFilterProps,
+  filters,
   bulkSelect,
   expandable,
   radioSelect,
@@ -86,6 +87,11 @@ const useTableToolsForDeprecatedTable = ({
     [pagination],
   );
 
+  const filterToolbarProps = useMemo(
+    () => toFilterToolbarConfig(filters).toolbarProps,
+    [filters],
+  );
+
   const bulkSelectToolbarProps = useMemo(
     () => toBulkSelectConfig(bulkSelect).toolbarProps,
     [bulkSelect],
@@ -115,7 +121,7 @@ const useTableToolsForDeprecatedTable = ({
     () => ({
       ...toolbarActionsProps,
       ...paginationToolbarProps,
-      ...conditionalFilterProps,
+      ...filterToolbarProps,
       ...bulkSelectToolbarProps,
       ...exportToolbarProps,
       ...toolbarPropsOption,
@@ -124,7 +130,7 @@ const useTableToolsForDeprecatedTable = ({
     [
       toolbarActionsProps,
       paginationToolbarProps,
-      conditionalFilterProps,
+      filterToolbarProps,
       bulkSelectToolbarProps,
       exportToolbarProps,
       toolbarPropsOption,
