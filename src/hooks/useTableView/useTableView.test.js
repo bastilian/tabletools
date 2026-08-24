@@ -2,6 +2,8 @@ import { renderHook, waitFor } from '@testing-library/react';
 
 import { DEFAULT_RENDER_OPTIONS } from '~/support/testHelpers';
 import useItems from '~/hooks/useItems';
+import { toTableViewTableProps } from '~/components/DeprecatedTable/helpers/toTableViewTableProps';
+import { toTableViewToggleProps } from '~/components/PrimaryToolbar/helpers/toTableViewToggleProps';
 
 import items from '~/support/factories/items';
 import columns from '~/support/factories/columns';
@@ -22,13 +24,13 @@ const useRowsView = (
     viewError,
     viewTotal,
   );
-  const table = useTableView(loading, items, error, total, {
+  const tableView = useTableView(loading, items, error, total, {
     columns: viewColumns,
   });
 
   return {
     items,
-    table,
+    tableView,
   };
 };
 
@@ -49,7 +51,9 @@ describe('useTableView', () => {
     );
 
     await waitFor(() =>
-      expect(result.current.table.tableProps.rows.length).toEqual(100),
+      expect(
+        toTableViewTableProps(result.current.tableView).rows.length,
+      ).toEqual(100),
     );
   });
 
@@ -58,17 +62,39 @@ describe('useTableView', () => {
       () => useRowsView(false, [], undefined, 0, columns),
       DEFAULT_RENDER_OPTIONS,
     );
-    console.log(
-      'result.current.table.tableProps',
-      result.current.table.tableProps,
-    );
+
     expect(
-      result.current.table.tableProps.rows[0].cells[0].title().props,
+      toTableViewTableProps(result.current.tableView).rows[0].cells[0].title()
+        .props,
     ).toEqual(
       expect.objectContaining({
         items: expect.any(Array),
         options: expect.any(Object),
         columns: expect.any(Array),
+      }),
+    );
+  });
+
+  it('returns table view building blocks', () => {
+    const { result } = renderHook(
+      () =>
+        useTableView(false, exampleItems, undefined, exampleItems.length, {
+          columns,
+        }),
+      DEFAULT_RENDER_OPTIONS,
+    );
+
+    expect(result.current).toEqual(
+      expect.objectContaining({
+        view: 'rows',
+        setTableView: expect.any(Function),
+        choosableViews: expect.any(Object),
+        supportedViews: expect.any(Object),
+        enableToggle: false,
+        loading: false,
+        items: exampleItems,
+        total: exampleItems.length,
+        viewOptions: expect.objectContaining({ columns }),
       }),
     );
   });
@@ -83,7 +109,7 @@ describe('useTableView', () => {
         DEFAULT_RENDER_OPTIONS,
       );
 
-      expect(result.current.tableViewToggleProps).not.toBeDefined();
+      expect(toTableViewToggleProps(result.current)).toBeUndefined();
     });
 
     it('returns a toggle if enabled via showViewToggle', () => {
@@ -96,7 +122,7 @@ describe('useTableView', () => {
         DEFAULT_RENDER_OPTIONS,
       );
 
-      expect(result.current.tableViewToggleProps).toBeDefined();
+      expect(toTableViewToggleProps(result.current)).toBeDefined();
     });
 
     it('returns a toggle if there is a table tree', () => {
@@ -110,7 +136,7 @@ describe('useTableView', () => {
         DEFAULT_RENDER_OPTIONS,
       );
 
-      expect(result.current.tableViewToggleProps).toBeDefined();
+      expect(toTableViewToggleProps(result.current)).toBeDefined();
     });
 
     it('returns no toggle if there is a table tree, but showViewToggle is false', () => {
@@ -124,7 +150,7 @@ describe('useTableView', () => {
         DEFAULT_RENDER_OPTIONS,
       );
 
-      expect(result.current.tableViewToggleProps).not.toBeDefined();
+      expect(toTableViewToggleProps(result.current)).toBeUndefined();
     });
   });
 
