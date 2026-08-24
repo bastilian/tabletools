@@ -12,6 +12,7 @@ import useTableView from '~/hooks/useTableView';
 import useExport from '~/hooks/useExport';
 import useRadioSelect from '~/hooks/useRadioSelect';
 import useToolbarActions from '~/hooks/useToolbarActions';
+import { toColumnManagerModalProps } from '~/utilities/helpers/toColumnManagerModalProps';
 
 /**
  *  @typedef {object} useTableToolsReturn
@@ -20,6 +21,7 @@ import useToolbarActions from '~/hooks/useToolbarActions';
  *  @property {boolean}          loading                   Loading state
  *  @property {Array}            columns                   Managed column definitions
  *  @property {object}           [tableView]               Table view props
+ *  @property {object}           [columnManager]           Column manager building blocks
  *  @property {object}           [columnManagerModalProps] Props for ColumnManagementModal
  *  @property {object}           [toolbarPropsOption]      Consumer toolbar props from options
  *  @property {object}           [tablePropsOption]        Consumer table props from options
@@ -77,13 +79,10 @@ const useTableTools = (
   // TODO investigate and maybe refactor
   const actionResolverEnabled = items?.length > 0;
 
-  const { columns, columnManagerAction, columnManagerModalProps } =
-    useColumnManager(options);
+  const columnManager = useColumnManager(options);
 
-  const { dedicatedAction, actions: toolbarActions } = useToolbarActions(
-    options,
-    columnManagerAction,
-  );
+  const { dedicatedAction, actions: toolbarActions } =
+    useToolbarActions(options);
 
   const pagination = usePagination({
     ...options,
@@ -108,12 +107,12 @@ const useTableTools = (
 
   const tableView = useTableView(loading, items, error, total, {
     ...options,
-    columns,
+    columns: columnManager.columns,
     expandable,
     bulkSelect,
   });
 
-  const tableSort = useTableSort(columns, {
+  const tableSort = useTableSort(columnManager.columns, {
     ...options,
     onSelect:
       bulkSelect?.selectOne ||
@@ -122,7 +121,7 @@ const useTableTools = (
   });
 
   const { isDisabled: exportIsDisabled, exportWithFormat } = useExport({
-    columns,
+    columns: columnManager.columns,
     ...options,
   });
 
@@ -159,9 +158,10 @@ const useTableTools = (
   return {
     view: tableView.view,
     loading,
-    columns,
+    columns: columnManager.columns,
     filterModalProps,
-    columnManagerModalProps,
+    columnManagerModalProps: toColumnManagerModalProps(columnManager),
+    columnManager,
     toolbarPropsOption,
     tablePropsOption,
     actionResolver: actionResolverEnabled && actionResolver,

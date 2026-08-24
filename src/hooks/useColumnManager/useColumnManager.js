@@ -4,21 +4,27 @@ import { getColumnsForModal, getColumnsToShow } from './helper';
 /**
  *  @typedef {object} useColumnManagerReturn
  *
- *  @property {Array}    columns               Patternfly table columns
- *  @property {Function} [columnManagerAction] Action props for a Toolbar action
- *  @property {object}   [ColumnManager]       ColumnManager modal component to be shown to manage columns
+ *  @property {boolean}  enableColumnManager  Whether column management is enabled
+ *  @property {Array}    columns              Visible table columns
+ *  @property {string}   [label]              Action label for the toolbar
+ *  @property {Function} [openColumnManager]  Opens the column manager modal
+ *  @property {Function} [closeColumnManager] Closes the column manager modal
+ *  @property {Function} [applyColumns]       Applies column selection from the modal
+ *  @property {Array}    [appliedColumns]     Columns shown in the modal
+ *  @property {boolean}  [isOpen]             Whether the modal is open
+ *  @property {boolean}  [enableDragDrop]     Whether drag-and-drop reordering is enabled
  */
 
 /**
- * Provides columns for a Patternfly table, a (Primary)Toolbar action and a `ColumnManager` component
+ * Provides column management state for table tools.
  *
- *  @param   {Array}                  columns                           Columns for a table to be managed
- *  @param   {object}                 [options]                         AsyncTableTools options
- *  @param   {string}                 [options.columnManagerSelectProp] Property to use for the selection manager to identify columns
- *  @param   {string}                 [options.manageColumnLabel]       Label for the action item to show
- *  @param   {boolean}                [options.enableDragDrop]          Enable drag and drop reordering in the column manager modal
+ *  @param   {object}                 [options]                   AsyncTableTools options
+ *  @param   {Array}                  [options.columns]           Columns for a table to be managed
+ *  @param   {boolean}                [options.manageColumns]     Enables column management
+ *  @param   {string}                 [options.manageColumnLabel] Label for the action item to show
+ *  @param   {boolean}                [options.enableDragDrop]    Enable drag and drop reordering in the column manager modal
  *
- *  @returns {useColumnManagerReturn}                                   Props and function to integrate the column manager
+ *  @returns {useColumnManagerReturn}                             Column manager props for variant adapters
  *
  *  @group Hooks
  *
@@ -39,22 +45,22 @@ const useColumnManager = (options = {}) => {
       }),
     ),
   );
-  const [isManagerOpen, setIsManagerOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
 
-  const onClick = useCallback(() => {
-    setIsManagerOpen(true);
+  const openColumnManager = useCallback(() => {
+    setIsOpen(true);
   }, []);
 
-  const onClose = useCallback(() => setIsManagerOpen(false), []);
+  const closeColumnManager = useCallback(() => setIsOpen(false), []);
 
   const applyColumns = useCallback(
     (columnsToApply) => {
       setColumnState(
         columnsToApply.map(({ key, isShown }) => ({ key, isShown })),
       );
-      onClose();
+      closeColumnManager();
     },
-    [onClose],
+    [closeColumnManager],
   );
 
   const columnsToShow = useMemo(
@@ -67,22 +73,24 @@ const useColumnManager = (options = {}) => {
     [columns, columnState, enableDragDrop],
   );
 
-  return enableColumnManager
-    ? {
-        columns: columnsToShow,
-        columnManagerAction: {
-          label: manageColumnLabel,
-          onClick,
-        },
-        columnManagerModalProps: {
-          appliedColumns,
-          isOpen: isManagerOpen,
-          onClose,
-          applyColumns,
-          enableDragDrop,
-        },
-      }
-    : { columns };
+  if (!enableColumnManager) {
+    return {
+      enableColumnManager: false,
+      columns,
+    };
+  }
+
+  return {
+    enableColumnManager,
+    columns: columnsToShow,
+    label: manageColumnLabel,
+    openColumnManager,
+    closeColumnManager,
+    applyColumns,
+    appliedColumns,
+    isOpen,
+    enableDragDrop,
+  };
 };
 
 export default useColumnManager;

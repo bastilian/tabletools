@@ -12,6 +12,7 @@ import { toBulkSelectTableProps } from '../helpers/toBulkSelectTableProps';
 import { toTableViewTableProps } from '../helpers/toTableViewTableProps';
 import { toTableViewToolbarProps } from '../helpers/toTableViewToolbarProps';
 import { toTableViewToggleProps } from '../../PrimaryToolbar/helpers/toTableViewToggleProps';
+import { toColumnManagerAction } from '../../PrimaryToolbar/helpers/toColumnManagerAction';
 
 /**
  * Adapter: assemble useTableTools building blocks into deprecated PatternFly table props.
@@ -29,6 +30,7 @@ import { toTableViewToggleProps } from '../../PrimaryToolbar/helpers/toTableView
  *  @param   {Function|boolean} [tableToolsProps.actionResolver]         Row action resolver
  *  @param   {object}           [tableToolsProps.dedicatedAction]        Primary/dedicated toolbar action
  *  @param   {Array}            [tableToolsProps.toolbarActions]         Toolbar actions
+ *  @param   {object}           [tableToolsProps.columnManager]          Column manager building blocks
  *  @param   {object}           [tableToolsProps.pagination]             Pagination props
  *  @param   {object}           [tableToolsProps.conditionalFilterProps] Filter toolbar slice
  *  @param   {object}           [tableToolsProps.bulkSelect]             Bulk select props
@@ -55,6 +57,7 @@ const useTableToolsForDeprecatedTable = ({
   actionResolver,
   dedicatedAction,
   toolbarActions,
+  columnManager,
   pagination,
   filters,
   bulkSelect,
@@ -65,13 +68,22 @@ const useTableToolsForDeprecatedTable = ({
   exportIsDisabled,
   exportWithFormat,
 }) => {
+  const actionsWithColumnManager = useMemo(() => {
+    const columnManagerAction = toColumnManagerAction(columnManager);
+
+    return [
+      ...(toolbarActions || []),
+      ...(columnManagerAction ? [columnManagerAction] : []),
+    ];
+  }, [toolbarActions, columnManager]);
+
   const toolbarActionsProps = useMemo(
     () =>
       toToolbarActions({
         firstAction: dedicatedAction,
-        actions: toolbarActions,
+        actions: actionsWithColumnManager,
       }).toolbarProps,
-    [dedicatedAction, toolbarActions],
+    [dedicatedAction, actionsWithColumnManager],
   );
 
   const exportToolbarProps = useMemo(

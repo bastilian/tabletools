@@ -40,6 +40,27 @@ describe('useTableTools', () => {
     expect(result.current.loading).toBe(false);
   });
 
+  it('returns columnManager and toolbarActions as separate building blocks', async () => {
+    const { result } = renderHook(
+      () =>
+        useTableTools(false, exampleItems, undefined, exampleItems.length, {
+          columns,
+          manageColumns: true,
+          actions: [{ label: 'Example', onClick: jest.fn() }],
+        }),
+      DEFAULT_RENDER_OPTIONS,
+    );
+
+    await waitFor(() => expect(result.current.columnManager).toBeDefined());
+
+    expect(result.current.toolbarActions).toEqual([
+      { label: 'Example', onClick: expect.any(Function) },
+    ]);
+    expect(result.current.columnManager.enableColumnManager).toBe(true);
+    expect(result.current.columnManagerModalProps).toBeDefined();
+    expect(result.current.columnManagerModalProps.isOpen).toBe(false);
+  });
+
   it('returns building-block props while fetching items async', async () => {
     const asyncFunction = jest.fn(async () => [
       exampleItems,

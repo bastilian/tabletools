@@ -1,6 +1,7 @@
 import { renderHook, act } from '@testing-library/react';
 
 import columns from '~/support/factories/columns';
+import { toColumnManagerModalProps } from '~/utilities/helpers/toColumnManagerModalProps';
 
 import useColumnManager from './useColumnManager';
 
@@ -10,13 +11,18 @@ describe('useColumnManager', () => {
   it('returns just columns if not enabled', () => {
     const { result } = renderHook(() => useColumnManager({ columns }));
     expect(result.current.columns).toBeDefined();
-    expect(result.current.columnManagerModalProps).not.toBeDefined();
+    expect(result.current.enableColumnManager).toBe(false);
+    expect(toColumnManagerModalProps(result.current)).toBeUndefined();
   });
 
-  it('returns a columnManagerModalProps if enabled', () => {
+  it('returns column manager building blocks when enabled', () => {
     const { result } = renderHook(() => useColumnManager(...defaultArguments));
-    expect(result.current.columnManagerModalProps).toBeDefined();
-    expect(result.current.columnManagerModalProps.enableDragDrop).toBe(false);
+
+    expect(result.current.enableColumnManager).toBe(true);
+    expect(toColumnManagerModalProps(result.current)).toBeDefined();
+    expect(toColumnManagerModalProps(result.current).enableDragDrop).toBe(
+      false,
+    );
   });
 
   it('passes enableDragDrop to the modal props when set', () => {
@@ -24,12 +30,16 @@ describe('useColumnManager', () => {
       useColumnManager({ columns, manageColumns: true, enableDragDrop: true }),
     );
 
-    expect(result.current.columnManagerModalProps.enableDragDrop).toBe(true);
-    expect(
-      result.current.columnManagerModalProps.appliedColumns.map(
-        ({ key }) => key,
-      ),
-    ).toEqual(['Title', 'Artist', 'column-2', 'Genre', 'Rating']);
+    const modalProps = toColumnManagerModalProps(result.current);
+
+    expect(modalProps.enableDragDrop).toBe(true);
+    expect(modalProps.appliedColumns.map(({ key }) => key)).toEqual([
+      'Title',
+      'Artist',
+      'column-2',
+      'Genre',
+      'Rating',
+    ]);
   });
 
   it('applies columns and preserves order', () => {
@@ -62,7 +72,7 @@ describe('useColumnManager', () => {
     ];
 
     act(() => {
-      result.current.columnManagerModalProps.applyColumns(reorderedColumns);
+      result.current.applyColumns(reorderedColumns);
     });
 
     expect(result.current.columns.map(({ title }) => title)).toEqual([
@@ -72,7 +82,7 @@ describe('useColumnManager', () => {
       'Rating',
     ]);
     expect(
-      result.current.columnManagerModalProps.appliedColumns.map(
+      toColumnManagerModalProps(result.current).appliedColumns.map(
         ({ key, isShown }) => ({ key, isShown }),
       ),
     ).toEqual([
