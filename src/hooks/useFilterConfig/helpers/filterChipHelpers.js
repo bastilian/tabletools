@@ -12,6 +12,7 @@ export const toFilterChips = (filterConfig, filterTypes, activeFilters) =>
         ? filterChipTemplates(configItem, value, filterTypes[configItem.type])
         : undefined;
     })
+    .flat()
     .filter((v) => !!v);
 
 export const toDeselectValue = (
@@ -22,7 +23,7 @@ export const toDeselectValue = (
 ) => {
   const configItem = getFilterConfigItem(
     filterConfig,
-    stringToId(chip.category),
+    stringToId(chip.key || chip.category),
   );
 
   return filterTypes[configItem.type]?.toDeselectValue(
