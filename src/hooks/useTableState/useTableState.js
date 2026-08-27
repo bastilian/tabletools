@@ -21,7 +21,7 @@ import compileState from './helpers/compileState';
  *
  *  @returns {Array}                       An array with the first item being the tableState, the second a function to set the state and a third optional item with the serialised state if a serialiser was provided
  *
- *  @group Hooks
+ *  @ignore
  *
  */
 const useTableState = (namespace, initialState, options = {}) => {

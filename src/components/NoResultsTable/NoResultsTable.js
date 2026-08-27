@@ -16,6 +16,8 @@ import {
  *
  *  @group Components
  *
+ *  @ignore
+ *
  */
 export const NoResultsTable = ({ kind = 'results' }) => (
   <EmptyState

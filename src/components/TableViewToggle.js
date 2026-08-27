@@ -7,7 +7,7 @@ import { ToggleGroup, ToggleGroupItem } from '@patternfly/react-core';
  *
  *  @returns {React.ReactElement}
  *
- *  @group Components
+ *  @ignore
  *
  */
 const TableViewToggle = ({ views, onToggle, currentTableView }) => (

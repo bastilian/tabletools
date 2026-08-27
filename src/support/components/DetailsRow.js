@@ -5,7 +5,7 @@ import { Content, ContentVariants } from '@patternfly/react-core';
 const DetailsRow = ({ item: { description } }) => (
   <Content
     component={ContentVariants.p}
-    style={{ background: 'white', padding: 'var(--pf-t--global--spacer--lg)' }}
+    style={{ padding: 'var(--pf-t--global--spacer--lg)' }}
   >
     {description}
   </Content>

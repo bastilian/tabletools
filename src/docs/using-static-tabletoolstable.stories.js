@@ -6,7 +6,7 @@ import itemsFactory from '~/support/factories/items';
 import { StaticTableToolsTable } from '~/components';
 
 const meta = {
-  title: '"Using StaticTableToolsTable" tutorial examples',
+  title: 'Guides Examples/"Using StaticTableToolsTable" tutorial examples',
   ...defaultStoryMeta,
 };
 

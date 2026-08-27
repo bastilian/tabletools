@@ -7,7 +7,7 @@ import { useTableContext } from '~/hooks';
  *
  *  @returns {object} table state
  *
- *  @group Hooks
+ *  @ignore
  *
  */
 const useDebug = (debugProp = false) => {
