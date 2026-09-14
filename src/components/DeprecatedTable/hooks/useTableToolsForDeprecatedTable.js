@@ -68,6 +68,8 @@ const useTableToolsForDeprecatedTable = ({
   exportIsDisabled,
   exportWithFormat,
 }) => {
+  const { exportConfig: consumerExportConfig, ...restToolbarPropsOption } =
+    toolbarPropsOption || {};
   const actionsWithColumnManager = useMemo(() => {
     const columnManagerAction = toColumnManagerAction(columnManager);
 
@@ -91,8 +93,9 @@ const useTableToolsForDeprecatedTable = ({
       toExportConfig({
         isDisabled: exportIsDisabled,
         exportWithFormat,
+        pdfExport: consumerExportConfig?.pdfExport,
       }).toolbarProps,
-    [exportIsDisabled, exportWithFormat],
+    [exportIsDisabled, exportWithFormat, consumerExportConfig],
   );
 
   const paginationToolbarProps = useMemo(
@@ -152,7 +155,7 @@ const useTableToolsForDeprecatedTable = ({
       ...filterToolbarProps,
       ...bulkSelectToolbarProps,
       ...exportToolbarProps,
-      ...toolbarPropsOption,
+      ...restToolbarPropsOption,
       ...tableViewToolbarProps,
     }),
     [
@@ -161,7 +164,7 @@ const useTableToolsForDeprecatedTable = ({
       filterToolbarProps,
       bulkSelectToolbarProps,
       exportToolbarProps,
-      toolbarPropsOption,
+      restToolbarPropsOption,
       tableViewToolbarProps,
     ],
   );

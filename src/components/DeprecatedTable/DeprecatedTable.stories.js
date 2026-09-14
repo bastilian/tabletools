@@ -1,31 +1,32 @@
-import React, { useCallback, useEffect } from 'react';
-import propTypes from 'prop-types';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { useDarkMode } from 'storybook-dark-mode';
+import React, { useCallback, useEffect } from "react";
+import propTypes from "prop-types";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { useDarkMode } from "storybook-dark-mode";
 
-import defaultStoryMeta from '~/support/defaultStoryMeta';
-import columns from '~/support/factories/columns';
+import defaultStoryMeta from "~/support/defaultStoryMeta";
+import columns from "~/support/factories/columns";
 import filters, {
   customNumberFilterType,
   customNumberFilter,
-} from '~/support/factories/filters';
-import paginationSerialiser from '~/components/StaticTableToolsTable/helpers/serialisers/pagination';
-import sortSerialiser from '~/components/StaticTableToolsTable/helpers/serialisers/sort';
-import filtersSerialiser from '~/components/StaticTableToolsTable/helpers/serialisers/filters';
-import useExampleDataQuery from '~/support/hooks/useExampleDataQuery';
-import CustomEmptyState from '~/support/components/CustomEmptyState';
-import DetailsRow from '~/support/components/DetailsRow';
-import DedicatedAction from '~/support/components/DedicatedAction';
-import { actions, rowActionResolver } from '~/support/constants';
-import { selectedItemIds } from '~/support/api';
+} from "~/support/factories/filters";
+import paginationSerialiser from "~/components/StaticTableToolsTable/helpers/serialisers/pagination";
+import sortSerialiser from "~/components/StaticTableToolsTable/helpers/serialisers/sort";
+import filtersSerialiser from "~/components/StaticTableToolsTable/helpers/serialisers/filters";
+import useExampleDataQuery from "~/support/hooks/useExampleDataQuery";
+import CustomEmptyState from "~/support/components/CustomEmptyState";
+import DetailsRow from "~/support/components/DetailsRow";
+import DedicatedAction from "~/support/components/DedicatedAction";
+import { actions, rowActionResolver } from "~/support/constants";
+import { selectedItemIds } from "~/support/api";
 
-import { TableToolsTable, TableStateProvider } from '~/components';
-import { useFullTableState, useStateCallbacks } from '~/hooks';
+import { TableToolsTable, TableStateProvider } from "~/components";
+import { useFullTableState, useStateCallbacks } from "~/hooks";
+import { pdfExport } from "../PrimaryToolbar/helpers/toExportConfig";
 
 const queryClient = new QueryClient();
 
 const onSelect = (selected) => {
-  console.log('Currently selected', selected);
+  console.log("Currently selected", selected);
 };
 
 const defaultOptions = {
@@ -54,6 +55,7 @@ const argProps = {
   customEmptyRows: propTypes.bool,
   customEmptyState: propTypes.bool,
   enableExport: propTypes.bool,
+  enablePdfExport: propTypes.bool,
   enableDetails: propTypes.bool,
   enableExpandAll: propTypes.bool,
   enableBulkSelect: propTypes.bool,
@@ -62,7 +64,7 @@ const argProps = {
 };
 
 const meta = {
-  title: 'TableToolsTable',
+  title: "TableToolsTable",
   args: {
     debug: true,
     columns,
@@ -70,13 +72,13 @@ const meta = {
     filtered: true,
     enableDefaultFilter: false,
     defaultFilter: {
-      'released-in-decade': [[1960, 1970]],
+      "released-in-decade": [[1960, 1970]],
     },
     sortable: true,
     enableInitialSort: false,
     initialSort: {
       index: 3,
-      direction: 'asc',
+      direction: "asc",
     },
     manageColumns: true,
     enableDragDrop: false,
@@ -86,6 +88,7 @@ const meta = {
     customEmptyRows: true,
     customEmptyState: true,
     enableExport: true,
+    enablePdfExport: false,
     enableDetails: true,
     enableExpandAll: true,
     enableBulkSelect: true,
@@ -126,6 +129,7 @@ const CommonExample = ({
   customEmptyRows,
   customEmptyState,
   enableExport,
+  enablePdfExport,
   enableDetails,
   enableExpandAll,
   enableBulkSelect,
@@ -142,7 +146,7 @@ const CommonExample = ({
     itemIdsInTable,
     itemIdsOnPage,
   } = useExampleDataQuery({
-    endpoint: '/api',
+    endpoint: "/api",
     useTableState: true,
     tableQueries: {
       extraParams: {
@@ -153,11 +157,11 @@ const CommonExample = ({
 
   useEffect(() => {
     document
-      .getElementsByTagName('html')[0]
-      .setAttribute('class', enableDarkMode ? 'pf-v6-theme-dark' : '');
+      .getElementsByTagName("html")[0]
+      .setAttribute("class", enableDarkMode ? "pf-v6-theme-dark" : "");
 
     return () => {
-      document.getElementsByTagName('html')[0].setAttribute('class', '');
+      document.getElementsByTagName("html")[0].setAttribute("class", "");
     };
   }, [enableDarkMode]);
 
@@ -171,6 +175,9 @@ const CommonExample = ({
         sortable
           ? columns
           : columns.map((column) => ({ ...column, sortable: undefined }))
+      }
+      toolbarProps={
+        enablePdfExport ? { exportConfig: { pdfExport } } : undefined
       }
       {...(filters && filtered
         ? {
@@ -262,9 +269,9 @@ const WithTableTreeExample = ({
     itemIdsInTable,
     itemIdsOnPage,
   } = useExampleDataQuery({
-    endpoint: '/api',
-    ...(tableView === 'tree'
-      ? { params: { limit: 'max', sort: 'id:asc' } }
+    endpoint: "/api",
+    ...(tableView === "tree"
+      ? { params: { limit: "max", sort: "id:asc" } }
       : {}),
     useTableState: true,
   });
@@ -274,7 +281,7 @@ const WithTableTreeExample = ({
     loading: treeLoading,
     error: treeError,
   } = useExampleDataQuery({
-    endpoint: '/api/tree',
+    endpoint: "/api/tree",
     useTableState: true,
   });
   const {
@@ -282,8 +289,8 @@ const WithTableTreeExample = ({
   } = useStateCallbacks();
 
   useEffect(() => {
-    if (Object.keys(filterState || {}).length && tableView === 'tree') {
-      setView('rows');
+    if (Object.keys(filterState || {}).length && tableView === "tree") {
+      setView("rows");
     }
   }, [filterState, setView, tableView]);
 
@@ -315,7 +322,7 @@ const WithTableTreeExample = ({
         manageColumns,
         tableTree,
         enableTreeView: true,
-        defaultTableView: 'tree',
+        defaultTableView: "tree",
         ...(enableInitialSort ? { sortBy: initialSort } : {}),
         ...(enableActions ? { actions } : {}),
         ...(dedicatedAction ? { dedicatedAction: DedicatedAction } : {}),
@@ -373,7 +380,7 @@ const WithAsyncFunctionExample = ({
 }) => {
   const { items, itemIdsInTable, itemIdsOnPage, exporter } =
     useExampleDataQuery({
-      endpoint: '/api',
+      endpoint: "/api",
       enabled: false,
     });
 
@@ -442,13 +449,13 @@ const WithPlainAsyncFunctionExample = ({ debug }) => {
   const fetchItems = useCallback(
     async ({ pagination = {}, filters, sort } = {}) => {
       const query =
-        '?' +
+        "?" +
         new URLSearchParams({
           ...pagination,
           ...(filters ? { filters } : {}),
           ...(sort ? { sort } : {}),
         }).toString();
-      const response = await fetch('/api' + query);
+      const response = await fetch("/api" + query);
       const json = await response.json();
 
       return [json.data, json.meta.total];
@@ -465,7 +472,7 @@ const WithPlainAsyncFunctionExample = ({ debug }) => {
         ...defaultOptions,
         debug,
         manageColumns: true,
-        kind: 'songs',
+        kind: "songs",
       }}
     />
   );
@@ -479,7 +486,7 @@ export const WithPlainAsyncFunction = {
 
 const WithErroringAsyncFunctionExample = ({ debug }) => {
   const { items } = useExampleDataQuery({
-    endpoint: '/api/error',
+    endpoint: "/api/error",
     enabled: false,
   });
 
@@ -492,7 +499,7 @@ const WithErroringAsyncFunctionExample = ({ debug }) => {
         ...defaultOptions,
         debug,
         manageColumns: true,
-        kind: 'songs',
+        kind: "songs",
       }}
     />
   );
@@ -516,7 +523,7 @@ const WithErrorPassedExample = ({ debug }) => {
     loading,
     result: { data, meta: { total } = {} } = {},
     error,
-  } = useExampleDataQuery({ endpoint: '/api/error' });
+  } = useExampleDataQuery({ endpoint: "/api/error" });
 
   return (
     <TableToolsTable
@@ -558,6 +565,32 @@ export const WithColumnDragDrop = {
     enableExport: false,
     enableDetails: false,
     enableBulkSelect: false,
+  },
+  decorators: [
+    (Story) => (
+      <QueryClientProvider client={queryClient}>
+        <TableStateProvider>
+          <Story />
+        </TableStateProvider>
+      </QueryClientProvider>
+    ),
+  ],
+  render: (args) => <CommonExample {...args} />,
+};
+
+export const WithPDFExport = {
+  name: "With PDF Export",
+  args: {
+    enableExport: true,
+    enablePdfExport: true,
+    enableRowActions: false,
+    enableActions: false,
+    dedicatedAction: false,
+    customEmptyRows: false,
+    customEmptyState: false,
+    enableDetails: false,
+    enableBulkSelect: false,
+    enableDragDrop: false,
   },
   decorators: [
     (Story) => (
