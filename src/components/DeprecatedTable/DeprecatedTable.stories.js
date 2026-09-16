@@ -21,6 +21,7 @@ import { selectedItemIds } from '~/support/api';
 
 import { TableToolsTable, TableStateProvider } from '~/components';
 import { useFullTableState, useStateCallbacks } from '~/hooks';
+import { pdfExport } from '../PrimaryToolbar/helpers/toExportConfig';
 
 const queryClient = new QueryClient();
 
@@ -54,6 +55,7 @@ const argProps = {
   customEmptyRows: propTypes.bool,
   customEmptyState: propTypes.bool,
   enableExport: propTypes.bool,
+  enablePdfExport: propTypes.bool,
   enableDetails: propTypes.bool,
   enableExpandAll: propTypes.bool,
   enableBulkSelect: propTypes.bool,
@@ -86,6 +88,7 @@ const meta = {
     customEmptyRows: true,
     customEmptyState: true,
     enableExport: true,
+    enablePdfExport: false,
     enableDetails: true,
     enableExpandAll: true,
     enableBulkSelect: true,
@@ -126,6 +129,7 @@ const CommonExample = ({
   customEmptyRows,
   customEmptyState,
   enableExport,
+  enablePdfExport,
   enableDetails,
   enableExpandAll,
   enableBulkSelect,
@@ -171,6 +175,9 @@ const CommonExample = ({
         sortable
           ? columns
           : columns.map((column) => ({ ...column, sortable: undefined }))
+      }
+      toolbarProps={
+        enablePdfExport ? { exportConfig: { pdfExport } } : undefined
       }
       {...(filters && filtered
         ? {
@@ -558,6 +565,32 @@ export const WithColumnDragDrop = {
     enableExport: false,
     enableDetails: false,
     enableBulkSelect: false,
+  },
+  decorators: [
+    (Story) => (
+      <QueryClientProvider client={queryClient}>
+        <TableStateProvider>
+          <Story />
+        </TableStateProvider>
+      </QueryClientProvider>
+    ),
+  ],
+  render: (args) => <CommonExample {...args} />,
+};
+
+export const WithPDFExport = {
+  name: 'With PDF Export',
+  args: {
+    enableExport: true,
+    enablePdfExport: true,
+    enableRowActions: false,
+    enableActions: false,
+    dedicatedAction: false,
+    customEmptyRows: false,
+    customEmptyState: false,
+    enableDetails: false,
+    enableBulkSelect: false,
+    enableDragDrop: false,
   },
   decorators: [
     (Story) => (
