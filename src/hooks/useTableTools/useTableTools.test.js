@@ -77,4 +77,62 @@ describe('useTableTools', () => {
 
     await waitFor(() => expect(asyncFunction).toHaveBeenCalled());
   });
+
+  it('correctly offsets sortBy when detailsComponent is present without selection', async () => {
+    const { result } = renderHook(
+      () =>
+        useTableTools(false, exampleItems, undefined, exampleItems.length, {
+          columns,
+          sortBy: { index: 2, direction: 'desc' },
+          detailsComponent: () => null,
+        }),
+      DEFAULT_RENDER_OPTIONS,
+    );
+
+    await waitFor(() => expect(result.current.tableSort).toBeDefined());
+    // Offset should be 1 (only expand column), so index becomes 2 + 1 = 3
+    expect(result.current.tableSort.sortBy).toEqual({
+      index: 3,
+      direction: 'desc',
+    });
+  });
+
+  it('correctly offsets sortBy when onSelect is present without detailsComponent', async () => {
+    const { result } = renderHook(
+      () =>
+        useTableTools(false, exampleItems, undefined, exampleItems.length, {
+          columns,
+          sortBy: { index: 2, direction: 'desc' },
+          onSelect: () => {},
+        }),
+      DEFAULT_RENDER_OPTIONS,
+    );
+
+    await waitFor(() => expect(result.current.tableSort).toBeDefined());
+    // Offset should be 1 (only select column), so index becomes 2 + 1 = 3
+    expect(result.current.tableSort.sortBy).toEqual({
+      index: 3,
+      direction: 'desc',
+    });
+  });
+
+  it('correctly offsets sortBy when both detailsComponent and onSelect are present', async () => {
+    const { result } = renderHook(
+      () =>
+        useTableTools(false, exampleItems, undefined, exampleItems.length, {
+          columns,
+          sortBy: { index: 2, direction: 'desc' },
+          detailsComponent: () => null,
+          onSelect: () => {},
+        }),
+      DEFAULT_RENDER_OPTIONS,
+    );
+
+    await waitFor(() => expect(result.current.tableSort).toBeDefined());
+    // Offset should be 2 (1 select column + 1 expand column), so index becomes 2 + 2 = 4
+    expect(result.current.tableSort.sortBy).toEqual({
+      index: 4,
+      direction: 'desc',
+    });
+  });
 });
