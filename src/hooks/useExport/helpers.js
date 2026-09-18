@@ -51,7 +51,7 @@ export const exportableColumns = (columns) =>
       column.export !== false && (column.exportKey || column.renderExport),
   );
 
-export const downloadItems = (columns, items, format, filename) => {
+export const downloadItems = (columns, items, format, exportFilename) => {
   const formater = format === 'csv' ? csvForItems : jsonForItems;
 
   if (items) {
@@ -60,7 +60,7 @@ export const downloadItems = (columns, items, format, filename) => {
         items,
         columns,
       }),
-      filename || CSV_FILE_PREFIX + '-' + new Date().toISOString(),
+      exportFilename || CSV_FILE_PREFIX + '-' + new Date().toISOString(),
       format,
     );
   } else {
