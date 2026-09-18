@@ -155,14 +155,14 @@ export const ExpandableWithDefaultSort = {
     <ShareableTable
       loading={false}
       items={[
-        { itemId: '1', title: 'A Track', artist: 'Zoe' },
-        { itemId: '2', title: 'B Track', artist: 'Adam' },
+        { itemId: '1', title: 'A Track', artist: 'Zoe', genre: 'Rock' },
+        { itemId: '2', title: 'B Track', artist: 'Adam', genre: 'Pop' },
       ]}
       total={2}
-      columns={['title', 'artist']}
+      columns={['title', 'artist', 'genre']}
       options={{
-        sortBy: { index: 1, direction: 'desc' }, // Default sort by Artist (columns[1])
-        detailsComponent: ExampleDetailsRow, // Expandable rows (1 toggle column, offset = 1)
+        sortBy: { index: 1, direction: 'asc' }, // Default sort by Artist (columns[1]) ascending - offset = 1
+        detailsComponent: ExampleDetailsRow,
       }}
     />
   ),
@@ -180,14 +180,14 @@ export const SelectableWithDefaultSort = {
     <ShareableTable
       loading={false}
       items={[
-        { itemId: '1', title: 'A Track', artist: 'Zoe' },
-        { itemId: '2', title: 'B Track', artist: 'Adam' },
+        { itemId: '1', title: 'A Track', artist: 'Zoe', genre: 'Rock' },
+        { itemId: '2', title: 'B Track', artist: 'Adam', genre: 'Pop' },
       ]}
       total={2}
-      columns={['title', 'artist']}
+      columns={['title', 'artist', 'genre']}
       options={{
-        onSelect: true, // Selection checkboxes only (1 select column, offset = 1, no expand column)
-        sortBy: { index: 1, direction: 'desc' }, // Default sort by Artist (columns[1]) - offset = 1
+        onSelect: true,
+        sortBy: { index: 0, direction: 'desc' }, // Default sort by Title (columns[0]) descending - offset = 1
       }}
     />
   ),
@@ -205,15 +205,15 @@ export const ExpandableAndSelectableWithDefaultSort = {
     <ShareableTable
       loading={false}
       items={[
-        { itemId: '1', title: 'A Track', artist: 'Zoe' },
-        { itemId: '2', title: 'B Track', artist: 'Adam' },
+        { itemId: '1', title: 'A Track', artist: 'Zoe', genre: 'Rock' },
+        { itemId: '2', title: 'B Track', artist: 'Adam', genre: 'Pop' },
       ]}
       total={2}
-      columns={['title', 'artist']}
+      columns={['title', 'artist', 'genre']}
       options={{
-        onSelect: true, // Selection checkboxes (adds 1 select column)
-        detailsComponent: ExampleDetailsRow, // Expandable rows (adds 1 toggle column)
-        sortBy: { index: 1, direction: 'desc' }, // Default sort by Artist (columns[1]) - offset = 2
+        onSelect: true,
+        detailsComponent: ExampleDetailsRow,
+        sortBy: { index: 2, direction: 'desc' }, // Default sort by Genre (columns[2]) descending - offset = 2
       }}
     />
   ),

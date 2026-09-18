@@ -112,23 +112,7 @@ const useTableTools = (
     bulkSelect,
   });
 
-  // Only pass onSelect to useTableSort when row selection is actually active.
-  // This prevents sort offsets from shifting on tables without checkboxes.
-  const hasSelection =
-    Boolean(bulkSelect?.enableBulkSelect) ||
-    Boolean(radioSelect?.enableRadioSelect) ||
-    typeof tablePropsOption?.onSelect === 'function';
-
-  const selectHandler = hasSelection
-    ? bulkSelect?.selectOne ||
-      radioSelect?.onRadioSelect ||
-      tablePropsOption?.onSelect
-    : undefined;
-
-  const tableSort = useTableSort(columnManager.columns, {
-    ...options,
-    onSelect: selectHandler,
-  });
+  const tableSort = useTableSort(columnManager.columns, options);
 
   const { isDisabled: exportIsDisabled, exportWithFormat } = useExport({
     columns: columnManager.columns,
