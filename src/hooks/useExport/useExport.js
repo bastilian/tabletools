@@ -14,16 +14,16 @@ import { downloadItems, exportableColumns } from './helpers';
 /**
  * Provides export props for table tools.
  *
- *  @param   {object}          [options]            AsyncTableTools options
- *  @param   {Function}        [options.exporter]   Function to return an array of items to be exported
- *  @param   {Array}           [options.columns]    columns for the export
- *  @param   {boolean}         [options.isDisabled] Wether or not export is enabled
- *  @param   {string}          [options.exportFilename]   Custom filename for the exported file
- *  @param   {Function}        [options.onStart]    Function to call before the export
- *  @param   {Function}        [options.onComplete] Function to call when the export succeeded
- *  @param   {Function}        [options.onError]    Function to call when there was an error exporting
+ *  @param   {object}          [options]                AsyncTableTools options
+ *  @param   {Function}        [options.exporter]       Function to return an array of items to be exported
+ *  @param   {Array}           [options.columns]        columns for the export
+ *  @param   {boolean}         [options.isDisabled]     Wether or not export is enabled
+ *  @param   {string}          [options.exportFilename] Custom filename for the exported file
+ *  @param   {Function}        [options.onStart]        Function to call before the export
+ *  @param   {Function}        [options.onComplete]     Function to call when the export succeeded
+ *  @param   {Function}        [options.onError]        Function to call when there was an error exporting
  *
- *  @returns {useExportReturn}                      Export props, or `{}` when disabled
+ *  @returns {useExportReturn}                          Export props, or `{}` when disabled
  *
  *  @group Hooks
  *
