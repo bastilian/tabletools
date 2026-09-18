@@ -112,13 +112,7 @@ const useTableTools = (
     bulkSelect,
   });
 
-  const tableSort = useTableSort(columnManager.columns, {
-    ...options,
-    onSelect:
-      bulkSelect?.selectOne ||
-      radioSelect?.onRadioSelect ||
-      tablePropsOption?.onSelect,
-  });
+  const tableSort = useTableSort(columnManager.columns, options);
 
   const { isDisabled: exportIsDisabled, exportWithFormat } = useExport({
     columns: columnManager.columns,

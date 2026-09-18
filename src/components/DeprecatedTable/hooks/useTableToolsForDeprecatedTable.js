@@ -118,11 +118,6 @@ const useTableToolsForDeprecatedTable = ({
     [radioSelect],
   );
 
-  const sortableTableProps = useMemo(
-    () => toSortTableProps(tableSort),
-    [tableSort],
-  );
-
   const expandableTableProps = useMemo(
     () => toExpandableTableProps(expandable),
     [expandable],
@@ -136,6 +131,27 @@ const useTableToolsForDeprecatedTable = ({
   const tableViewTableProps = useMemo(
     () => toTableViewTableProps(tableView),
     [tableView],
+  );
+
+  const sortableTableProps = useMemo(
+    () =>
+      toSortTableProps(tableSort, {
+        hasSelect:
+          bulkSelectTableProps?.onSelect ||
+          radioSelectTableProps?.onSelect ||
+          typeof tablePropsOption?.onSelect === 'function',
+        hasExpand: expandableTableProps?.onCollapse,
+        isTree: tableView?.view === 'tree' || view === 'tree',
+      }),
+    [
+      tableSort,
+      bulkSelectTableProps?.onSelect,
+      radioSelectTableProps?.onSelect,
+      tablePropsOption?.onSelect,
+      expandableTableProps?.onCollapse,
+      tableView,
+      view,
+    ],
   );
 
   const tableViewToolbarProps = useMemo(
