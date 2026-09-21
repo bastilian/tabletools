@@ -5,6 +5,7 @@ import useParamsFromTableState from './hooks/useParamsFromTableState';
 import useTableQueries from './hooks/useTableQueries';
 import useQueryTotalBatched from './hooks/useQueryTotalBatched';
 import useQueryQueue from './hooks/useQueryQueue';
+import { DEFAULT_QUERY_CLIENT } from './constants';
 
 const useQueryWithUtilities = ({
   fetchFn,
@@ -17,6 +18,7 @@ const useQueryWithUtilities = ({
   tableQueries: tableQueriesOptions,
   totalBatched: totalBatchedOptions,
   combineParamsWithTableState,
+  queryClient: queryClientOption,
 } = {}) => {
   const params = useParamsFromTableState({
     paramsOption,
@@ -24,7 +26,7 @@ const useQueryWithUtilities = ({
     combineParamsWithTableState,
   });
 
-  const queryClient = useQueryClient();
+  const queryClient = useQueryClient(queryClientOption || DEFAULT_QUERY_CLIENT);
   const enabled = useMemo(
     () => (useTableState ? enabledOption && !!params : enabledOption),
     [enabledOption, params, useTableState],
@@ -33,6 +35,7 @@ const useQueryWithUtilities = ({
     () => (params ? [...queryKeyOption, params] : queryKeyOption),
     [queryKeyOption, params],
   );
+
   const queryFn = useCallback(
     async (queryFnParams) => {
       if (combineParamsWithTableState) {
@@ -49,12 +52,15 @@ const useQueryWithUtilities = ({
     data: queryResult,
     error: queryError,
     refetch,
-  } = useQuery({
-    queryKey,
-    queryFn: async () => await queryFn(),
-    enabled: !batched && enabled,
-    refetchOnWindowFocus: false,
-  });
+  } = useQuery(
+    {
+      queryKey,
+      queryFn: async () => await queryFn(),
+      enabled: !batched && enabled,
+      refetchOnWindowFocus: false,
+    },
+    queryClient,
+  );
 
   const query = useCallback(
     async (params) =>
@@ -85,6 +91,7 @@ const useQueryWithUtilities = ({
     error: queueError,
     ...queueQueries
   } = useQueryQueue({
+    queryClient,
     queryKey,
     enabled,
     batched,

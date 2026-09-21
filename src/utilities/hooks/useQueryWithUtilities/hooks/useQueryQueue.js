@@ -12,6 +12,7 @@ const useQueryQueue = ({
   queue,
   query,
   queryTotalBatched,
+  queryClient,
 }) => {
   const enabled = useMemo(
     () => (queue && enabledOption) || false,
@@ -89,12 +90,15 @@ const useQueryQueue = ({
     isFetching: loading,
     data: result,
     error,
-  } = useQuery({
-    queryKey,
-    queryFn,
-    enabled,
-    refetchOnWindowFocus: false,
-  });
+  } = useQuery(
+    {
+      queryKey,
+      queryFn,
+      enabled,
+      refetchOnWindowFocus: false,
+    },
+    queryClient,
+  );
 
   return {
     loading,

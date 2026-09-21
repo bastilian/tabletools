@@ -80,13 +80,16 @@ const useQueryTotalBatched = ({
     isFetching: loading,
     data: result,
     error,
-  } = useQuery({
-    queryKey,
-    queryFn: async () => await queryTotalBatched(),
-    enabled: batched && enabled,
-    refetchOnWindowFocus: false,
-    retry: false,
-  });
+  } = useQuery(
+    {
+      queryKey,
+      queryFn: async () => await queryTotalBatched(),
+      enabled: batched && enabled,
+      refetchOnWindowFocus: false,
+      retry: false,
+    },
+    queryClient,
+  );
 
   return {
     loading,
