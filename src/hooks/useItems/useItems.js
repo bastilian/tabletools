@@ -1,4 +1,4 @@
-import { useEffect, useCallback } from 'react';
+import { useEffect, useCallback, useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
 
 import {
@@ -36,7 +36,7 @@ const useItems = (
   const { filter, sort, pagination } = tableState || {};
   const serialisedTableState = useSerialisedTableState();
   const useInternalState = typeof externalItems === 'function';
-
+  const queryId = useMemo(() => crypto.randomUUID().split('-')[0], []);
   const queryFn = useCallback(async () => {
     const [items, total] = await externalItems(
       serialisedTableState,
@@ -56,7 +56,7 @@ const useItems = (
     refetch,
   } = useQuery({
     queryKey: [
-      'items',
+      `items-${queryId}`,
       serialisedTableState,
       filter,
       sort,
