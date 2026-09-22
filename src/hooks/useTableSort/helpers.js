@@ -12,12 +12,3 @@ export const addSortableTransform = (columns) =>
         }
       : {}),
   }));
-
-// The sort click event passes an index including the select and/or the expand column
-// Therefore we need to add an offset in these cases to match with the index of the columns passed in
-export const columnOffset = (options = {}) => {
-  const init =
-    (typeof options.onSelect === 'function') +
-    (typeof options.detailsComponent !== 'undefined');
-  return options.tableView === 'tree' ? init - 1 : init;
-};

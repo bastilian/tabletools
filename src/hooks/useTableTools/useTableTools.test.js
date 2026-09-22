@@ -77,4 +77,27 @@ describe('useTableTools', () => {
 
     await waitFor(() => expect(asyncFunction).toHaveBeenCalled());
   });
+
+  it('returns pure sortBy in tableSort without variant-specific offsets', async () => {
+    const detailsComponent = () => null;
+    const onSelect = jest.fn();
+
+    const { result } = renderHook(
+      () =>
+        useTableTools(false, exampleItems, undefined, exampleItems.length, {
+          columns,
+          sortBy: { index: 2, direction: 'desc' },
+          detailsComponent,
+          onSelect,
+        }),
+      DEFAULT_RENDER_OPTIONS,
+    );
+
+    await waitFor(() => expect(result.current.tableSort).toBeDefined());
+    // useTableSort maintains data-column index directly
+    expect(result.current.tableSort.sortBy).toEqual({
+      index: 2,
+      direction: 'desc',
+    });
+  });
 });

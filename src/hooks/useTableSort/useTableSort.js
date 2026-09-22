@@ -1,15 +1,15 @@
 import { useCallback, useMemo } from 'react';
 import { useDeepCompareMemo } from 'use-deep-compare';
 
-import useTableState, { useRawTableState } from '~/hooks/useTableState';
+import useTableState from '~/hooks/useTableState';
 
-import { addSortableTransform, columnOffset } from './helpers';
+import { addSortableTransform } from './helpers';
 import { TABLE_STATE_NAMESPACE } from './constants';
 
 /**
  *  @typedef {object} useTableSortReturn
  *
- *  @property {object}   sortBy          Current sort state with column offset applied
+ *  @property {object}   sortBy          Current sort state
  *  @property {Function} onSort          Sort change handler
  *  @property {Array}    sortableColumns Columns with sortable transforms applied
  */
@@ -40,9 +40,6 @@ const useTableSort = (columns, options = {}) => {
     onSort: onSortOption,
   } = options;
 
-  const { tableView } = useRawTableState() || {};
-  const offset = columnOffset({ ...options, tableView });
-
   const stateOptions = useDeepCompareMemo(
     () => ({
       ...(serialiser
@@ -65,21 +62,12 @@ const useTableSort = (columns, options = {}) => {
   const onSort = useCallback(
     (_, index, direction) => {
       setSortBy({
-        index: index - offset,
+        index,
         direction,
       });
       onSortOption?.(index, direction);
     },
-    [onSortOption, setSortBy, offset],
-  );
-
-  const sortByOffset = useMemo(
-    () =>
-      sortBy && {
-        ...sortBy,
-        index: sortBy?.index + offset,
-      },
-    [sortBy, offset],
+    [onSortOption, setSortBy],
   );
 
   const sortableColumns = useMemo(
@@ -89,11 +77,11 @@ const useTableSort = (columns, options = {}) => {
 
   return useMemo(
     () => ({
-      sortBy: sortByOffset,
+      sortBy,
       onSort,
       sortableColumns,
     }),
-    [sortByOffset, onSort, sortableColumns],
+    [sortBy, onSort, sortableColumns],
   );
 };
 
