@@ -152,9 +152,11 @@ ExampleDetailsRow.propTypes = {
 export const ExpandableWithDefaultSort = {
   decorators: [
     (Story) => (
-      <TableStateProvider>
-        <Story />
-      </TableStateProvider>
+      <QueryProviderWithUtilities>
+        <TableStateProvider>
+          <Story />
+        </TableStateProvider>
+      </QueryProviderWithUtilities>
     ),
   ],
   render: () => (
@@ -177,9 +179,11 @@ export const ExpandableWithDefaultSort = {
 export const SelectableWithDefaultSort = {
   decorators: [
     (Story) => (
-      <TableStateProvider>
-        <Story />
-      </TableStateProvider>
+      <QueryProviderWithUtilities>
+        <TableStateProvider>
+          <Story />
+        </TableStateProvider>
+      </QueryProviderWithUtilities>
     ),
   ],
   render: () => (
@@ -202,9 +206,11 @@ export const SelectableWithDefaultSort = {
 export const ExpandableAndSelectableWithDefaultSort = {
   decorators: [
     (Story) => (
-      <TableStateProvider>
-        <Story />
-      </TableStateProvider>
+      <QueryProviderWithUtilities>
+        <TableStateProvider>
+          <Story />
+        </TableStateProvider>
+      </QueryProviderWithUtilities>
     ),
   ],
   render: () => (
