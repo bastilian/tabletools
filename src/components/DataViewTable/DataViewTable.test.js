@@ -1,8 +1,11 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
 
-import TableStateProvider from '../TableStateProvider';
-import TableToolsTable from '../TableToolsTable';
+import {
+  TableStateProvider,
+  TableToolsTable,
+  QueryProviderWithUtilities,
+} from '~/components';
 
 describe('DataViewTable', () => {
   const exampleItems = [
@@ -23,9 +26,11 @@ describe('DataViewTable', () => {
 
   it('should render a basic data view table', () => {
     render(
-      <TableStateProvider>
-        <TableToolsTable {...defaultProps} />
-      </TableStateProvider>,
+      <QueryProviderWithUtilities>
+        <TableStateProvider>
+          <TableToolsTable {...defaultProps} />
+        </TableStateProvider>
+      </QueryProviderWithUtilities>,
     );
 
     expect(screen.getByLabelText('DataViewTable')).toBeInTheDocument();

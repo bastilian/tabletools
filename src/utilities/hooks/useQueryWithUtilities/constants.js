@@ -1,3 +1,5 @@
+import { QueryClient } from '@tanstack/react-query';
+
 export const DEFAULT_BATCH_SIZE = 50;
 export const DEFAULT_CONCURRENT_REQUESTS = 2;
 export const DEFAULT_LIMIT_PARAM = 'limit';
@@ -10,3 +12,4 @@ export const DEFAULT_ITEMS_STATES_FOR_PARAMS = [
 export const DEFAULT_PALL_OPTIONS = {
   concurrency: 5,
 };
+export const DEFAULT_QUERY_CLIENT = new QueryClient();

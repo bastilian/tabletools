@@ -1,7 +1,6 @@
 import React, { useContext, useState, useRef } from 'react';
 import propTypes from 'prop-types';
 
-import { QueryProviderWithUtilities } from '~/components';
 import { TableContext } from '~/hooks/useTableContext/constants';
 
 /**
@@ -51,14 +50,14 @@ TableStateProvider.propTypes = {
 const TableStateProviderWrapper = ({ isNewContext = false, children }) => {
   const tableContext = useContext(TableContext);
   const Wrapper =
-    tableContext && !isNewContext ? React.Fragment : TableStateProvider;
+    !tableContext || (tableContext && isNewContext)
+      ? TableStateProvider
+      : React.Fragment;
 
   return (
-    <QueryProviderWithUtilities>
-      <Wrapper {...(isNewContext ? { parentContext: tableContext } : {})}>
-        {children}
-      </Wrapper>
-    </QueryProviderWithUtilities>
+    <Wrapper {...(isNewContext ? { parentContext: tableContext } : {})}>
+      {children}
+    </Wrapper>
   );
 };
 

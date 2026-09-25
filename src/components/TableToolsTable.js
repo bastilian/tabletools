@@ -5,6 +5,7 @@ import { ColumnManagementModal } from '@patternfly/react-component-groups';
 import useTableTools from '~/hooks/useTableTools';
 
 import TableStateProvider from './TableStateProvider';
+import QueryProviderWithUtilities from './QueryProviderWithUtilities';
 import FilterModal from './FilterModal';
 import { variants } from './constants';
 
@@ -113,10 +114,21 @@ TableToolsTable.propTypes = {
  *  @group Components
  *
  */
-const TableToolsTableWithOrWithoutProvider = (props) => (
-  <TableStateProvider>
-    <TableToolsTable {...props} />
-  </TableStateProvider>
-);
+const TableToolsTableWithOrWithoutProvider = (props) => {
+  const Wrapper =
+    typeof props.items === 'function'
+      ? QueryProviderWithUtilities
+      : React.Fragment;
+
+  return (
+    <Wrapper>
+      <TableStateProvider>
+        <TableToolsTable {...props} />
+      </TableStateProvider>
+    </Wrapper>
+  );
+};
+
+TableToolsTableWithOrWithoutProvider.propTypes = TableToolsTable.propTypes;
 
 export default TableToolsTableWithOrWithoutProvider;

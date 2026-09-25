@@ -9,7 +9,11 @@ import filters, {
 } from '~/support/factories/filters';
 import useExampleDataQuery from '~/support/hooks/useExampleDataQuery';
 
-import { BaseTableToolsTable, TableStateProvider } from '~/components';
+import {
+  BaseTableToolsTable,
+  TableStateProvider,
+  QueryProviderWithUtilities,
+} from '~/components';
 import paginationSerialiser from '~/components/StaticTableToolsTable/helpers/serialisers/pagination';
 import sortSerialiser from '~/components/StaticTableToolsTable/helpers/serialisers/sort';
 import filtersSerialiser from '~/components/StaticTableToolsTable/helpers/serialisers/filters';
@@ -122,9 +126,11 @@ ShareableTableToolsTableExample.propTypes = {};
 export const ShareableTableToolsTable = {
   decorators: [
     (Story) => (
-      <TableStateProvider>
-        <Story />
-      </TableStateProvider>
+      <QueryProviderWithUtilities>
+        <TableStateProvider>
+          <Story />
+        </TableStateProvider>
+      </QueryProviderWithUtilities>
     ),
   ],
   render: (args) => <ShareableTableToolsTableExample {...args} />,
@@ -146,9 +152,11 @@ ExampleDetailsRow.propTypes = {
 export const ExpandableWithDefaultSort = {
   decorators: [
     (Story) => (
-      <TableStateProvider>
-        <Story />
-      </TableStateProvider>
+      <QueryProviderWithUtilities>
+        <TableStateProvider>
+          <Story />
+        </TableStateProvider>
+      </QueryProviderWithUtilities>
     ),
   ],
   render: () => (
@@ -171,9 +179,11 @@ export const ExpandableWithDefaultSort = {
 export const SelectableWithDefaultSort = {
   decorators: [
     (Story) => (
-      <TableStateProvider>
-        <Story />
-      </TableStateProvider>
+      <QueryProviderWithUtilities>
+        <TableStateProvider>
+          <Story />
+        </TableStateProvider>
+      </QueryProviderWithUtilities>
     ),
   ],
   render: () => (
@@ -196,9 +206,11 @@ export const SelectableWithDefaultSort = {
 export const ExpandableAndSelectableWithDefaultSort = {
   decorators: [
     (Story) => (
-      <TableStateProvider>
-        <Story />
-      </TableStateProvider>
+      <QueryProviderWithUtilities>
+        <TableStateProvider>
+          <Story />
+        </TableStateProvider>
+      </QueryProviderWithUtilities>
     ),
   ],
   render: () => (
